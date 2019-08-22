@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: story.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: story.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>
+'use strict';
+var $ = require('jquery');
+var _ = require('underscore');
+var LZString = require('lz-string');
+
+/**
+An object representing the entire story. After the document has completed
+loading, an instance of this class will be available at `window.story`.
+
+@module Story
+@class Story
+@constructor
+**/
+var Story = function(el) {
+	// set up basic properties
+
+	this.el = el;
+
+	/**
+	 The name of the story.
+	 @property name
+	 @type String
+	 @readonly
+	**/
+	this.name = el.attr('name');
+
+	/**
+	 The ID of the first passage to be displayed.
+	 @property startPassage
+	 @type Number
+	 @readonly
+	**/
+	this.startPassage = parseInt(el.attr('startnode'));
+
+	/**
+	 The program that created this story.
+
+	 @property creator
+	 @type String
+	 @readonly
+	**/
+
+	this.creator = el.attr('creator');
+
+	/**
+	 The version of the program used to create this story.
+
+	 @property creatorVersion
+	 @type String
+	 @readOnly
+	**/
+
+	this.creatorVersion = el.attr('creator-version');
+
+	// initialize history and state
+
+	/**
+	 An array of passage IDs, one for each passage viewed during the current
+	 session.
+
+	 @property history
+	 @type Array
+	 @readOnly
+	**/
+
+	this.history = [];
+
+	/**
+	 An object that stores data that persists across a single user session.
+	 Any other variables will not survive the user pressing back or forward.
+
+	 @property state
+	 @type Object
+	**/
+
+	this.state = {};
+
+	/**
+	 The name of the last checkpoint set. If none has been set, this is an
+	 empty string.
+
+	 @property checkpointName
+	 @type String
+	 @readonly
+	**/
+
+	this.checkpointName = '';
+
+	/**
+	 If set to true, then any JavaScript errors are ignored -- normally, play
+	 would end with a message shown to the user.
+
+	 @property ignoreErrors
+	 @type Boolean
+	**/
+
+	this.ignoreErrors = false;
+
+	/**
+	 The message shown to users when there is an error and ignoreErrors is not
+	 true. Any %s in the message will be interpolated as the actual error
+	 messsage.
+
+	 @property errorMessage
+	 @type String
+	**/
+
+	this.errorMessage = '\u26a0 %s';
+
+	/**
+	 Mainly for internal use, this records whether the current passage contains
+	 a checkpoint.
+
+	 @property atCheckpoint
+	 @type Boolean
+	 @private
+	**/
+
+	this.atCheckpoint = false;
+
+	// create passage objects
+
+	/**
+	 An array of all passages, indexed by ID.
+
+	 @property passages
+	 @type Array
+	**/
+
+	this.passages = [];
+
+	var p = this.passages;
+
+	el.children('tw-passagedata').each(function(el) {
+		var $t = $(this);
+		var id = parseInt($t.attr('pid'));
+		var tags = $t.attr('tags');
+
+		p[id] = new Passage(
+			id,
+			$t.attr('name'),
+			(tags !== '' &amp;&amp; tags !== undefined) ? tags.split(' ') : [],
+			$t.html()
+		);
+	});
+
+	/**
+	 An array of user-specific scripts to run when the story is begun.
+
+	 @property userScripts
+	 @type Array
+	**/
+
+	this.userScripts = _.map(
+		el.children('*[type="text/twine-javascript"]'),
+		function(el) {
+			return $(el).html();
+		}
+	);
+
+	/**
+	 An array of user-specific style declarations to add when the story is begun.
+
+	 @property userStyles
+	 @type Array
+	**/
+
+	this.userStyles = _.map(
+		el.children('*[type="text/twine-css"]'),
+		function(el) {
+			return $(el).html();
+		}
+	);
+};
+
+_.extend(Story.prototype, {
+	/**
+	 Begins playing this story.
+
+	 @method start
+	**/
+
+	start: function() {
+		// set up history event handler
+
+		$(window).on('popstate', function(event) {
+			var state = event.originalEvent.state;
+
+			if (state) {
+				this.state = state.state;
+				this.history = state.history;
+				this.checkpointName = state.checkpointName;
+				this.show(this.history[this.history.length - 1], true);
+			}
+			else if (this.history.length > 1) {
+				this.state = {};
+				this.history = [];
+				this.checkpointName = '';
+				this.show(this.startPassage, true);
+			}
+		}.bind(this));
+
+		// set up passage link handler
+
+		$('body').on('click', 'a[data-passage]', function (e) {
+			this.show(_.unescape(
+				$(e.target).closest('[data-passage]').attr('data-passage')
+			));
+		}.bind(this));
+
+		// set up hash change handler for save/restore
+
+		$(window).on('hashchange', function() {
+			this.restore(window.location.hash.replace('#', ''));
+		}.bind(this));
+
+		// set up error handler
+
+		window.onerror = function(message, url, line) {
+			if (! this.errorMessage || typeof(this.errorMessage) != 'string') {
+				this.errorMessage = Story.prototype.errorMessage;
+			}
+
+			if (!this.ignoreErrors) {
+				if (url) {
+					message += ' (' + url;
+
+					if (line) {
+						message += ': ' + line;
+					}
+
+					message += ')';
+				}
+
+				$('#passages').html(this.errorMessage.replace('%s', message));
+			}
+		}.bind(this);
+
+		// activate user styles
+
+		_.each(this.userStyles, function(style) {
+			$('body').append('&lt;style>' + style + '&lt;/style>');
+		});
+
+		// run user scripts
+
+		_.each(this.userScripts, function(script) {
+			eval(script);
+		});
+
+		/**
+		 Triggered when the story is finished loading, and right before
+		 the first passage is displayed. The story property of this event
+		 contains the story.
+
+		 @event startstory
+		**/
+		$.event.trigger('startstory', { story: this });
+
+		// try to restore based on the window hash if possible
+
+		if (window.location.hash === '' ||
+			!this.restore(window.location.hash.replace('#', ''))) {
+			// start the story; mark that we're at a checkpoint
+
+			this.show(this.startPassage);
+			this.atCheckpoint = true;
+		}
+	},
+
+	/**
+	 Returns the Passage object corresponding to either an ID or name.
+	 If none exists, then it returns null.
+
+	 @method passage
+	 @param idOrName {String|Number} ID or name of the passage
+	 @return Passage object or null
+	**/
+	passage: function(idOrName) {
+		if (_.isNumber(idOrName)) {
+			return this.passages[idOrName];
+		}
+		else if (_.isString(idOrName)) {
+			return _.findWhere(this.passages, { name: idOrName });
+		}
+	},
+
+	/**
+	 Displays a passage on the page, replacing the current one. !! NOT ANy MORE !! If
+	 there is no passage by the name or ID passed, an exception is raised.
+
+	 Calling this immediately inside a passage (i.e. in its source code) will
+	 *not* display the other passage. Use Story.render() instead.
+
+	 @method show
+	 @param idOrName {String|Number} ID or name of the passage
+	 @param noHistory {Boolean} if true, then this will not be recorded in the story history
+	**/
+
+	show: function(idOrName, noHistory) {
+		var passage = this.passage(idOrName);
+
+		if (!passage) {
+			throw new Error(
+				'There is no passage with the ID or name "' + idOrName + '"'
+			);
+		}
+
+		/**
+		 Triggered whenever a passage is about to be replaced onscreen with another.
+		 The passage being hidden is stored in the passage property of the event.
+
+		 @event hidepassage
+		**/
+
+		$.event.trigger('hidepassage', { passage: window.passage });
+
+		/**
+		 Triggered whenever a passage is about to be shown onscreen.
+		 The passage being displayed is stored in the passage property of the event.
+
+		 @event showpassage
+		**/
+
+		$.event.trigger('showpassage', { passage: passage });
+
+		if (!noHistory) {
+			this.history.push(passage.id);
+
+			try {
+				if (this.atCheckpoint) {
+					window.history.pushState(
+						{
+							state: this.state,
+							history: this.history,
+							checkpointName: this.checkpointName
+						},
+						'',
+						''
+					);
+				}
+				else {
+					window.history.replaceState(
+						{
+							state: this.state,
+							history: this.history,
+							checkpointName: this.checkpointName
+						},
+						'',
+						''
+					);
+				}
+			}
+			catch (e) {
+				// this may fail due to security restrictions in the browser
+
+				/**
+				 Triggered whenever a checkpoint fails to be saved to browser history.
+
+				 @event checkpointfailed
+				**/
+
+				$.event.trigger('checkpointfailed', { error: e });
+			}
+		}
+
+		window.passage = passage;
+		this.atCheckpoint = false;
+
+		// --- derek / twize --- weird passage code starts here.
+		// THIS IS WHERE PASSAGES GET ADDED TO THE THING
+
+		if(_.find(passage.tags, function(tag) { return tag === "replace" })) {
+			$('#passages').empty();
+		}
+
+		if(_.find(passage.tags, function(tag) { return tag === "panelize" })) {
+			passage.source = `&lt;%$( function(){ window.passage.panelize(function initializer(p) { ${passage.source} }); }); %>`;
+			// so we don't accidentally do this twice:
+			passage.tags = _(passage.tags).without("panelize");
+		}
+
+		var passageNameClass = passage.passageDomName();
+		var historyIndex = _.wiz_findInHistory(passage.id)
+		// refactor this to create the element and append it rather than just append raw html
+		var rendered;
+		try {
+			rendered = passage.render()
+		} catch (e) {
+			throw new Error(
+`Some sort of rendering issue with passage "${passage.name}":
+---
+${e.stack}`)
+		}
+
+		$('#passages').append('&lt;div class="passage ' + passageNameClass + '" historyIndex="' + historyIndex + '">' + rendered + '&lt;/div>');
+
+		var newPassage = $('.'+passageNameClass+'[historyIndex='+historyIndex+']')
+		var activePassage = $('.active');
+
+		if (activePassage) {
+			activePassage.removeClass("active");
+		}
+		newPassage.addClass("active");
+
+		/**
+		 Triggered after a passage has been shown onscreen, and is now
+		 displayed in the div with id passage. The passage being displayed is
+		 stored in the passage property of the event.
+
+		 @event showpassage:after
+		**/
+
+		$.event.trigger('showpassage:after', { passage: passage });
+	},
+
+	/**
+	 Returns the HTML source for a passage. This is most often used when
+	 embedding one passage inside another. In this instance, make sure to
+	 use &lt;%= %> instead of &lt;%- %> to avoid incorrectly encoding HTML entities.
+
+	 @method render
+	 @param idOrName {String|Number} ID or name of the passage
+	 @return {String} HTML source code
+	**/
+
+	render: function(idOrName) {
+		var passage = this.passage(idOrName);
+
+		if (!passage) {
+			throw new Error('There is no passage with the ID or name ' + idOrName);
+		}
+
+		return passage.render();
+	},
+
+	/**
+	 Tries to add an entry in the browser history for the current story state.
+	 Remember, only variables set on this story's state variable are stored in
+	 the browser history.
+
+	 @method checkpoint
+	 @param name {String} checkpoint name, appears in history, optional
+	**/
+
+	checkpoint: function(name) {
+		if (name !== undefined) {
+			document.title = this.name + ': ' + name;
+			this.checkpointName = name;
+		}
+		else {
+			this.checkpointName = '';
+		}
+
+		this.atCheckpoint = true;
+
+		/**
+		 Triggered whenever a checkpoint is set in the story.
+
+		 @event checkpoint
+		**/
+
+		$.event.trigger('checkpoint', { name: name });
+	},
+
+	/**
+	 Returns a hash value representing the current state of the story.
+
+	 @method saveHash
+	 @return String hash
+	**/
+
+	saveHash: function()
+	{
+		return LZString.compressToBase64(JSON.stringify({ state: this.state, history: this.history, checkpointName: this.checkpointName }));
+	},
+
+	/**
+	 Sets the URL's hash property to the hash value created by saveHash().
+
+	 @method save
+	 @return String hash
+	**/
+
+	save: function()
+	{
+		/**
+		 Triggered whenever story progress is saved.
+
+		 @event save
+		**/
+
+		$.event.trigger('save');
+		window.location.hash = this.saveHash();
+	},
+
+	/**
+	 Tries to restore the story state from a hash value generated by saveHash().
+
+	 @method restore
+	 @param hash {String}
+	 @return {Boolean} whether the restore succeeded
+	**/
+
+	restore: function (hash)
+	{
+		/**
+		 Triggered before trying to restore from a hash.
+
+		 @event restore
+		**/
+
+		$.event.trigger('restore');
+
+		try
+		{
+			var save = JSON.parse(LZString.decompressFromBase64(hash));
+			this.state = save.state;
+			this.history = save.history;
+			this.checkpointName = save.checkpointName;
+			this.show(this.history[this.history.length - 1], true);
+		}
+		catch (e)
+		{
+			// swallow the error
+
+			/**
+			 Triggered if there was an error with restoring from a hash.
+
+			 @event restorefailed
+			**/
+
+			$.event.trigger('restorefailed', { error: e });
+			return false;
+		};
+
+		/**
+		 Triggered after completing a restore from a hash.
+
+		 @event restore:after
+		**/
+
+		$.event.trigger('restore:after');
+		return true;
+	}
+});
+
+module.exports = Story;
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="ArtAsset.html">ArtAsset</a></li><li><a href="PanelRenderer.html">PanelRenderer</a></li><li><a href="Seqel.html">Seqel</a></li><li><a href="Sequence.html">Sequence</a></li><li><a href="Story.html">Story</a></li><li><a href="Twize.html">Twize</a></li></ul><h3>Events</h3><ul><li><a href="global.html#event:animation-begun">animation-begun</a></li><li><a href="global.html#event:checkpoint">checkpoint</a></li><li><a href="global.html#event:checkpointfailed">checkpointfailed</a></li><li><a href="global.html#event:hidepassage">hidepassage</a></li><li><a href="global.html#event:restore">restore</a></li><li><a href="global.html#event:restorefailed">restorefailed</a></li><li><a href="global.html#event:save">save</a></li><li><a href="global.html#event:showpassage">showpassage</a></li><li><a href="global.html#event:startstory">startstory</a></li><li><a href="global.html#event:restore:after">restore:after</a></li><li><a href="global.html#event:showpassage:after">showpassage:after</a></li></ul><h3>Namespaces</h3><ul><li><a href="-_.html">_</a></li></ul><h3>Mixins</h3><ul><li><a href="Underscore.hasAll.html">hasAll</a></li><li><a href="Underscore.hasOnly.html">hasOnly</a></li><li><a href="Underscore.xor.html">xor</a></li><li><a href="Underscore-thumbprint.html">thumbprint</a></li></ul><h3>Global</h3><ul><li><a href="global.html#__parentPassage">__parentPassage</a></li><li><a href="global.html#__selectors">__selectors</a></li><li><a href="global.html#__settings">__settings</a></li><li><a href="global.html#_getDisplayed">_getDisplayed</a></li><li><a href="global.html#_layers">_layers</a></li><li><a href="global.html#_loadingAssets">_loadingAssets</a></li><li><a href="global.html#addArt">addArt</a></li><li><a href="global.html#addArtAssets">addArtAssets</a></li><li><a href="global.html#addBeatPushesanewsequencebeattotheAssetAnimation'ssequence.">addBeat
+
+   Pushes a new sequence beat to the AssetAnimation's sequence.</a></li><li><a href="global.html#addLayer">addLayer</a></li><li><a href="global.html#addLayers">addLayers</a></li><li><a href="global.html#addSeqeltheSeqelconstructortakesvariablearguments,sothisbasicSeqel-makerdoestoo.---2arguments:---">addSeqel
+   the Seqel constructor takes variable arguments, so this basic Seqel-maker
+   does too.
+   --- 2 arguments: ---</a></li><li><a href="global.html#addStep">addStep</a></li><li><a href="global.html#addUnknownLayers">addUnknownLayers</a></li><li><a href="global.html#advance">advance</a></li><li><a href="global.html#animate">animate</a></li><li><a href="global.html#art">art</a></li><li><a href="global.html#asset">asset</a></li><li><a href="global.html#assetFindsthefirstinstanceofanassetmatchingthequeryparamanywhereintheShadowPanel.">asset
+
+   Finds the first instance of an asset matching the query param anywhere in the ShadowPanel.</a></li><li><a href="global.html#assetRecords">assetRecords</a></li><li><a href="global.html#beats">beats</a></li><li><a href="global.html#checkpoint">checkpoint</a></li><li><a href="global.html#checkpointName">checkpointName</a></li><li><a href="global.html#createLayerInstanceSpecializedlayercreation.">createLayerInstance
+
+   Specialized layer creation.</a></li><li><a href="global.html#createStepAnimation">createStepAnimation</a></li><li><a href="global.html#creator">creator</a></li><li><a href="global.html#creatorVersion">creatorVersion</a></li><li><a href="global.html#destination">destination</a></li><li><a href="global.html#errorMessage">errorMessage</a></li><li><a href="global.html#getArtAsset">getArtAsset</a></li><li><a href="global.html#getDefault">getDefault</a></li><li><a href="global.html#history">history</a></li><li><a href="global.html#id">id</a></li><li><a href="global.html#ignoreErrors">ignoreErrors</a></li><li><a href="global.html#ignoreRoot">ignoreRoot</a></li><li><a href="global.html#layerGetsalayerfromtheshadowPanel.">layer
+
+   Gets a layer from the shadowPanel.</a></li><li><a href="global.html#layerize">layerize</a></li><li><a href="global.html#layers">layers</a></li><li><a href="global.html#name">name</a></li><li><a href="global.html#panelize">panelize</a></li><li><a href="global.html#passage">passage</a></li><li><a href="global.html#passageDomName">passageDomName</a></li><li><a href="global.html#passages">passages</a></li><li><a href="global.html#pos">pos</a></li><li><a href="global.html#remove">remove</a></li><li><a href="global.html#render">render</a></li><li><a href="global.html#renderer">renderer</a></li><li><a href="global.html#rendererId">rendererId</a></li><li><a href="global.html#replace">replace</a></li><li><a href="global.html#restore">restore</a></li><li><a href="global.html#save">save</a></li><li><a href="global.html#saveHash">saveHash</a></li><li><a href="global.html#selectors">selectors</a></li><li><a href="global.html#seq">seq</a></li><li><a href="global.html#setDefaults">setDefaults</a></li><li><a href="global.html#setup">setup</a></li><li><a href="global.html#setupStructure">setupStructure</a></li><li><a href="global.html#show">show</a></li><li><a href="global.html#source">source</a></li><li><a href="global.html#start">start</a></li><li><a href="global.html#startPassage">startPassage</a></li><li><a href="global.html#state">state</a></li><li><a href="global.html#step">step</a></li><li><a href="global.html#tags">tags</a></li><li><a href="global.html#tracks">tracks</a></li><li><a href="global.html#userScripts">userScripts</a></li><li><a href="global.html#userStyles">userStyles</a></li><li><a href="global.html#wandize">wandize</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> on Thu Mar 16 2017 12:58:43 GMT-0700 (Pacific Summer Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

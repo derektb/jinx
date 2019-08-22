@@ -1,0 +1,144 @@
+/* give ourselves some decent defaults */
+
+html.twize-page, html.twize-page body {
+	width: 100%;
+	height: 100%;
+}
+
+body {
+	font: 18px "Helvetica Neue", Helvetica, Arial, sans-serif;
+	color: #222;
+}
+
+#passages {
+	max-width: 38em;
+	margin: 0 auto;
+	line-height: 145%;
+}
+
+.layer .asset {
+	opacity: 0;
+}
+
+/*a {
+	color: #222;
+	text-decoration: none;
+	border-bottom: 2px solid #bbb;
+}
+
+a:hover {
+	color: #cc8929;
+	border-color: #cc8929;
+}
+
+a:active {
+	color: #ffb040;
+	border-color: #ffb040;
+}*/
+
+tw-storydata {
+	display: none;
+}
+
+/* scale font sizes for phones */
+
+@media screen and (max-device-width: 480px) {
+	#passages {
+		font-size: 70%;
+	}
+}
+
+/* basic panel settings */
+
+.panel {
+	position: relative;
+	height: 300px; width: 300px;
+}
+
+.layer, .layer .asset {
+	position: absolute;
+	top: 0; left: 0;
+}
+
+.layer {
+	width: 100%;
+	height: 100%;
+}
+
+.layer .asset {
+	/* Unclear what removing the following will break: */
+	/*width: 100%;
+	height: 100%;*/
+	/* get a preprocessor you jamoke */
+	user-select: none;
+	-moz-user-select: none;
+	-webkit-user-select: none;
+	-ms-user-select: none;
+}
+
+/*#wand {
+	display: inline-block;
+	position: absolute;
+	bottom: -30px; right: 12px;
+	width: 40px; height: 40px;
+}
+
+#wand a {
+	display: inline-block;
+	position: relative;
+	width: 40px; height: 40px;
+	background-color: #ddd;
+	border-radius: 5px;
+}
+
+.active #wand a {
+	background-color: #06f;
+}*/
+
+.wand {
+	transition: border-bottom .1s;
+	border-bottom: 4px solid #ddd;
+}
+
+.wand.active {
+	border-bottom-color: #f08;
+	cursor: pointer;
+}
+
+.wand.active:hover, .wand.loading {
+	border-bottom-width: 8px;
+}
+
+.layer.css-border {
+	/* user, supply thine own image */
+	background-position: center;
+	background-size: contain;
+	background-repeat: no-repeat;
+	/* default effect, to negate pop-in */
+	animation: fade-in .2s;
+}
+
+@keyframes fade-in {
+  from {
+		opacity: 0;
+	} to {
+		opacity: 1;
+	}
+}
+
+#debug {
+	background-color: #fff;
+	padding: 1em;
+	box-shadow: 0 0 10px black;
+
+	position: fixed;
+	left: 1em;
+	top: 1em;
+	bottom: 1em;
+
+	overflow-y: auto;
+  overflow-x: hidden;
+	max-width: 90vw;
+
+	z-index: 10000;
+}

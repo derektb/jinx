@@ -1,0 +1,366 @@
+{
+  "passages": [
+
+    {
+      "name": "helloworld",
+      "tags": "replace",
+
+      "content": "helloworld.txt",
+
+      "testName": "Grunt-Built Testing Suite",
+      "testDescription": "A Passage built entirely with Grunt",
+      "passing": true
+    },
+
+    {
+      "name": "Test Replacement",
+      "tags": "replace",
+
+      "content": "Test-Replacement.txt",
+
+      "testDescription": "Tests that passages tagged with 'replace' will replace all passages in div#passages.",
+      "passing": true
+    },
+
+    {
+      "name": "Test 0.1.0 Panel",
+      "tags": "replace",
+      "version": "0.1",
+
+      "content": "0_1/panel.js",
+
+      "testDescription": "This should: define a panel with a single art object and a destination to display this passage upon clicking the #wand.  !!The API in this test is deprecated: it ONLY adds art and a destination.  The panel adds a default layer and the wand navigates correctly, but no animation is defined, and no art displays: possibly we assumed in the past that this would be a valid way of defining a panel.  It isn't any more.",
+      "passing": false
+    },
+
+    {
+      "name": "0_2_panel",
+      "tags": "replace",
+      "version": "0.2",
+
+      "content": "0_2/panel.js",
+
+      "testDescription": "This should be a multi-layer panel.  Three layers with three separate art 300px assets.  A Sequence exists which defines which art goes where.",
+      "passing": true
+    },
+
+    {
+      "name": "Test 0.2.0 Panel (Override Version)",
+      "tags": "replace",
+      "version": "0.2",
+
+      "content": "0_2/panel-override.js",
+
+      "testDescription": "The same as before, except an 'override' property has been set to 'true', allowing Sequence Step definitions to define new layers when none are found.  *On second thought, this is slightly risky, since layers are an order-matters array, so possibly this is a bad idea.*",
+      "passing": false
+    },
+
+    {
+      "name": "test addArtAssets",
+      "tags": "replace",
+      "version": "0.4",
+
+      "content": [
+        "&lt;%$(function(){window.passage.panelize(function(p) {",
+          "p.addArtAssets(",
+            "['bga','background/background-1.png'], ['1-char', '1/character.png'], ['1-sp', '1/speech.png'],",
+            "['2-char', '2/character.png'], ['2-effect', '2/effect.png'], ['2-sp', '2/speech.png']",
+          ");",
+          "p.addLayers('bg', 'char', 'speech', 'css-border')",
+
+          "p.seq.addSeqel('bga', 'bg');",
+          "p.seq.addSeqel('1-char', 'char');",
+          "p.seq.addSeqel('1-sp', 'speech','stop');",
+          "p.seq.addSeqel('2-effect', 'speech', 'replace', 'stop');",
+          "p.seq.addSeqel('2-char', 'char', 'replace', 'on');",
+          "p.seq.addSeqel('2-sp', 'speech','stop');",
+
+          "p.destination = { main: '[[Start]]' };",
+        "})});%&gt;"
+      ],
+
+      "testName": "Test Panel.addArtAssets and Panel.addLayers",
+      "testDescription": "Tests two new condensed methods for adding multiple art assets and layers at once",
+      "passing": true
+    },
+
+    {
+      "name": "test auto panelize",
+      "tags": "replace panelize",
+      "version": "0.4",
+
+      "content": [
+          "p.addArtAssets(",
+            "['bga','background/background-1.png'], ['1-char', '1/character.png'], ['1-sp', '1/speech.png'],",
+            "['2-char', '2/character.png'], ['2-effect', '2/effect.png'], ['2-sp', '2/speech.png']",
+          ");",
+          "p.addLayers('bg', 'char', 'speech', 'css-border')",
+
+          "p.seq.addSeqel('bga', 'bg');",
+          "p.seq.addSeqel('1-char', 'char');",
+          "p.seq.addSeqel('1-sp', 'speech','stop');",
+          "p.seq.addSeqel('2-effect', 'speech', 'replace', 'stop');",
+          "p.seq.addSeqel('2-char', 'char', 'replace', 'on');",
+          "p.seq.addSeqel('2-sp', 'speech','stop');",
+
+          "p.destination = { main: '[[Start]]' };"
+      ],
+
+      "testName": "Test 'Panelize' Tag and Auto Panelization",
+      "testDescription": "Panels tagged with 'panelize' should automatically append the proper Underscore and Twize markup for panelizing a passage.",
+      "passing": true
+    },
+
+    {
+      "name": "manager-dog 0.4.0 condensed",
+      "tags": "replace panelize",
+      "version": "0.4",
+
+      "content": "0_4/manager-dog__snippet.js",
+
+      "testName": "Manager Dog 0.4 (Snippet)",
+      "testDescription": "Tests condensed panel creation (`p.addArtAssets`, `p.addLayers`, `p.step.create`), as well as condensed seqel markup (`a,l,p,e,d,s,f`) and general 0.4 sync/delay timing properties",
+      "passing": true
+    },
+
+    {
+      "name": "manager-dog 040 condensed one-shot",
+      "tags": "replace panelize",
+      "version": "0.4",
+
+      "content": "0_4/manager-dog__condensed-one-shot.js",
+
+      "testName": "Manager Dog 0.4 One-Shot",
+      "testDescription": "The same as manager dog 0.4, but goes through the whole comic.",
+      "passing": true
+    },
+
+    {
+      "name": "New Animation Pipeline",
+      "tags": "replace panelize",
+      "version": "0.5",
+
+      "content": "0_5/new-animation-pipeline.js",
+
+      "testName": "New Animation Pipeline",
+      "testDescription": "Rigorously tests everything that broke in 0.4 which should work in 0.5",
+      "passing": true
+    },
+
+    {
+      "name": "ArtAsset Class",
+      "tags": "replace panelize",
+      "version": "0.5",
+
+      "content": "0_5/artasset-class.js",
+
+      "testName": "ArtAsset.type 'asset'",
+      "testDescription": "Tests that art assets may be created as 'asset' type ArtAssets rather than the 'image' type that has now become a default.  Images should be displayed within divs in this version.'",
+      "passing": true
+    },
+
+    {
+      "name": "custom-effects__loading-refactoring",
+      "tags": "replace panelize",
+      "version": "0.6",
+
+      "content": "0_6/loading-refactoring.js",
+
+      "testName": "Refactoring loading",
+      "testDescription": "In 0.5, loading was written poorly, in a way that assumes all steps will have assets that load.  When a step only removes assets, for example, it will load infinitely.  This fixes that by first checking to see if it needs to load before waiting to load.",
+      "passing": true
+    },
+
+    {
+      "name": "custom-effects__xy-property",
+      "tags": "replace panelize",
+      "version": "0.6",
+
+      "content": "0_6/xy-property.js",
+
+      "testName": "Positionable assets with XY property",
+      "testDescription": "Assets should be positionable via the 'xy' seqel property: this is a two-item array.  This test will pass if the assets 1,2,3 appear in a diagonal line, and will fail if they all just appear in the corner.",
+      "passing": true
+    },
+
+    {
+      "name": "custom-effects__xy-property--relative-position",
+      "tags": "replace panelize",
+      "version": "0.6",
+
+      "content": "0_6/xy-property--relative-position.js",
+
+      "testName": "Positionable assets with XY property: Relative positioning from effect",
+      "testDescription": "The same as the previous test, except there is positioning data in the effect as well.  That will be interpreted as 'relative positioning' and be added to the 'absolute positioning' of the xy property",
+      "passing": true
+    },
+
+    {
+      "name": "css-class-passage-tags",
+      "tags": "replace panelize .big-panel",
+      "version": "0.6",
+
+      "content": "0_6/css-class-passage-tags.js",
+
+      "testName": "CSS-Classing Passage Tags",
+      "testDescription": "Passages should be able to take custom CSS classes via passage tags; tags beginning with a period will be appended as css classes.  This passage should be extremely large, as it adds the class `.big-panel`",
+      "passing": true
+    },
+
+    {
+      "name": "custom-effects__snabbt-whole-effect",
+      "tags": "replace panelize",
+      "version": "0.6",
+
+      "content": "0_6/snabbt--effect-whole.js",
+
+      "testName": "Snabbt Custom Effects: Snabbt hash effect",
+      "testDescription": "This test has an effect entirely defined within a snabbt hash, including timing information. If created correctly, 1 should quickly strobe into visibility, followed by 2 more slowly strobing into visibility.",
+      "passing": true
+    },
+
+    {
+      "name": "custom-effects__snabbt-partial-effect-with-timing",
+      "tags": "replace panelize",
+      "version": "0.6",
+
+      "content": "0_6/snabbt--effect-with-timing.js",
+
+      "testName": "Snabbt Custom Effects: Snabbt hash with timing in the seqel",
+      "testDescription": "This test has an effect defined by a snabbt hash, but with timing defined within the seqel.",
+      "passing": true
+    },
+
+    {
+      "name": "custom-effects__snabbt-predefined-effect-creation",
+      "tags": "replace panelize",
+      "version": "0.6",
+
+      "content": "0_6/snabbt--predefined-effect-creation.js",
+
+      "testName": "Snabbt Custom Effects: Predefined effect creation",
+      "testDescription": "Tests the creation and usage of predefined effects, including both animation and timing. In this test: 1,2,3 should appear all at the same time.",
+      "passing": true
+    },
+
+    {
+      "name": "custom-effects__snabbt-predefined-effect-overridden",
+      "tags": "replace panelize",
+      "version": "0.6",
+
+      "content": "0_6/snabbt--predefined-effect-overridden.js",
+
+      "testName": "Snabbt Custom Effects: Predefined effect overridden partially by seqel",
+      "testDescription": "Tests overriding a predefined effect.  Predefined effects will be overridden by seqel properties.  In this test, we use a predefined effect, but override its timing: 1,2,3 should appear and disappear at 3 different times.",
+      "passing": true
+    },
+
+    {
+      "name": "custom-effects__snabbt-predefined-effect-extension",
+      "tags": "replace panelize",
+      "version": "0.6",
+
+      "content": "0_6/snabbt--predefined-effect-extension.js",
+
+      "testName": "Snabbt Custom Effects: Predefined effect - Extending predefined effects",
+      "testDescription": "Tests the extension of predefined effects.  This test defines an effect that fades and zooms from 0 to 1 over one second; and then extends that effect, overriding it so that it zooms out from 5 to 1 and takes two seconds to complete.",
+      "passing": true
+    },
+
+    {
+      "name": "custom-effects__snabbt-callbacks",
+      "tags": "replace panelize",
+      "version": "0.6",
+
+      "content": "0_6/snabbt--callbacks.js",
+
+      "testName": "Snabbt Custom Effects: Snabbt Callbacks",
+      "testDescription": "Custom effect hashes can include callbacks which will hook into predefined snabbt callback hooks, such as `start()`, `update()`, and `complete()`. This particular test adds at `start()` an event listener which will listen for the animation to end (0.5) and fire an `alert()` when it has.",
+      "passing": true
+    },
+
+    {
+      "name": "transition-steps--pre",
+      "tags": "replace panelize",
+      "version": "0.6",
+
+      "content": "0_6/transition-steps--pre.js",
+
+      "testName": "Transition Steps: Pre-Transition Step",
+      "testDescription": "Tests creation of steps that run when advancing between panels, after the 'final' step, but before the next panel is displayed.",
+      "passing": false
+    },
+
+    {
+      "name": "transition-steps--post",
+      "tags": "replace panelize",
+      "version": "0.6",
+
+      "content": "0_6/transition-steps--post.js",
+
+      "testName": "Transition Steps: Post-Transition Step",
+      "testDescription": "Tests creation of steps that run on a panel once the subsequent advanced-to panel has been displayed.  In this test, 1,2,3 will be removed once the new panel has been displayed after a short pause",
+      "passing": false
+    },
+
+    {
+      "name": "seqel-apply--effect",
+      "tags": "replace panelize",
+      "version": "0.6",
+
+      "content": "0_6/seqel-apply--effect.js",
+
+      "testName": "Seqel 'Effect' Apply",
+      "testDescription": "Tests the 'effect' apply seqel, which will neither add nor remove an asset but just animate it.",
+      "passing": true
+    },
+
+    {
+      "name": "panel-art--panel-path",
+      "tags": "replace panelize",
+      "version": "0.6",
+
+      "content": "0_6/panel-art--panel-path.js",
+
+      "testName": "Panel.art.path()",
+      "testDescription": "Tests ability to set panel-specific path (appended after rootArtPath), for DRYer art asset creation.  Path may also be escaped by passing `path: false` into a hash for the art asset",
+      "passing": true
+    },
+
+    {
+      "name": "code-seqel",
+      "tags": "replace panelize",
+      "version": "0.6",
+
+      "content": "0_6/code-seqel.js",
+
+      "testName": "Code Seqel",
+      "testDescription": "Tests creation of code seqels, which will run in sequence along with the rest of the animation.  This should be just like the snabbt callbacks test, except in this one, the alert is being generated by a code seqel a the end of the step.",
+      "passing": true
+    },
+
+    {
+      "name": "text-assets",
+      "tags": "replace panelize",
+      "version": "0.7",
+
+      "content": "0_7/text-assets.js",
+
+      "testName": "Text Assets",
+      "testDescription": "Tests creation of text assets, of fixed height, width, and both.",
+      "passing": true
+    },
+
+    {
+      "name": "custom-asset-classnames",
+      "tags": "replace panelize",
+      "version": "0.7",
+
+      "content": "0_7/custom-asset-classnames.js",
+
+      "testName": "ArtAssets With Custom Classes",
+      "testDescription": "Art assets may now be created with user-defined classnames as an array of strings called classNames on the artasset.",
+      "passing": true
+    }
+  ]
+}

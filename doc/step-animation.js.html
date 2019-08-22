@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: step-animation.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: step-animation.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>var $ = require('jquery');
+var _ = require('underscore');
+const AssetAnimation = require('./asset-animation');
+const ShadowPanel = require('ShadowPanel');
+const Seqel = require('seqel');
+
+var StepAnimation = function(step, shadowPanel) {
+  var step = step;
+
+  var assets = this.assets = [];
+  var panel  = this.panel  = shadowPanel || new ShadowPanel();
+  var timing = this.timing = {startTime: 0, endTime: 0, totalTime: 0};
+
+  /** ASSETANIMATION MANAGEMENT **/
+
+  var createAssetAnimation = this.createAssetAnimation = function(ref) {
+    var assetAnimation;
+
+    assetAnimation = new AssetAnimation(ref.name, ref.layer, ref.id)
+    assets.push(assetAnimation);
+
+    return assetAnimation;
+  }
+
+  var getAssetAnimation = this.getAssetAnimation = function(ref) {
+    var ref, seqel, timing, assetAnimation;
+    // recieve, find, or create the asset reference we need
+    // if (_(param).hasAll(['name','layer','id'])) {
+    //   ref = param
+    // } else {
+    //   ref = getRef(param);
+    // }
+
+    assetAnimation = _(assets).find(function(animationAssetRecord){
+      return animationAssetRecord.asset.id === ref.id;
+    })
+    if (!assetAnimation) {
+      assetAnimation = createAssetAnimation(ref);
+    }
+    return assetAnimation
+  }
+
+  var addArtToLayer = this.addArtToLayer = function(seqel) {
+    var ref, assetAnimation;
+    ref = createRef(seqel);
+    assetAnimation = createAssetAnimation(ref);
+    addBeatTo(assetAnimation, seqel.timing(), "add");
+    return assetAnimation;
+  }
+
+  var removeArtFromLayer = this.removeArtFromLayer = function(seqel) {
+    var ref, assetAnimation;
+
+    ref = getRef(seqel)
+    assetAnimation = getAssetAnimation(ref);
+    addBeatTo(assetAnimation, seqel.timing(), 'remove');
+    removeRef(ref);
+  }
+
+  var removeAllArtFromLayer = this.removeAllArtFromLayer = function(seqel) {
+    var refs, assetAnimations, i;
+
+    refs = refsOnLayer(seqel.layer);
+    assetAnimations = []
+    _(refs).each(function(ref){
+      assetAnimations.push(getAssetAnimation(ref));
+    });
+    for(i = 0; i &lt; assetAnimations.length; i++) {
+      var assetAnimation, thisTiming;
+      assetAnimation = assetAnimations[i]
+
+      thisTiming = seqel.timing()
+      if(i>0) {
+        thisTiming.delay = 0;
+        thisTiming.sync = 'with'
+      }
+
+      addBeatTo(assetAnimation, thisTiming, 'remove');
+      removeRef(assetAnimation.asset);
+    }
+  }
+
+  /** BEAT MANAGEMENT **/
+
+  var addBeatTo = this.addBeatTo = function(assetAnimation, seqelTiming, action) {
+    // var timing = this.getBeatSync()
+    var startTime = getBeatSync(seqelTiming.sync) + seqelTiming.delay;
+    var endTime = startTime + seqelTiming.duration;
+
+    var hash = {
+      action: action,
+      startTime: startTime,
+      endTime: endTime,
+      duration: seqelTiming.duration
+    }
+    assetAnimation.addBeat(hash);
+    if (seqelTiming.sync != 'async'){
+      updateTiming(startTime,endTime);
+    }
+  }
+
+  var getBeatSync = this.getBeatSync = function(sync) {
+    var nextTiming;
+
+    switch (sync) {
+      case "with":
+        nextTiming = timing.startTime;
+        break;
+      case "after":
+        nextTiming = timing.endTime;
+        break;
+      case "async":
+        nextTiming = 0;
+        break;
+      default:
+        return undefined;
+    }
+
+    return nextTiming;
+  }
+
+  var updateTiming = this.updateTiming = function(newStart,newEnd) {
+    timing.startTime = newStart;
+    timing.endTime = newEnd;
+
+    if (newEnd > timing.totalTime) {
+      timing.totalTime = newEnd;
+    }
+  }
+
+  /** REF MANAGEMENT **/
+
+  var getRef = this.getRef = function(param) {
+    var assetId, seqel, art, layer, assetLayer, results;
+
+    if(_(param).isNumber()) {
+      assetId = param;
+      results = panel.asset(assetId);
+    } else {
+      if (_(param).hasAll(["art","layer"])) {
+        seqel = param;
+      } else {
+        return undefined;
+      }
+
+      art   = seqel.art;
+      layer = seqel.layer;
+      assetLayer = panel.layer(layer);
+
+      if (!assetLayer) {
+         createRef(seqel);
+      } else {
+        results = assetLayer.asset(seqel.art) || assetLayer.createAssetInstance(seqel.art);
+      }
+    }
+
+    return results;
+  }
+
+  var refsOnLayer = this.refsOnLayer = function(layer) {
+    var assetLayer, results;
+
+    assetLayer = panel.layer(layer);
+    results = assetLayer.assets();
+
+    return results;
+  }
+
+  var createRef = this.createRef = function(seqel) {
+    var ref, refLayer;
+
+    refLayer = panel.layer(seqel.layer) || panel.createLayerInstance(seqel.layer);
+    ref = refLayer.createAssetInstance(seqel.art);
+
+    return ref;
+  }
+
+  var removeRef = this.removeRef = function(ref) {
+    var layer, id;
+      layer = ref.layer;
+      id = ref.id;
+
+    panel.layer(layer).removeAssetInstance(id);
+  }
+}
+
+module.exports = StepAnimation;
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="ArtAsset.html">ArtAsset</a></li><li><a href="PanelRenderer.html">PanelRenderer</a></li><li><a href="Seqel.html">Seqel</a></li><li><a href="Sequence.html">Sequence</a></li><li><a href="Story.html">Story</a></li><li><a href="Twize.html">Twize</a></li></ul><h3>Events</h3><ul><li><a href="global.html#event:animation-begun">animation-begun</a></li><li><a href="global.html#event:checkpoint">checkpoint</a></li><li><a href="global.html#event:checkpointfailed">checkpointfailed</a></li><li><a href="global.html#event:hidepassage">hidepassage</a></li><li><a href="global.html#event:restore">restore</a></li><li><a href="global.html#event:restorefailed">restorefailed</a></li><li><a href="global.html#event:save">save</a></li><li><a href="global.html#event:showpassage">showpassage</a></li><li><a href="global.html#event:startstory">startstory</a></li><li><a href="global.html#event:restore:after">restore:after</a></li><li><a href="global.html#event:showpassage:after">showpassage:after</a></li></ul><h3>Namespaces</h3><ul><li><a href="-_.html">_</a></li></ul><h3>Mixins</h3><ul><li><a href="Underscore.hasAll.html">hasAll</a></li><li><a href="Underscore.hasOnly.html">hasOnly</a></li><li><a href="Underscore.xor.html">xor</a></li><li><a href="Underscore-thumbprint.html">thumbprint</a></li></ul><h3>Global</h3><ul><li><a href="global.html#__parentPassage">__parentPassage</a></li><li><a href="global.html#__selectors">__selectors</a></li><li><a href="global.html#__settings">__settings</a></li><li><a href="global.html#_getDisplayed">_getDisplayed</a></li><li><a href="global.html#_layers">_layers</a></li><li><a href="global.html#_loadingAssets">_loadingAssets</a></li><li><a href="global.html#addArt">addArt</a></li><li><a href="global.html#addArtAssets">addArtAssets</a></li><li><a href="global.html#addBeatPushesanewsequencebeattotheAssetAnimation'ssequence.">addBeat
+
+   Pushes a new sequence beat to the AssetAnimation's sequence.</a></li><li><a href="global.html#addLayer">addLayer</a></li><li><a href="global.html#addLayers">addLayers</a></li><li><a href="global.html#addSeqeltheSeqelconstructortakesvariablearguments,sothisbasicSeqel-makerdoestoo.---2arguments:---">addSeqel
+   the Seqel constructor takes variable arguments, so this basic Seqel-maker
+   does too.
+   --- 2 arguments: ---</a></li><li><a href="global.html#addStep">addStep</a></li><li><a href="global.html#addUnknownLayers">addUnknownLayers</a></li><li><a href="global.html#advance">advance</a></li><li><a href="global.html#animate">animate</a></li><li><a href="global.html#art">art</a></li><li><a href="global.html#asset">asset</a></li><li><a href="global.html#assetFindsthefirstinstanceofanassetmatchingthequeryparamanywhereintheShadowPanel.">asset
+
+   Finds the first instance of an asset matching the query param anywhere in the ShadowPanel.</a></li><li><a href="global.html#assetRecords">assetRecords</a></li><li><a href="global.html#beats">beats</a></li><li><a href="global.html#checkpoint">checkpoint</a></li><li><a href="global.html#checkpointName">checkpointName</a></li><li><a href="global.html#createLayerInstanceSpecializedlayercreation.">createLayerInstance
+
+   Specialized layer creation.</a></li><li><a href="global.html#createStepAnimation">createStepAnimation</a></li><li><a href="global.html#creator">creator</a></li><li><a href="global.html#creatorVersion">creatorVersion</a></li><li><a href="global.html#destination">destination</a></li><li><a href="global.html#errorMessage">errorMessage</a></li><li><a href="global.html#getArtAsset">getArtAsset</a></li><li><a href="global.html#getDefault">getDefault</a></li><li><a href="global.html#history">history</a></li><li><a href="global.html#id">id</a></li><li><a href="global.html#ignoreErrors">ignoreErrors</a></li><li><a href="global.html#ignoreRoot">ignoreRoot</a></li><li><a href="global.html#layerGetsalayerfromtheshadowPanel.">layer
+
+   Gets a layer from the shadowPanel.</a></li><li><a href="global.html#layerize">layerize</a></li><li><a href="global.html#layers">layers</a></li><li><a href="global.html#name">name</a></li><li><a href="global.html#panelize">panelize</a></li><li><a href="global.html#passage">passage</a></li><li><a href="global.html#passageDomName">passageDomName</a></li><li><a href="global.html#passages">passages</a></li><li><a href="global.html#pos">pos</a></li><li><a href="global.html#remove">remove</a></li><li><a href="global.html#render">render</a></li><li><a href="global.html#renderer">renderer</a></li><li><a href="global.html#rendererId">rendererId</a></li><li><a href="global.html#replace">replace</a></li><li><a href="global.html#restore">restore</a></li><li><a href="global.html#save">save</a></li><li><a href="global.html#saveHash">saveHash</a></li><li><a href="global.html#selectors">selectors</a></li><li><a href="global.html#seq">seq</a></li><li><a href="global.html#setDefaults">setDefaults</a></li><li><a href="global.html#setup">setup</a></li><li><a href="global.html#setupStructure">setupStructure</a></li><li><a href="global.html#show">show</a></li><li><a href="global.html#source">source</a></li><li><a href="global.html#start">start</a></li><li><a href="global.html#startPassage">startPassage</a></li><li><a href="global.html#state">state</a></li><li><a href="global.html#step">step</a></li><li><a href="global.html#tags">tags</a></li><li><a href="global.html#tracks">tracks</a></li><li><a href="global.html#userScripts">userScripts</a></li><li><a href="global.html#userStyles">userStyles</a></li><li><a href="global.html#wandize">wandize</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> on Thu Mar 16 2017 12:58:43 GMT-0700 (Pacific Summer Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

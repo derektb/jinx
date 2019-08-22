@@ -1,0 +1,6 @@
+<% var amet = 'amet' %>
+lorem
+ipsum
+dolor
+sit
+<%= amet %>

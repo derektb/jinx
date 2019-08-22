@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: twize.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: twize.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>var $ = require('jquery');
+var _ = require('underscore');
+var snabbt = require('./snabbt.min.js');
+const Wand = require('Wand');
+const Passage = require('Passage');
+
+/**
+ A singleton that knows all sorts of stuff about how Wizard Town comix work.
+
+Stuff like this (apologies for documenting specters):
+  - Knows what the standard Effects are and can provide them
+  - Knows how to use the wand
+    - Knows how to confugire different versions of the wand
+  - Knows about all the panels
+  - Knows about pages
+  - Parses Panel markup and creates panels from it
+  @module Twize
+  @class Twize
+*/
+var Twize = function(){
+  var twize = this;
+  /**
+   Twize.setup sets up all internal settings for this comic.
+
+   @method
+   @param hash {Object} An object containing expected settable properties
+  */
+  this.setup = function(hash) {
+    if(this.__settings.isSetUp &amp;&amp; !hash.override) {
+      throw new Error("You have already set up this Twize. If you want to run setup again—well, I don't know why you would, but if you really do, please include 'override: true' in your setup parameters.")
+    }
+
+    this.__settings.rootArtPath = hash.rootArtPath || this.__settings.rootArtPath; // sorry, this is gross, please find a better way of doing it.
+
+    if (hash.defaults) {
+      this.setDefaults(hash.defaults);
+    }
+
+    this.__settings.isSetUp = true;
+  }
+
+  /**
+   Twize.setDefaults is setup, but for defaults.
+
+   @method setDefaults
+   @param hash {Object} A hash of defaults.  Can accept custom defaults if "customDefaults: true" is passed in the hash; otherwise, ignores properties it doesn't already know about.
+  **/
+
+  this.setDefaults = function(hash) {
+    if(hash.resetDefaults == true) {
+      _.each(this.__settings.defaults, function(v,key,defaults) {
+        defaults[key] = undefined;
+      });
+    }
+    _.each(hash, this.__setDefaults_iterateOverProps);
+  }
+
+  this.__setDefaults_iterateOverProps = function(prop, key) {
+    if(_.has(twize.__settings.defaults, key)) {
+      twize.__settings.defaults[key] = prop;
+    }
+  }
+
+  /**
+   The method we use to publically acces our defaults
+
+   @function getDefault
+   @param property {String} The name of the property to be gotten from defaults.
+  **/
+
+  this.getDefault = function __twize__getDefault(property) {
+    if(_.has(this.__settings.defaults, property)) {
+      return(this.__settings.defaults[property])
+    } else {
+      console.log("Twize.getDefault: No such property '"+property+"' exists within this Twize's defaults.")
+    }
+  }
+
+  /**
+   __settings privately stores all settings germane to this comic.  Things in here are accessed via public getters, if at all.
+
+   @property __settings
+  **/
+  this.__settings = {
+    isSetUp: false,
+
+    rootArtPath: '',
+    defaults: {
+      effect: 'none',
+      apply: 'add',
+      sync: 'with',
+      delay: 0,
+      duration: 100,
+      flow: 'on',
+      easing: function easeOutCubic(t) { return 1+(--t)*t*t },
+    }
+  }
+
+  // the public getter for rootArtPath:
+  Object.defineProperties(this, {
+    "rootArtPath": { get: function() {
+      return this.__settings.rootArtPath;
+    }}
+  });
+
+  this._debugModeActive = false;
+  this.debug = function twize__setupDebugMode() {
+    if (!this._debugModeActive) {
+      // debugPassageSrc defined Globally
+      var debugPassage = new Passage(Number(_.thumbprint(5,10)), "debug", "", debugPassageSrc);
+      window.story.passages.push(debugPassage);
+
+      $(document).keydown(function(e){
+      	if (e.keyCode === 192) {
+      		if($('#debug').length === 0){
+      			var d = document.createElement('div');
+      			d.id = "debug";
+      			d.insertAdjacentHTML("afterbegin", window.story.render('debug'));
+      			$('body').append(d);
+      		} else {
+      			$('#debug').remove()
+      		}
+      	}
+      });
+
+      $(document).on('click', '#debug a', function(){
+      	$('#debug').remove();
+      });
+
+      this._debugModeActive = true;
+    }
+  }
+  this.debugMode = this.debug;
+
+  // currently deprecated effects stuff
+  //
+  // /**
+  //  Effects is where we store all the standard (configurable) snabbt animations.
+  //
+  //  I'm pretty sure all of the effects should return a function that plays a snabbt animation when called?
+  //
+  //  @property effects
+  // **/
+  //
+  // this.effects = {
+  //   add: function(el,params){
+  //     var duration, startTime;
+  //
+  //     duration = params.duration;
+  //     startTime = params.syncPoint;
+  //
+  //     return function() {
+  //       snabbt(el, {
+  //         start: function(){ el.removeClass('inactive') },
+  //         fromOpacity: 0,
+  //         opacity: 1,
+  //         delay: startTime,
+  //         duration: duration,
+  //         easing: function easeOutCubic(t) { return 1+(--t)*t*t },
+  //       });
+  //     };
+  //   },
+  //
+  //   remove: function(el,params) {
+  //     var panelRemoves, artName, layerName;
+  //     var duration, startTime;
+  //
+  //     artName = params.art;
+  //     layerName = params.layer;
+  //
+  //     panelRemoves = params.panelRemoves;
+  //     duration = params.duration;
+  //     startTime = params.syncPoint;
+  //     var result = function() {
+  //       snabbt(el, {
+  //         complete: function() {
+  //           panelRemoves() // panelRemoves is bound in advance() and its params are 'partially applied' there
+  //         },
+  //         fromOpacity: 1,
+  //         opacity: 0,
+  //         delay: startTime,
+  //         duration: duration,
+  //         easing: function easeOutCubic(t) { return 1+(--t)*t*t },
+  //       });
+  //     };
+  //     return result;
+  //   },
+  //
+  //   replace: function(elToAdd,elToRemove,params) {
+  //     // adds elements and animates them in
+  //     // and, at the same time, effects.remove()s elements.
+  //   }
+  // }
+
+  this.wand = new Wand();
+
+  // this is a test
+  $(document).on('panelized', function(e,panel){
+    // console.log("We saw that the panel '"+panel.name+"' was panelized.");
+  });
+  // it worked, refactor for these methods to be defined within Twize object.
+  $(document).on('panelComplete', function(e,panel){
+    // console.log("We saw that the panel '"+panel.name+"' was completed")
+  });
+}
+
+/**
+ The standard namespace for [Underscore.js]{@link http://underscorejs.org}, which is used extensively in Snowman and Twize.  Twize uses a number of common custom functions which we mix into Underscore by way of the prepackaged [mixin()]{@link http://underscorejs.org/#mixin}
+ @namespace _
+ @global
+*/
+_.mixin( /** @lends _ */{
+  /**
+    Will take any string and process it to be a valid css classname. Anything that isn't an alphanumeric character, a dash, or an underscore will be replaced with a dash.
+    @function
+    @param {String} Name The name to be processed into a valid CSS name.
+    @returns {String} Returns the string with all invalid characters replaced with dashes.
+  */
+  wiz_validCssName: function(name) {
+    var nonValidCharacters, validatedName, invalidArgument;
+
+    invalidArgument = function(){
+      /**
+      @throws Will throw an error if passed a non-strig name arg.
+      */
+      new Error( "_.wiz_validCssName requires that you pass a string to it, dummy!  Duh!" )
+    }
+
+    if (name) {
+      if (typeof name == "string") {
+        nonValidCharacters = /([^a-zA-Z-_0-9])/g;
+        validatedName = name.replace(nonValidCharacters, "-");
+        return validatedName;
+      } else {
+        invalidArgument();
+      }
+    } else {
+      invalidArgument();
+    }
+  },
+
+  /**
+    Finds the first or last index of a passage in the history using [_.lastIndexOf]{@link http://underscorejs.org/#lastIndexOf} or [_.firstIndexOf]{@link http://underscorejs.org/#firstIndexOf}
+
+    @function
+    @param passageId {Number} The id of the passage to be found.
+    @param [how=last] {String} Whether to start at the end ("last") or the beginning ("first") of the history.
+    @returns {number|undefined} Returns the index of the passage to be found, or undefined.
+  */
+  wiz_findInHistory: function(passageId, how) {
+    var method, historySet, found;
+    method = how || "last"; // || "first"
+    historySet = window.story.history;
+
+    if (method == "last") {
+      found = _.lastIndexOf(historySet, passageId);
+    } else if (method == "first") {
+      found = _.indexOf(historySet, passageId);
+    } else throw new Error("_.wiz_findInHistory recieved a bad type of find: has '"+method+"', expects 'last' or 'first'.")
+
+    return found;
+  },
+
+  /**
+    @mixin
+    @memberof Underscore
+  */
+  xor: function(a,b){
+    if ( ( a &amp;&amp; !b ) || ( !a &amp;&amp; b ) ) {
+      return true;
+    } else {
+      return false;
+    }
+  },
+
+  /**
+    @mixin
+    @memberof Underscore
+  */
+  hasAll: function(object, array) {
+    return _(array).all(function(prop) {
+      return _(object).has(prop);
+    })
+  },
+
+  /**
+    @mixin
+    @memberof Underscore
+  */
+  hasOnly: function(object, array) {
+    var objectKeys = _(object).keys().sort();
+    return _(objectKeys).isEqual(array.sort());
+  },
+
+  /**
+   thumbprinting method which will reliably output an x-digit numeral thumbprint
+   @mixin Underscore~thumbprint
+  */
+  thumbprint: function(x, b) {
+    var tp = [];
+    var b = b+""
+    var characters = base[b] || base["32"]
+
+    for(var i = 0; i &lt; x; i++) {
+    //   var min = (i == 0) ? 1 : 0;
+    //   tp.push(_.random(min,9));
+      tp.push(_.sample(characters));
+    }
+    // tp = parseInt(tp.join(""), 10);
+    return tp.join("");
+  }
+});
+
+var base = {
+  "10": _("0123456789").toArray(),
+  "16": _("0123456789ABCDEF").toArray(),
+  "32": _("abcdefghijklmnopqrstuvwxyz234567").toArray(),
+  "64": _("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/").toArray()
+}
+
+var debugPassageSrc = `All Passages:
+&lt;%
+_(window.story.passages).each(function(passage) {
+ if(passage) {
+%>
+[[&lt;%= passage.name %>]]
+&lt;%
+}
+});
+%>
+&lt;hr>
+&lt;a>close&lt;/a>`;
+
+module.exports = Twize;
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="ArtAsset.html">ArtAsset</a></li><li><a href="PanelRenderer.html">PanelRenderer</a></li><li><a href="Seqel.html">Seqel</a></li><li><a href="Sequence.html">Sequence</a></li><li><a href="Story.html">Story</a></li><li><a href="Twize.html">Twize</a></li></ul><h3>Events</h3><ul><li><a href="global.html#event:animation-begun">animation-begun</a></li><li><a href="global.html#event:checkpoint">checkpoint</a></li><li><a href="global.html#event:checkpointfailed">checkpointfailed</a></li><li><a href="global.html#event:hidepassage">hidepassage</a></li><li><a href="global.html#event:restore">restore</a></li><li><a href="global.html#event:restorefailed">restorefailed</a></li><li><a href="global.html#event:save">save</a></li><li><a href="global.html#event:showpassage">showpassage</a></li><li><a href="global.html#event:startstory">startstory</a></li><li><a href="global.html#event:restore:after">restore:after</a></li><li><a href="global.html#event:showpassage:after">showpassage:after</a></li></ul><h3>Namespaces</h3><ul><li><a href="-_.html">_</a></li></ul><h3>Mixins</h3><ul><li><a href="Underscore.hasAll.html">hasAll</a></li><li><a href="Underscore.hasOnly.html">hasOnly</a></li><li><a href="Underscore.xor.html">xor</a></li><li><a href="Underscore-thumbprint.html">thumbprint</a></li></ul><h3>Global</h3><ul><li><a href="global.html#__parentPassage">__parentPassage</a></li><li><a href="global.html#__selectors">__selectors</a></li><li><a href="global.html#__settings">__settings</a></li><li><a href="global.html#_getDisplayed">_getDisplayed</a></li><li><a href="global.html#_layers">_layers</a></li><li><a href="global.html#_loadingAssets">_loadingAssets</a></li><li><a href="global.html#addArt">addArt</a></li><li><a href="global.html#addArtAssets">addArtAssets</a></li><li><a href="global.html#addBeatPushesanewsequencebeattotheAssetAnimation'ssequence.">addBeat
+
+   Pushes a new sequence beat to the AssetAnimation's sequence.</a></li><li><a href="global.html#addLayer">addLayer</a></li><li><a href="global.html#addLayers">addLayers</a></li><li><a href="global.html#addSeqeltheSeqelconstructortakesvariablearguments,sothisbasicSeqel-makerdoestoo.---2arguments:---">addSeqel
+   the Seqel constructor takes variable arguments, so this basic Seqel-maker
+   does too.
+   --- 2 arguments: ---</a></li><li><a href="global.html#addStep">addStep</a></li><li><a href="global.html#addUnknownLayers">addUnknownLayers</a></li><li><a href="global.html#advance">advance</a></li><li><a href="global.html#animate">animate</a></li><li><a href="global.html#art">art</a></li><li><a href="global.html#asset">asset</a></li><li><a href="global.html#assetFindsthefirstinstanceofanassetmatchingthequeryparamanywhereintheShadowPanel.">asset
+
+   Finds the first instance of an asset matching the query param anywhere in the ShadowPanel.</a></li><li><a href="global.html#assetRecords">assetRecords</a></li><li><a href="global.html#beats">beats</a></li><li><a href="global.html#checkpoint">checkpoint</a></li><li><a href="global.html#checkpointName">checkpointName</a></li><li><a href="global.html#createLayerInstanceSpecializedlayercreation.">createLayerInstance
+
+   Specialized layer creation.</a></li><li><a href="global.html#createStepAnimation">createStepAnimation</a></li><li><a href="global.html#creator">creator</a></li><li><a href="global.html#creatorVersion">creatorVersion</a></li><li><a href="global.html#destination">destination</a></li><li><a href="global.html#errorMessage">errorMessage</a></li><li><a href="global.html#getArtAsset">getArtAsset</a></li><li><a href="global.html#getDefault">getDefault</a></li><li><a href="global.html#history">history</a></li><li><a href="global.html#id">id</a></li><li><a href="global.html#ignoreErrors">ignoreErrors</a></li><li><a href="global.html#ignoreRoot">ignoreRoot</a></li><li><a href="global.html#layerGetsalayerfromtheshadowPanel.">layer
+
+   Gets a layer from the shadowPanel.</a></li><li><a href="global.html#layerize">layerize</a></li><li><a href="global.html#layers">layers</a></li><li><a href="global.html#name">name</a></li><li><a href="global.html#panelize">panelize</a></li><li><a href="global.html#passage">passage</a></li><li><a href="global.html#passageDomName">passageDomName</a></li><li><a href="global.html#passages">passages</a></li><li><a href="global.html#pos">pos</a></li><li><a href="global.html#remove">remove</a></li><li><a href="global.html#render">render</a></li><li><a href="global.html#renderer">renderer</a></li><li><a href="global.html#rendererId">rendererId</a></li><li><a href="global.html#replace">replace</a></li><li><a href="global.html#restore">restore</a></li><li><a href="global.html#save">save</a></li><li><a href="global.html#saveHash">saveHash</a></li><li><a href="global.html#selectors">selectors</a></li><li><a href="global.html#seq">seq</a></li><li><a href="global.html#setDefaults">setDefaults</a></li><li><a href="global.html#setup">setup</a></li><li><a href="global.html#setupStructure">setupStructure</a></li><li><a href="global.html#show">show</a></li><li><a href="global.html#source">source</a></li><li><a href="global.html#start">start</a></li><li><a href="global.html#startPassage">startPassage</a></li><li><a href="global.html#state">state</a></li><li><a href="global.html#step">step</a></li><li><a href="global.html#tags">tags</a></li><li><a href="global.html#tracks">tracks</a></li><li><a href="global.html#userScripts">userScripts</a></li><li><a href="global.html#userStyles">userStyles</a></li><li><a href="global.html#wandize">wandize</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> on Thu Mar 16 2017 12:58:43 GMT-0700 (Pacific Summer Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

@@ -1,0 +1,54 @@
+a:not([data-passage]):first-child
+{
+	color: green;
+}
+
+.__show-layers#passages, .__show-layers .panel, .__show-layers .layer {
+	perspective: 1000px;
+	transform-style: preserve-3d;
+}
+
+div#passages {
+	border: 2px solid #9b8;
+	border-bottom: 4px solid #695;
+	border-radius: 10px;
+	margin-bottom: 1em;
+	padding: 1em;
+}
+
+.layer.css-border {
+	background-image: url("test-art/frames/background/border.png");
+	background-size: cover;
+}
+
+.test-failing {
+	background-color: rgba(255,0,32,0.4);
+}
+
+.test-unknown {
+	background-color: black;
+	color: white;
+}
+
+.test-passing {
+	background-color: rgba(64,255,32, 0.1)
+}
+
+/*@keyframes fadeIn {
+	from {
+		opacity: 0;
+	}
+
+	to {
+		opacity: 1;
+	}
+}*/
+
+.passage.big-panel .panel {
+	position: relative;
+	height: 600px; width: 600px;
+}
+
+.passage.big-panel .panel .asset {
+	width: 100%;
+}

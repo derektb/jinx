@@ -1,0 +1,7 @@
+p.step.create({a: 'bga', l: 'bg'},
+              {a: '1-char', l: 'char'},
+              {a: '1-sp', l: 'speech', s: 'after'});
+p.step.create({p: 'remove', l: 'speech'},
+              {a: '2-effect', l: 'speech', s: 'after', d: 500},
+              {a: '2-char', l: 'char', p: 'replace', s: 'after', d: 200},
+              {a: '2-sp', l: 'speech', d: 400})

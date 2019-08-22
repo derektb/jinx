@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: passage.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: passage.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ An object representing a single passage in the story. The passage currently
+ being displayed is available as `window.passage`.
+
+ @class Passage
+ @constructor
+**/
+
+'use strict';
+var _ = require('underscore');
+var marked = require('marked');
+var jQuery = require('jquery');
+
+/**
+ Our rendering engine. This is available externally as Passage.render(),
+ as well as on Passage instances.
+
+ @method render
+ @private
+ @return HTML source
+**/
+
+function render(source) {
+	// See below for the definition of readyFunc.
+
+	var result = _.template(source)({ s: window.story.state, $: readyFunc });
+
+	// Remove /* comments */
+
+	result = result.replace(/\/\*.*\*\//g, '');
+
+	// Remove // comments
+	// to avoid clashes with URLs, lines must start with these
+
+	result = result.replace(/^\/\/.*(\r\n?|\n)/g, '');
+
+	// [\ndiv\n]{.withClass#andID}
+
+	var divRegexp = /\[([\r\n+])([^\]]*?)([\r\n+])\]\{(.*?)\}/g;
+	var divRenderer = function(wholeMatch, startBr, source, endBr, selector) {
+		return renderEl(
+			'div',
+			startBr + source + endBr,
+			selector
+		);
+	};
+
+	while (divRegexp.test(result)) {
+		result = result.replace(divRegexp, divRenderer);
+	}
+
+	// [span]{.withClass#andID}
+
+	var spanRegexp = /\[(.*?)\]\{(.*?)\}/g;
+	var spanRenderer = function(wholeMatch, source, selector) {
+		return renderEl('span', source, selector);
+	};
+
+	while (spanRegexp.test(result)) {
+		result = result.replace(spanRegexp, spanRenderer);
+	}
+
+	// [[links]]
+
+	result = result.replace(/\[\[(.*?)\]\]/g, function(match, target) {
+		var display = target;
+
+		// display|target format
+
+		var barIndex = target.indexOf('|');
+
+		if (barIndex != -1) {
+			display = target.substr(0, barIndex);
+			target = target.substr(barIndex + 1);
+		}
+		else {
+			// display->target format
+
+			var rightArrIndex = target.indexOf('->');
+
+			if (rightArrIndex != -1) {
+				display = target.substr(0, rightArrIndex);
+				target = target.substr(rightArrIndex + 2);
+			}
+			else {
+				// target&lt;-display format
+
+				var leftArrIndex = target.indexOf('&lt;-');
+
+				if (leftArrIndex != -1) {
+					display = target.substr(leftArrIndex + 2);
+					target = target.substr(0, leftArrIndex);
+				}
+			}
+		}
+
+		// does this look like an external link?
+
+		if (/^\w+:\/\/\/?\w/i.test(target)) {
+			return '&lt;a href="' + target + '">' + display + '&lt;/a>';
+		}
+		else {
+			return '&lt;a href="javascript:void(0)" data-passage="' +
+				_.escape(target) + '">' + display + '&lt;/a>';
+		}
+	});
+
+	return marked(result);
+};
+
+/**
+ A helper function that converts markup like [this]{#id.class} into HTML
+ source for a DOM element.
+
+ @method renderEl
+ @private
+ @param {String} nodeName element's node name, e.g. 'div' or 'span'.
+ @param {String} source inner source code of the element
+ @param {String} selector a string selector, i.e. #myId.className. If the
+						  first character of this is a dash (-), then
+						  this element will also be given the attribute 'style="display:none"'.
+ @return {String} HTML source code
+**/
+
+function renderEl(nodeName, source, selector) {
+	var result = '&lt;' + nodeName;
+
+	if (selector) {
+		if (selector[0] == '-') {
+			result += ' style="display:none"';
+		}
+
+		var classes = [];
+		var id = null;
+		var classOrId = /([#\.])([^#\.]+)/g;
+		var matches = classOrId.exec(selector);
+
+		while (matches !== null) {
+			switch (matches[1]) {
+				case '#':
+					id = matches[2];
+					break;
+
+				case '.':
+					classes.push(matches[2]);
+					break;
+
+				default:
+					throw new Error("Don't know how to apply selector " + matches[0]);
+			}
+
+			matches = classOrId.exec(selector);
+		}
+
+		if (id !== null) {
+			result += ' id="' + id + '"';
+		}
+
+		if (classes.length > 0) {
+			result += ' class="' + classes.join(' ') + '"';
+		}
+	}
+
+	result += '>';
+
+	if (source !== null)
+		result += render(source);
+
+	return result + '&lt;/' + nodeName + '>';
+}
+
+/**
+ A helper function that is connected to passage templates as $. It acts
+ like the jQuery $ function, running a script when the passage is ready in
+ the DOM. The function passed is also bound to div#passages for convenience.
+
+ If this is *not* passed a single function, then this acts as a passthrough
+ to jQuery's native $ function.
+
+ @function readyFunc
+ @return jQuery object, as with jQuery()
+ @private
+**/
+
+function readyFunc() {
+	if (arguments.length == 1 &amp;&amp; typeof arguments[0] == 'function') {
+		return jQuery(window).one(
+			'showpassage:after',
+			_.bind(arguments[0], jQuery('#passages'))
+		);
+	}
+	else {
+		return jQuery.apply(window, arguments);
+	}
+}
+
+var Passage = function(id, name, tags, source) {
+	/**
+	 The numeric ID of the passage.
+	 @property name
+	 @type Number
+	 @readonly
+	**/
+
+	this.id = id;
+
+	/**
+	 The name of the passage.
+	 @property name
+	 @type String
+	**/
+
+	this.name = name;
+
+	/**
+	 The tags of the passage.
+	 @property tags
+	 @type Array
+	**/
+
+	this.tags = tags;
+
+	/**
+	 The passage source code.
+	 @property source
+	 @type String
+	**/
+
+	this.source = _.unescape(source);
+};
+
+/**
+ Static renderer, which will render any string passed to it as HTML.
+ See Passage.render()'s instance method for a description of what exactly it does.
+ @method render
+ @static
+ @return HTML source
+**/
+Passage.render = render;
+
+_.extend(Passage.prototype, {
+	/**
+	 Returns an HTML-rendered version of this passage's source. This
+	 first runs the source code through the Underscore template parser,
+	 then runs the result through a Markdown renderer, and then finally
+	 converts bracketed links to passage links.
+
+	 @method render
+	 @return HTML source
+	**/
+
+	render: function() {
+		return render(_.unescape(this.source));
+	}
+});
+
+module.exports = Passage;
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="ArtAsset.html">ArtAsset</a></li><li><a href="PanelRenderer.html">PanelRenderer</a></li><li><a href="Seqel.html">Seqel</a></li><li><a href="Sequence.html">Sequence</a></li><li><a href="Story.html">Story</a></li><li><a href="Twize.html">Twize</a></li></ul><h3>Events</h3><ul><li><a href="global.html#event:animation-begun">animation-begun</a></li><li><a href="global.html#event:checkpoint">checkpoint</a></li><li><a href="global.html#event:checkpointfailed">checkpointfailed</a></li><li><a href="global.html#event:hidepassage">hidepassage</a></li><li><a href="global.html#event:restore">restore</a></li><li><a href="global.html#event:restorefailed">restorefailed</a></li><li><a href="global.html#event:save">save</a></li><li><a href="global.html#event:showpassage">showpassage</a></li><li><a href="global.html#event:startstory">startstory</a></li><li><a href="global.html#event:restore:after">restore:after</a></li><li><a href="global.html#event:showpassage:after">showpassage:after</a></li></ul><h3>Namespaces</h3><ul><li><a href="-_.html">_</a></li></ul><h3>Mixins</h3><ul><li><a href="Underscore.hasAll.html">hasAll</a></li><li><a href="Underscore.hasOnly.html">hasOnly</a></li><li><a href="Underscore.xor.html">xor</a></li><li><a href="Underscore-thumbprint.html">thumbprint</a></li></ul><h3>Global</h3><ul><li><a href="global.html#__parentPassage">__parentPassage</a></li><li><a href="global.html#__selectors">__selectors</a></li><li><a href="global.html#__settings">__settings</a></li><li><a href="global.html#_getDisplayed">_getDisplayed</a></li><li><a href="global.html#_layers">_layers</a></li><li><a href="global.html#_loadingAssets">_loadingAssets</a></li><li><a href="global.html#addArt">addArt</a></li><li><a href="global.html#addArtAssets">addArtAssets</a></li><li><a href="global.html#addBeatPushesanewsequencebeattotheAssetAnimation'ssequence.">addBeat
+
+   Pushes a new sequence beat to the AssetAnimation's sequence.</a></li><li><a href="global.html#addLayer">addLayer</a></li><li><a href="global.html#addLayers">addLayers</a></li><li><a href="global.html#addSeqeltheSeqelconstructortakesvariablearguments,sothisbasicSeqel-makerdoestoo.---2arguments:---">addSeqel
+   the Seqel constructor takes variable arguments, so this basic Seqel-maker
+   does too.
+   --- 2 arguments: ---</a></li><li><a href="global.html#addStep">addStep</a></li><li><a href="global.html#addUnknownLayers">addUnknownLayers</a></li><li><a href="global.html#advance">advance</a></li><li><a href="global.html#animate">animate</a></li><li><a href="global.html#art">art</a></li><li><a href="global.html#asset">asset</a></li><li><a href="global.html#assetFindsthefirstinstanceofanassetmatchingthequeryparamanywhereintheShadowPanel.">asset
+
+   Finds the first instance of an asset matching the query param anywhere in the ShadowPanel.</a></li><li><a href="global.html#assetRecords">assetRecords</a></li><li><a href="global.html#beats">beats</a></li><li><a href="global.html#checkpoint">checkpoint</a></li><li><a href="global.html#checkpointName">checkpointName</a></li><li><a href="global.html#createLayerInstanceSpecializedlayercreation.">createLayerInstance
+
+   Specialized layer creation.</a></li><li><a href="global.html#createStepAnimation">createStepAnimation</a></li><li><a href="global.html#creator">creator</a></li><li><a href="global.html#creatorVersion">creatorVersion</a></li><li><a href="global.html#destination">destination</a></li><li><a href="global.html#errorMessage">errorMessage</a></li><li><a href="global.html#getArtAsset">getArtAsset</a></li><li><a href="global.html#getDefault">getDefault</a></li><li><a href="global.html#history">history</a></li><li><a href="global.html#id">id</a></li><li><a href="global.html#ignoreErrors">ignoreErrors</a></li><li><a href="global.html#ignoreRoot">ignoreRoot</a></li><li><a href="global.html#layerGetsalayerfromtheshadowPanel.">layer
+
+   Gets a layer from the shadowPanel.</a></li><li><a href="global.html#layerize">layerize</a></li><li><a href="global.html#layers">layers</a></li><li><a href="global.html#name">name</a></li><li><a href="global.html#panelize">panelize</a></li><li><a href="global.html#passage">passage</a></li><li><a href="global.html#passageDomName">passageDomName</a></li><li><a href="global.html#passages">passages</a></li><li><a href="global.html#pos">pos</a></li><li><a href="global.html#remove">remove</a></li><li><a href="global.html#render">render</a></li><li><a href="global.html#renderer">renderer</a></li><li><a href="global.html#rendererId">rendererId</a></li><li><a href="global.html#replace">replace</a></li><li><a href="global.html#restore">restore</a></li><li><a href="global.html#save">save</a></li><li><a href="global.html#saveHash">saveHash</a></li><li><a href="global.html#selectors">selectors</a></li><li><a href="global.html#seq">seq</a></li><li><a href="global.html#setDefaults">setDefaults</a></li><li><a href="global.html#setup">setup</a></li><li><a href="global.html#setupStructure">setupStructure</a></li><li><a href="global.html#show">show</a></li><li><a href="global.html#source">source</a></li><li><a href="global.html#start">start</a></li><li><a href="global.html#startPassage">startPassage</a></li><li><a href="global.html#state">state</a></li><li><a href="global.html#step">step</a></li><li><a href="global.html#tags">tags</a></li><li><a href="global.html#tracks">tracks</a></li><li><a href="global.html#userScripts">userScripts</a></li><li><a href="global.html#userStyles">userStyles</a></li><li><a href="global.html#wandize">wandize</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> on Thu Mar 16 2017 12:58:43 GMT-0700 (Pacific Summer Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>
