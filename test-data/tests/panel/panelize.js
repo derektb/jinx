@@ -1,20 +1,20 @@
 var Panel = require("Panel");
 var Passage = require("Passage");
-var Twize = require("Twize");
+var Jinx = require("Jinx");
 const Story = require('Story');
 var _ = require("underscore");
 const $ = require('jQuery');
 const TestPanels = require('./_testpanels');
 
-var seq, twize, fixture;
+var seq, jinx, fixture;
 
 QUnit.module("Panelization",
 {
   beforeEach: function() {
-    twize = window.twize = new Twize();
+    jinx = window.jinx = new Jinx();
   },
   afterEach: function() {
-    twize = window.twize = null;
+    jinx = window.jinx = null;
   }
 },
 

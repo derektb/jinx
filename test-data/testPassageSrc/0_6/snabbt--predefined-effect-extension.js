@@ -1,5 +1,5 @@
 
-twize.effects.create("fizzBuzz",
+jinx.effects.create("fizzBuzz",
   {
     fromScale: [0,0],
     fromOpacity: 0,
@@ -14,7 +14,7 @@ twize.effects.create("fizzBuzz",
   }
 );
 
-twize.effects.extend("fizzBuzz",
+jinx.effects.extend("fizzBuzz",
   "zipZop", // including a name will also save it to the list of effects
   {
     fromScale: [5,5],
@@ -35,7 +35,7 @@ p.step.create(
   {p: 'add',     a: 'bg', l: 'bg', u: 200},
   {p: 'add',     a: '1',  l: 'L',  e: "fizzBuzz"},
   {p: 'add',     a: '2',  l: 'L',  e: "zipZop"},
-  {p: 'remove',  a: '1',  l: 'L',  e: twize.effects.extend('fadeOut', { fromScale: [1,1], scale: [.8,.8], duration: 1000 }), s: 'after' } // not including a name will just extend and return a hash
+  {p: 'remove',  a: '1',  l: 'L',  e: jinx.effects.extend('fadeOut', { fromScale: [1,1], scale: [.8,.8], duration: 1000 }), s: 'after' } // not including a name will just extend and return a hash
 );
 
 p.destination = { main: '[[->Start]]' };

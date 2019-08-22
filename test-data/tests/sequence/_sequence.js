@@ -1,16 +1,16 @@
 var Sequence = require("Sequence");
-var Twize = require("Twize");
+var Jinx = require("Jinx");
 
-var seq, twize;
+var seq, jinx;
 
 QUnit.module("Sequence Tests | Main",
 {
   beforeEach: function() {
-    twize = window.twize = new Twize();
+    jinx = window.jinx = new Jinx();
     seq = new Sequence();
   },
   afterEach: function() {
-    twize = window.twize = null;
+    jinx = window.jinx = null;
   }
 },
 
@@ -39,7 +39,7 @@ function() {
     try {
       seq.addStep({a: "foo", l: "bar"}, {a: "foo", l: "bar", flow: "up yours"});
     } catch (e) {
-      throw new Error("Seqel constructor is trying to access getDefault from Twize, but no Twize exists.");
+      throw new Error("Seqel constructor is trying to access getDefault from Jinx, but no Jinx exists.");
     }
     assert.equal(seq.getTrack("default").length, 2, "addStep results in Seqel creation with in the default track.");
     assert.equal(seq.getTrack("default")[1].flow, "stop", "the final Seqel created in addStep is automatically given a 'stop' flow property.");

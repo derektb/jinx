@@ -1,28 +1,28 @@
 var _ = require('underscore');
-var twizeModuleAliases = {
+const moduleAliases = {
 	  "Story": './src/base/story.js'
 	, "Passage": './src/base/passage.js'
 
-	, "Twize": './src/twize/main/twize.js'
-	, "Wand": './src/twize/main/wand.js'
-	, "Effects": './src/twize/main/effects.js'
-	, "Settings": './src/twize/main/settings.js'
-	, "Debug": './src/twize/main/debug.js'
+	, "Jinx": './src/jinx/main/jinx.js'
+	, "Wand": './src/jinx/main/wand.js'
+	, "Effects": './src/jinx/main/effects.js'
+	, "Settings": './src/jinx/main/settings.js'
+	, "Debug": './src/jinx/main/debug.js'
 
-	, "Panel": './src/twize/panel/panel.js'
+	, "Panel": './src/jinx/panel/panel.js'
 
-	, "PanelArt": './src/twize/panel/art/panelart.js'
-	, "ArtAsset": './src/twize/panel/art/artasset.js'
+	, "PanelArt": './src/jinx/panel/art/panelart.js'
+	, "ArtAsset": './src/jinx/panel/art/artasset.js'
 
-	, "Sequence": './src/twize/panel/sequence/sequence.js'
-	, "Seqel": './src/twize/panel/sequence/seqel.js'
+	, "Sequence": './src/jinx/panel/sequence/sequence.js'
+	, "Seqel": './src/jinx/panel/sequence/seqel.js'
 
-	, "PanelRenderer": './src/twize/panel/renderer/panelrenderer.js'
-	, "ShadowPanel": './src/twize/panel/renderer/shadowpanel.js'
-	, "ShadowLayer": './src/twize/panel/renderer/shadowlayer.js'
-	, "ShadowAsset": './src/twize/panel/renderer/shadowasset.js'
-	, "AssetAnimation": './src/twize/panel/renderer/asset-animation.js'
-	, "StepAnimation": './src/twize/panel/renderer/step-animation.js'
+	, "PanelRenderer": './src/jinx/panel/renderer/panelrenderer.js'
+	, "ShadowPanel": './src/jinx/panel/renderer/shadowpanel.js'
+	, "ShadowLayer": './src/jinx/panel/renderer/shadowlayer.js'
+	, "ShadowAsset": './src/jinx/panel/renderer/shadowasset.js'
+	, "AssetAnimation": './src/jinx/panel/renderer/asset-animation.js'
+	, "StepAnimation": './src/jinx/panel/renderer/step-animation.js'
 }
 
 module.exports = function(grunt) {
@@ -33,7 +33,7 @@ module.exports = function(grunt) {
 		browserify: {
 			default: {
 				files: {
-					'build/twize.js': 'src/index.js',
+					'build/jinx.js': 'src/index.js',
 					'build/tests.js': 'test-data/tests/**/*.js'
 				},
 				options: {
@@ -41,7 +41,7 @@ module.exports = function(grunt) {
 						debug: true,
 						detectGlobals: false
 					},
-					alias: twizeModuleAliases,
+					alias: moduleAliases,
 					watch: true,
 					transform: [
 						['babelify', { presets: ["env"] }]
@@ -50,14 +50,14 @@ module.exports = function(grunt) {
 			},
 			release: {
 				files: {
-					'build/twize.js': 'src/index.js'
+					'build/jinx.js': 'src/index.js'
 				},
 				options: {
 					browserifyOptions: {
 						debug: false,
 						detectGlobals: false
 					},
-					alias: twizeModuleAliases,
+					alias: moduleAliases,
 					transform: [
 						['uglifyify', { global: true }],
 						['babelify', { presets: ["env"] }]
@@ -69,7 +69,7 @@ module.exports = function(grunt) {
 		cssmin: {
 			default: {
 				files: {
-					'build/twize.css': 'src/**/*.css'
+					'build/jinx.css': 'src/**/*.css'
 				},
 				expand: true
 			}
@@ -139,8 +139,8 @@ module.exports = function(grunt) {
 
 		var mainData = {
 			name: name,
-			storyFormatScript: '<script src="twize.js"></script>',
-			storyFormatStylesheet: '<link rel="stylesheet" href="twize.css">',
+			storyFormatScript: '<script src="jinx.js"></script>',
+			storyFormatStylesheet: '<link rel="stylesheet" href="jinx.css">',
 			passages: testPassages
 		};
 
@@ -154,8 +154,8 @@ module.exports = function(grunt) {
 		var data = {
 			name: '{{STORY_NAME}}',
 			passages: '{{STORY_DATA}}',
-			storyFormatScript: '<script>' + grunt.file.read('build/twize.js') + '</script>',
-			storyFormatStylesheet: '<style>' + grunt.file.read('build/twize.css') + '</style>'
+			storyFormatScript: '<script>' + grunt.file.read('build/jinx.js') + '</script>',
+			storyFormatStylesheet: '<style>' + grunt.file.read('build/jinx.css') + '</style>'
 		};
 
 		grunt.file.write('build/format.html', template(data));

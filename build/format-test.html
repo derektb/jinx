@@ -1,12 +1,12 @@
 <!DOCTYPE html>
-<html class="twize-page">
+<html class="jinx-page">
 <head>
 <title>
-Twize Tests
+Jinx Tests
 
 </title>
 <meta charset="utf-8">
-<link rel="stylesheet" href="twize.css">
+<link rel="stylesheet" href="jinx.css">
 </head>
 <body>
 
@@ -14,9 +14,9 @@ Twize Tests
 
 
 
-<div id="version-marker">0.6.10-2</div>
+<div id="version-marker">0.0.0</div>
 
-<tw-storydata name="Twize Tests
+<tw-storydata name="Jinx Tests
 " startnode="1" creator="Twine" creator-version="2.0">
 
 <style role="stylesheet" id="twine-user-stylesheet" type="text/twine-css">
@@ -99,10 +99,10 @@ code {
 console.log('User JavaScript is working.');
 
 window.story.state.rootArtPath = "test-art/frames/";
-twize.setup({
+jinx.setup({
   rootArtPath: "test-art/frames/"
 });
-twize.debug();
+jinx.debug();
 
 var hideLayers = window.hideLayers = function hideLayers() {
   var images = document.querySelectorAll(".panel .layer img, .css-border")
@@ -146,20 +146,20 @@ Snowman Tests
 - [[Test comments]]
 
 -----
-Twize Tests
+Jinx Tests
 <a href="./test.html">QUNIT</a>
 ---
 <em>from testPassages</em>
 
 <ul>
-  <h3>Twize 0.1</h3>
+  <h3>Jinx 0.1</h3>
 
 <li class="test-failing">[[Test 0.1.0 Panel->Test 0.1.0 Panel]] — This should: define a panel with a single art object and a destination to display this passage upon clicking the #wand.  !!The API in this test is deprecated: it ONLY adds art and a destination.  The panel adds a default layer and the wand navigates correctly, but no animation is defined, and no art displays: possibly we assumed in the past that this would be a valid way of defining a panel.  It isn't any more.</li>
 
 </ul>
 
 <ul>
-  <h3>Twize 0.2</h3>
+  <h3>Jinx 0.2</h3>
 
 <li class="test-passing">[[0_2_panel->0_2_panel]] — This should be a multi-layer panel.  Three layers with three separate art 300px assets.  A Sequence exists which defines which art goes where.</li>
 
@@ -168,11 +168,11 @@ Twize Tests
 </ul>
 
 <ul>
-  <h3>Twize 0.4</h3>
+  <h3>Jinx 0.4</h3>
 
 <li class="test-passing">[[Test Panel.addArtAssets and Panel.addLayers->test addArtAssets]] — Tests two new condensed methods for adding multiple art assets and layers at once</li>
 
-<li class="test-passing">[[Test 'Panelize' Tag and Auto Panelization->test auto panelize]] — Panels tagged with 'panelize' should automatically append the proper Underscore and Twize markup for panelizing a passage.</li>
+<li class="test-passing">[[Test 'Panelize' Tag and Auto Panelization->test auto panelize]] — Panels tagged with 'panelize' should automatically append the proper Underscore and Jinx markup for panelizing a passage.</li>
 
 <li class="test-passing">[[Manager Dog 0.4 (Snippet)->manager-dog 0.4.0 condensed]] — Tests condensed panel creation (`p.addArtAssets`, `p.addLayers`, `p.step.create`), as well as condensed seqel markup (`a,l,p,e,d,s,f`) and general 0.4 sync/delay timing properties</li>
 
@@ -181,7 +181,7 @@ Twize Tests
 </ul>
 
 <ul>
-  <h3>Twize 0.5</h3>
+  <h3>Jinx 0.5</h3>
 
 <li class="test-passing">[[New Animation Pipeline->New Animation Pipeline]] — Rigorously tests everything that broke in 0.4 which should work in 0.5</li>
 
@@ -190,7 +190,7 @@ Twize Tests
 </ul>
 
 <ul>
-  <h3>Twize 0.6</h3>
+  <h3>Jinx 0.6</h3>
 
 <li class="test-passing">[[Refactoring loading->custom-effects__loading-refactoring]] — In 0.5, loading was written poorly, in a way that assumes all steps will have assets that load.  When a step only removes assets, for example, it will load infinitely.  This fixes that by first checking to see if it needs to load before waiting to load.</li>
 
@@ -225,7 +225,7 @@ Twize Tests
 </ul>
 
 <ul>
-  <h3>Twize 0.7</h3>
+  <h3>Jinx 0.7</h3>
 
 <li class="test-passing">[[Text Assets->text-assets]] — Tests creation of text assets, of fixed height, width, and both.</li>
 
@@ -253,11 +253,11 @@ Twize Tests
 - [[Manager Dog 0.3.0->manager-dog-p1 0.3.0]] - Manager dog in multiple panels
 
 - !!FAILING [[Manager Dog 0.4.0 Snabbt Test->manager-dog 0.4.0]] - A single beat from manager dog, coordinated with snabbt.  Uses constructors that build steps rather than seqels.
-- !!FAILING [[Manager Dog 0.4.0 Snabbt Test (condensed)->manager-dog 0.4.0 condensed]] - The same as the previous test, but with abbreviated prop names and without explicit definitions for things we want Twize to do automagically.
+- !!FAILING [[Manager Dog 0.4.0 Snabbt Test (condensed)->manager-dog 0.4.0 condensed]] - The same as the previous test, but with abbreviated prop names and without explicit definitions for things we want Jinx to do automagically.
 
 -----
 
-*Build 0.6.10-2 was created at: SAT 9 JUN 2018, 7:13:42 PM*
+*Build 0.0.0 was created at: WED 21 AUG 2019, 8:31:31 PM*
 </tw-passagedata>
 
 <!-- grunt-built passages -->
@@ -359,7 +359,7 @@ p.destination = { main: '[[Start]]' };
   </tw-passagedata>
 
   <tw-passagedata pid="27" name="manager-dog 0.4.0 condensed" tags="replace panelize">
-    window.twize.setDefaults({duration:150})
+    window.jinx.setDefaults({duration:150})
 p.addArtAssets(
   [&#x27;bga&#x27;,&#x27;background/background-1.png&#x27;],
   [&#x27;1-char&#x27;, &#x27;1/character.png&#x27;],
@@ -384,7 +384,7 @@ p.destination = { main: &#x27;[[-&amp;gt;Start]]&#x27; };
 
   <tw-passagedata pid="28" name="manager-dog 040 condensed one-shot" tags="replace panelize">
     // --- Art ---
-twize.setDefaults({duration: 400})
+jinx.setDefaults({duration: 400})
 
 p.addArtAssets(
   [&quot;bg-1&quot;, &quot;background/background-1.png&quot;],
@@ -469,7 +469,7 @@ p.destination = { main: &#x27;[[-&gt;Start]]&#x27; };
   </tw-passagedata>
 
   <tw-passagedata pid="30" name="ArtAsset Class" tags="replace panelize">
-    // window.twize.__settings.rootArtPath = &#x27;numbers300/&#x27;;
+    // window.jinx.__settings.rootArtPath = &#x27;numbers300/&#x27;;
 
 p.addArtAssets(
   {name: &#x27;bg&#x27;, type: &#x27;asset&#x27;, useRoot: false, src: &#x27;test-art/test-bg.png&#x27;},
@@ -546,7 +546,7 @@ p.destination = { main: &#x27;[[-&gt;Start]]&#x27; };
   </tw-passagedata>
 
   <tw-passagedata pid="33" name="custom-effects__xy-property--relative-position" tags="replace panelize">
-    twize.effects.extend(&quot;fadeIn&quot;, &quot;dropIn&quot;, {
+    jinx.effects.extend(&quot;fadeIn&quot;, &quot;dropIn&quot;, {
   fromPosition: [0,-50],
   position: [0,0]
 })
@@ -703,7 +703,7 @@ p.destination = { main: &#x27;[[-&gt;Start]]&#x27; };
 
   <tw-passagedata pid="37" name="custom-effects__snabbt-predefined-effect-creation" tags="replace panelize">
     
-twize.createEffect(&quot;fooBar&quot;,
+jinx.createEffect(&quot;fooBar&quot;,
   {
     fromScale: [0,0],
     fromOpacity: 0,
@@ -718,7 +718,7 @@ twize.createEffect(&quot;fooBar&quot;,
   }
 );
 
-twize.effects.create(&quot;wibbleWobble&quot;,
+jinx.effects.create(&quot;wibbleWobble&quot;,
   {
     fromScale: [1,1],
     fromOpacity: 1,
@@ -788,7 +788,7 @@ p.destination = { main: &#x27;[[-&gt;Start]]&#x27; };
 
   <tw-passagedata pid="39" name="custom-effects__snabbt-predefined-effect-extension" tags="replace panelize">
     
-twize.effects.create(&quot;fizzBuzz&quot;,
+jinx.effects.create(&quot;fizzBuzz&quot;,
   {
     fromScale: [0,0],
     fromOpacity: 0,
@@ -803,7 +803,7 @@ twize.effects.create(&quot;fizzBuzz&quot;,
   }
 );
 
-twize.effects.extend(&quot;fizzBuzz&quot;,
+jinx.effects.extend(&quot;fizzBuzz&quot;,
   &quot;zipZop&quot;, // including a name will also save it to the list of effects
   {
     fromScale: [5,5],
@@ -824,7 +824,7 @@ p.step.create(
   {p: &#x27;add&#x27;,     a: &#x27;bg&#x27;, l: &#x27;bg&#x27;, u: 200},
   {p: &#x27;add&#x27;,     a: &#x27;1&#x27;,  l: &#x27;L&#x27;,  e: &quot;fizzBuzz&quot;},
   {p: &#x27;add&#x27;,     a: &#x27;2&#x27;,  l: &#x27;L&#x27;,  e: &quot;zipZop&quot;},
-  {p: &#x27;remove&#x27;,  a: &#x27;1&#x27;,  l: &#x27;L&#x27;,  e: twize.effects.extend(&#x27;fadeOut&#x27;, { fromScale: [1,1], scale: [.8,.8], duration: 1000 }), s: &#x27;after&#x27; } // not including a name will just extend and return a hash
+  {p: &#x27;remove&#x27;,  a: &#x27;1&#x27;,  l: &#x27;L&#x27;,  e: jinx.effects.extend(&#x27;fadeOut&#x27;, { fromScale: [1,1], scale: [.8,.8], duration: 1000 }), s: &#x27;after&#x27; } // not including a name will just extend and return a hash
 );
 
 p.destination = { main: &#x27;[[-&gt;Start]]&#x27; };
@@ -843,7 +843,7 @@ p.addLayers(&#x27;bg&#x27;, &#x27;L&#x27;, &#x27;css-border&#x27;);
 
 p.step.create(
   {p: &#x27;add&#x27;,     a: &#x27;bg&#x27;, l: &#x27;bg&#x27;, u: 200,
-    e: twize.effects.extend(&#x27;fadeIn&#x27;, {
+    e: jinx.effects.extend(&#x27;fadeIn&#x27;, {
       start: function() {
         $(document).one(&#x27;ended-playing-animation&#x27;, p, function() {
           alert(p.name+&quot; has finished its animation!&quot;);
@@ -926,12 +926,12 @@ p.step.create(
   {p: &#x27;add&#x27;,     a: &#x27;1&#x27;,  l: &#x27;L&#x27;,  u: 500, d:200},
   {p: &#x27;effect&#x27;,  a: &#x27;1&#x27;,  l: &#x27;L&#x27;,  u: 1000, d: 250, s: &#x27;after&#x27;, e: {
       position: [250,100],
-      easing: twize.getDefault(&#x27;easing&#x27;)
+      easing: jinx.getDefault(&#x27;easing&#x27;)
     }
   },
   {p: &#x27;effect&#x27;,  a: &#x27;1&#x27;,  l: &#x27;L&#x27;,  u: 1000, d: 250, s: &#x27;after&#x27;, e: {
       position: [50,200],
-      easing: twize.getDefault(&#x27;easing&#x27;)
+      easing: jinx.getDefault(&#x27;easing&#x27;)
     }
   }
 );
@@ -1788,6 +1788,6 @@ p.step.create({p: 'remove', l: 'speech'},
 </tw-storydata>
 
 
-<script src="twize.js"></script>
+<script src="jinx.js"></script>
 </body>
 </html>

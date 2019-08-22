@@ -1,19 +1,19 @@
 var Sequence = require("Sequence");
-var Twize = require("Twize");
+var Jinx = require("Jinx");
 var Seqel = require("Seqel");
 var ShadowPanel = require("ShadowPanel");
 var _ = require("underscore");
 
-var seq, twize;
+var seq, jinx;
 
 QUnit.module("Sequence Tests | Animation",
 {
   beforeEach: function() {
-    twize = window.twize = new Twize();
+    jinx = window.jinx = new Jinx();
     seq = new Sequence();
   },
   afterEach: function() {
-    twize = window.twize = null;
+    jinx = window.jinx = null;
   }
 },
 
@@ -83,7 +83,7 @@ function() {
       //  But then again, getAssetAnimations is the gatekeeper for all animations, so in theory, it has to be flexible, too.  Smart.  Delegating a lot.
     });
 
-    QUnit.test("... This test specifically tests, rigorously, an ({add},{replace after}) step, of the sort that produced a bugs in Twize 0.4, and which tests the ability for the 0.5 animation system to translate layer-wide effects into per-individual-asset effects", function(assert) {
+    QUnit.test("... This test specifically tests, rigorously, an ({add},{replace after}) step, of the sort that produced a bugs in Jinx 0.4, and which tests the ability for the 0.5 animation system to translate layer-wide effects into per-individual-asset effects", function(assert) {
       var step, assetAnimations;
       var shadowPanel = new ShadowPanel();
       seq.addStep(

@@ -1,10 +1,10 @@
 console.log('User JavaScript is working.');
 
 window.story.state.rootArtPath = "test-art/frames/";
-twize.setup({
+jinx.setup({
   rootArtPath: "test-art/frames/"
 });
-twize.debug();
+jinx.debug();
 
 var hideLayers = window.hideLayers = function hideLayers() {
   var images = document.querySelectorAll(".panel .layer img, .css-border")

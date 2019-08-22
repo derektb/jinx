@@ -1,4 +1,4 @@
-twize.effects.extend("fadeIn", "dropIn", {
+jinx.effects.extend("fadeIn", "dropIn", {
   fromPosition: [0,-50],
   position: [0,0]
 })

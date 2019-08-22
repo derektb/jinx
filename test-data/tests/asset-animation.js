@@ -2,16 +2,16 @@ var AssetAnimation = require("AssetAnimation");
 var ShadowPanel = require("ShadowPanel");
 var _ = require("underscore");
 
-var seq, twize;
+var seq, jinx;
 
 QUnit.module("AssetAnimation",
 {
   beforeEach: function() {
-    // twize = window.twize = new Twize();
+    // jinx = window.jinx = new Jinx();
     // passage = new Passage();
   },
   afterEach: function() {
-    // twize = window.twize = null;
+    // jinx = window.jinx = null;
   }
 },
 

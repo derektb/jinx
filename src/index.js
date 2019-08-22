@@ -11,11 +11,11 @@ var Panel = window.Panel = require('Panel');
 
 var Seqel = window.Seqel = require('Seqel');
 var Sequence = window.Sequence = require('Sequence');
-var Twize = window.Twize = require('Twize')
+var Jinx = window.Jinx = require('Jinx')
 
 $(function() {
 	window.story = new Story($('tw-storydata'));
 	// probably:
-	window.twize = new Twize();
+	window.jinx = new Jinx();
 	window.story.start();
 });

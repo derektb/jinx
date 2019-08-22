@@ -1,15 +1,15 @@
-const Twize = require("Twize");
+const Jinx = require("Jinx");
 const Panel = require("Panel");
 const StepAnimation = require('StepAnimation');
 const _ = require("underscore");
 
-var twize, panel;
+var jinx, panel;
 var stepData, stepAnimation, step, newPosIndex, isFinalStep;
 
 QUnit.module("Panel Advance",
   {
     beforeEach: function() {
-      twize = window.twize = new Twize();
+      jinx = window.jinx = new Jinx();
       panel = new Panel("test");
       panel.addArtAssets(
         ['bg','bg.png']
@@ -38,7 +38,7 @@ QUnit.module("Panel Advance",
       );
     },
     afterEach: function() {
-      twize = window.twize = null;
+      jinx = window.jinx = null;
       panel = null;
     }
   },

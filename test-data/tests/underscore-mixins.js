@@ -1,16 +1,16 @@
-var Twize = require("Twize");
+var Jinx = require("Jinx");
 var Panel = require("Panel");
 var _ = require("underscore");
 
-var seq, twize, renderer;
+var seq, jinx, renderer;
 
 QUnit.module("Underscore Mikins",
 {
   beforeEach: function() {
-    twize = window.twize = new Twize();
+    jinx = window.jinx = new Jinx();
   },
   afterEach: function() {
-    twize = window.twize = null;
+    jinx = window.jinx = null;
   }
 },
 

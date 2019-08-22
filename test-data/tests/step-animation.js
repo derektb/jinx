@@ -1,21 +1,21 @@
 var Sequence = require("Sequence");
-var Twize = require("Twize");
+var Jinx = require("Jinx");
 var Seqel = require("Seqel");
 var ShadowPanel = require("ShadowPanel");
 var StepAnimation = require("StepAnimation");
 var _ = require("underscore");
 
-var seq, twize, stepAnimation;
+var seq, jinx, stepAnimation;
 
 QUnit.module("StepAnimation",
 {
   beforeEach: function() {
-    twize = window.twize = new Twize();
+    jinx = window.jinx = new Jinx();
     seq = new Sequence();
     stepAnimation = new StepAnimation();
   },
   afterEach: function() {
-    twize = window.twize = null;
+    jinx = window.jinx = null;
   }
 },
 

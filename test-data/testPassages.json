@@ -107,7 +107,7 @@
       ],
 
       "testName": "Test 'Panelize' Tag and Auto Panelization",
-      "testDescription": "Panels tagged with 'panelize' should automatically append the proper Underscore and Twize markup for panelizing a passage.",
+      "testDescription": "Panels tagged with 'panelize' should automatically append the proper Underscore and Jinx markup for panelizing a passage.",
       "passing": true
     },
 

@@ -9,7 +9,7 @@ p.addLayers('bg', 'L', 'css-border');
 
 p.step.create(
   {p: 'add',     a: 'bg', l: 'bg', u: 200,
-    e: twize.effects.extend('fadeIn', {
+    e: jinx.effects.extend('fadeIn', {
       start: function() {
         $(document).one('ended-playing-animation', p, function() {
           alert(p.name+" has finished its animation!");

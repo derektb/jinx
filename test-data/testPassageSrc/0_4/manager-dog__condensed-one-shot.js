@@ -1,5 +1,5 @@
 // --- Art ---
-twize.setDefaults({duration: 400})
+jinx.setDefaults({duration: 400})
 
 p.addArtAssets(
   ["bg-1", "background/background-1.png"],

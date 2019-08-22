@@ -369,11 +369,11 @@ _.extend(Story.prototype, {
 		window.passage = passage;
 		this.atCheckpoint = false;
 
-		// --- derek / twize --- weird passage code starts here.
+		// --- derek / jinx --- weird passage code starts here.
 		// THIS IS WHERE PASSAGES GET ADDED TO THE THING
-		var twizeAutoReplace = window.twize.getSetting('autoReplace');
+		var jinxAutoReplace = window.jinx.getSetting('autoReplace');
 		var taggedReplace = Boolean(_.find(passage.tags, function(tag) { return tag === "replace" }));
-		var shouldReplace = twizeAutoReplace ? !taggedReplace : taggedReplace;
+		var shouldReplace = jinxAutoReplace ? !taggedReplace : taggedReplace;
 
 		if (shouldReplace) {
 			$('#passages').empty();
@@ -383,7 +383,7 @@ _.extend(Story.prototype, {
 			if (passage.panel) {
 				return false;
 			}
-			const autoPanelize = window.twize.getSetting('autoPanelize');
+			const autoPanelize = window.jinx.getSetting('autoPanelize');
 			if (autoPanelize) {
 				return !(_.find(passage.tags, function(tag) { return tag === "no-panelize" }));
 			} else {

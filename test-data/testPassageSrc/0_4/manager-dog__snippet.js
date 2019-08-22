@@ -1,4 +1,4 @@
-window.twize.setDefaults({duration:150})
+window.jinx.setDefaults({duration:150})
 p.addArtAssets(
   ['bga','background/background-1.png'],
   ['1-char', '1/character.png'],

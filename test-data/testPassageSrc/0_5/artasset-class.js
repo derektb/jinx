@@ -1,4 +1,4 @@
-// window.twize.__settings.rootArtPath = 'numbers300/';
+// window.jinx.__settings.rootArtPath = 'numbers300/';
 
 p.addArtAssets(
   {name: 'bg', type: 'asset', useRoot: false, src: 'test-art/test-bg.png'},

@@ -5,19 +5,19 @@ const Sequence = require("Sequence")
 const StepAnimation = require('StepAnimation');
 const AssetAnimation = require('AssetAnimation');
 // var Passage = require("Passage");
-const Twize = require("Twize");
+const Jinx = require("Jinx");
 const _ = require("underscore");
 
-var seq, twize, renderer;
+var seq, jinx, renderer;
 
 QUnit.module("PanelRenderer",
 {
   beforeEach: function() {
-    twize = window.twize = new Twize();
+    jinx = window.jinx = new Jinx();
     renderer = new PanelRenderer();
   },
   afterEach: function() {
-    twize = window.twize = null;
+    jinx = window.jinx = null;
   }
 },
 
@@ -56,11 +56,11 @@ function() {
   QUnit.module("Animation Functions",
   {
     beforeEach: function() {
-      twize = window.twize = new Twize();
+      jinx = window.jinx = new Jinx();
       renderer = new PanelRenderer();
     },
     afterEach: function() {
-      twize = window.twize = null;
+      jinx = window.jinx = null;
       renderer = null;
     }
   },

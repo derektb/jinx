@@ -1,5 +1,5 @@
 
-twize.createEffect("fooBar",
+jinx.createEffect("fooBar",
   {
     fromScale: [0,0],
     fromOpacity: 0,
@@ -14,7 +14,7 @@ twize.createEffect("fooBar",
   }
 );
 
-twize.effects.create("wibbleWobble",
+jinx.effects.create("wibbleWobble",
   {
     fromScale: [1,1],
     fromOpacity: 1,
