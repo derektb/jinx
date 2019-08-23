@@ -342,9 +342,9 @@
     {
       "name": "text-assets",
       "tags": "replace panelize",
-      "version": "0.7",
+      "version": "0.6",
 
-      "content": "0_7/text-assets.js",
+      "content": "0_6/text-assets.js",
 
       "testName": "Text Assets",
       "testDescription": "Tests creation of text assets, of fixed height, width, and both.",
@@ -354,9 +354,9 @@
     {
       "name": "custom-asset-classnames",
       "tags": "replace panelize",
-      "version": "0.7",
+      "version": "0.6",
 
-      "content": "0_7/custom-asset-classnames.js",
+      "content": "0_6/custom-asset-classnames.js",
 
       "testName": "ArtAssets With Custom Classes",
       "testDescription": "Art assets may now be created with user-defined classnames as an array of strings called classNames on the artasset.",

@@ -25,24 +25,10 @@ var Panel = function(name) {
   // ----- Basic Properties -----
   this.name = name;
 
-  /**
-	 Stores parent passage information
-
-	 @property _parentPassage
-	 @type PlainObject
-	**/
   this.__parentPassage = {
     name: "",
     id: undefined
   }
-
-  /**
-	 Stores the CSS selectors relevant to this particular panel, so that in-panel
-   jQuery can know about it.  Set up in Panelize.
-
-	 @property _selectors
-	 @type PlainObject
-	**/
   this.__selectors = {
     passage: "",
     panel: ""
@@ -51,41 +37,12 @@ var Panel = function(name) {
     return $(this.__selectors.panel);
   }
 
-
-  /* remembers whether the panel is complete; possibly spurious */
   this.__isComplete = false;
 
   // --- ART ---
 
   this.art = new PanelArt(this.name);
   var art = this.art;
-
-  // DEPRECATING:
-
-  // this.addArt = function(key,path,filename) {
-  //   var data;
-  //
-  //   if (this.art[key]) {
-  //     throw new Error (
-  //       'There is already an art asset in this panel with the name "' + key + '"'
-  //     );
-  //   } else {
-  //     data = {
-  //       name: key,
-  //       type: "image"
-  //     };
-  //
-  //     if (filename && path) {
-  //       data.useRoot = false;
-  //       data.src = path + filename;
-  //     } else {
-  //       data.useRoot = true;
-  //       data.src = path;
-  //     }
-  //
-  //     this.art[key] = new ArtAsset(data);
-  //   }
-  // }
 
   this.addArtAssets = function __Panel__addArtAssets () {
     var assets;
@@ -136,24 +93,18 @@ var Panel = function(name) {
     }
   }
 
-  /**
-   Embarrassingly similar to Panel.addArtAssets, Panel.addLayers is an expedient way to add a bunch of layers at once.  It expects an indefinite number of strings as arguments.
-  **/
-
   this.addLayers = function __Panel__addMultipleLayers() {
-    var p = this;
-    var layers;
-    layers = Array.from(arguments);
+    const layers = Array.from(arguments);
 
-    _.each(layers, function(layerName) {
-      p.addLayer(layerName);
+    _.each(layers, (layerName)=> {
+      this.addLayer(layerName);
     })
   }
 
   // --- SEQUENCE ---
 
   this.seq = new Sequence();
-
+  // TODO: This sucks.  Possibly: this.step = StepCreator(this.seq);
   this.step = {};
   this.step.create = _.bind(this.seq.addStep, this.seq);
 
@@ -163,16 +114,8 @@ var Panel = function(name) {
   this.destination.main = ""; // a Twine 2 syntax link
 
   //  -----  WORKHORSE METHODS  -----
-  /**
-   (Setup Method)
-	 The method which sets up initial DOM structure for a panel.
 
-	 @method setupStructure
-   @param passage {String} the selector for the passage in which the panel will
-          be created.
-   @returns the newly-created div.panel within the panel object
-	**/
-
+  // TODO: This should be a part of the Renderer, not a part of the Panel
   this.setupStructure = function(passage) {
     var panelDiv;
 
@@ -192,13 +135,7 @@ var Panel = function(name) {
     }
   };
 
-  /**
-	 The method which creates art layers within a panel.
-
-	 @method layerize
-   @param specificLayer {String} a specific layer to layerize, rather than all layers at once.
-	**/
-
+  // TODO: Renderer
   this.layerize = function(specificLayer) {
     var layers, $panel;
     var createLayer;
@@ -234,21 +171,9 @@ var Panel = function(name) {
         }, this)
       );
     }
-
-    // console.log(this.art.__displayedAssets)
   };
 
-  /**
-	 The method which manages the Wand.  If it can't find a wand, it creates one;
-   otherwise, it moves the existing wand from wherever it is to the
-   active panel.
-   Possibly someday this also adds all kinds of listeners and whatnot, but for
-   now it just does what I said it does.
-     I briefly considered calling this method "Ollivander"
-
-	 @method wandize
-	**/
-
+  // TODO: Having this in the panel is sort of bizarre; it should definitely be in the Wand.  It's not clear whether we even use wandize
   this.wandize = function() {
     var wand, wandExists, latestInstance;
 
@@ -289,11 +214,6 @@ var Panel = function(name) {
     }
   };
 
-  /**
-	 Advance is the workhorse for handling sequential action in a Panel.  in 0.5, Advance delegates its behaviors among its children, and basically just oversees everything and makes sure nobody gets too big for their britches.  As such, it's quite lean.
-
-	 @method advance
-	**/
 
   this.advance = function() {
     var stepData, stepAnimation,
@@ -321,16 +241,7 @@ var Panel = function(name) {
 // Some Jinx-Specific extensions to the Passage
 
 _.extend(Passage.prototype, {
-  /**
-	 The function which creates a panel on a passage object.  For the moment, I'm
-   going to advocate calling this
-
-	 @method panelize
-   @param initializeData { Function }  [optional] A function which initializes panel
-   data.  This function is provided the newly-created Panel as a param.
-   @returns the panel object.
-	**/
-
+  // TODO: Panelize should be broken apart to some degree
   panelize: function(initializeData){
     var panel, passageSelector, panelSelector;
 

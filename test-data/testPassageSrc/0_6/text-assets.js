@@ -1,8 +1,11 @@
 p.art.path("../numbers300/")
 
-var textStyle = document.createElement('style');
-textStyle.innerHTML = ".passage--text-assets .layer.text .asset{padding:10px;background-color:white;line-height: 1}";
-$('body').append(textStyle)
+const STYLES_ID = 'text-assets-styles';
+if (!document.getElementById(STYLES_ID)) {
+  var textStyle = document.createElement('style');
+  textStyle.innerHTML = ".passage--text-assets .layer.text .asset{padding:10px;background-color:white;line-height: 1}";
+  $('body').append(textStyle)
+}
 
 p.addArtAssets(
   {
