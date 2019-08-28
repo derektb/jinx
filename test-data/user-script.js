@@ -2,7 +2,7 @@ console.log('User JavaScript is working.');
 
 window.story.state.rootArtPath = "test-art/frames/";
 jinx.setup({
-  rootArtPath: "test-art/frames/"
+  rootArtPath: "../test-data/test-art/frames/"
 });
 jinx.debug();
 

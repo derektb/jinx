@@ -17,7 +17,7 @@ div#passages {
 }
 
 .layer.css-border {
-	background-image: url("test-art/frames/background/border.png");
+	background-image: url("../test-data/test-art/frames/background/border.png");
 	background-size: cover;
 }
 
