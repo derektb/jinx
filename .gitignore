@@ -59,6 +59,7 @@ node_modules/
 
 # ignore builds
 /build
+/dist
 
 # ignore OS generated files
 ehthumbs.db

@@ -6,7 +6,7 @@ It is originally based off the Snowman story format created by Chris Klimas, and
 
 ## Building From Source
 
-Run `npm install` to install dependencies. `grunt` or `grunt build` will create a testing version of the format at `index.html`, and `grunt release` will build a release version ready to be used in Twine under `dist/`.
+Run `npm install` to install dependencies. `grunt` or `grunt build` will create a testing version of the format at `index.html`, and `grunt package` will build a release version ready to be used in Twine under `dist/`.
 
 ## See Also
 
