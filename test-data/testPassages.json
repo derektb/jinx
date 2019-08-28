@@ -86,7 +86,7 @@
 
     {
       "name": "test auto panelize",
-      "tags": "replace panelize",
+      "tags": "replace panel",
       "version": "0.4",
 
       "content": [
@@ -113,7 +113,7 @@
 
     {
       "name": "manager-dog 0.4.0 condensed",
-      "tags": "replace panelize",
+      "tags": "replace panel",
       "version": "0.4",
 
       "content": "0_4/manager-dog__snippet.js",
@@ -125,7 +125,7 @@
 
     {
       "name": "manager-dog 040 condensed one-shot",
-      "tags": "replace panelize",
+      "tags": "replace panel",
       "version": "0.4",
 
       "content": "0_4/manager-dog__condensed-one-shot.js",
@@ -137,7 +137,7 @@
 
     {
       "name": "New Animation Pipeline",
-      "tags": "replace panelize",
+      "tags": "replace panel",
       "version": "0.5",
 
       "content": "0_5/new-animation-pipeline.js",
@@ -149,7 +149,7 @@
 
     {
       "name": "ArtAsset Class",
-      "tags": "replace panelize",
+      "tags": "replace panel",
       "version": "0.5",
 
       "content": "0_5/artasset-class.js",
@@ -161,7 +161,7 @@
 
     {
       "name": "custom-effects__loading-refactoring",
-      "tags": "replace panelize",
+      "tags": "replace panel",
       "version": "0.6",
 
       "content": "0_6/loading-refactoring.js",
@@ -173,7 +173,7 @@
 
     {
       "name": "custom-effects__xy-property",
-      "tags": "replace panelize",
+      "tags": "replace panel",
       "version": "0.6",
 
       "content": "0_6/xy-property.js",
@@ -185,7 +185,7 @@
 
     {
       "name": "custom-effects__xy-property--relative-position",
-      "tags": "replace panelize",
+      "tags": "replace panel",
       "version": "0.6",
 
       "content": "0_6/xy-property--relative-position.js",
@@ -197,7 +197,7 @@
 
     {
       "name": "css-class-passage-tags",
-      "tags": "replace panelize .big-panel",
+      "tags": "replace panel .big-panel",
       "version": "0.6",
 
       "content": "0_6/css-class-passage-tags.js",
@@ -209,7 +209,7 @@
 
     {
       "name": "custom-effects__snabbt-whole-effect",
-      "tags": "replace panelize",
+      "tags": "replace panel",
       "version": "0.6",
 
       "content": "0_6/snabbt--effect-whole.js",
@@ -221,7 +221,7 @@
 
     {
       "name": "custom-effects__snabbt-partial-effect-with-timing",
-      "tags": "replace panelize",
+      "tags": "replace panel",
       "version": "0.6",
 
       "content": "0_6/snabbt--effect-with-timing.js",
@@ -233,7 +233,7 @@
 
     {
       "name": "custom-effects__snabbt-predefined-effect-creation",
-      "tags": "replace panelize",
+      "tags": "replace panel",
       "version": "0.6",
 
       "content": "0_6/snabbt--predefined-effect-creation.js",
@@ -245,7 +245,7 @@
 
     {
       "name": "custom-effects__snabbt-predefined-effect-overridden",
-      "tags": "replace panelize",
+      "tags": "replace panel",
       "version": "0.6",
 
       "content": "0_6/snabbt--predefined-effect-overridden.js",
@@ -257,7 +257,7 @@
 
     {
       "name": "custom-effects__snabbt-predefined-effect-extension",
-      "tags": "replace panelize",
+      "tags": "replace panel",
       "version": "0.6",
 
       "content": "0_6/snabbt--predefined-effect-extension.js",
@@ -269,7 +269,7 @@
 
     {
       "name": "custom-effects__snabbt-callbacks",
-      "tags": "replace panelize",
+      "tags": "replace panel",
       "version": "0.6",
 
       "content": "0_6/snabbt--callbacks.js",
@@ -281,7 +281,7 @@
 
     {
       "name": "transition-steps--pre",
-      "tags": "replace panelize",
+      "tags": "replace panel",
       "version": "0.6",
 
       "content": "0_6/transition-steps--pre.js",
@@ -293,7 +293,7 @@
 
     {
       "name": "transition-steps--post",
-      "tags": "replace panelize",
+      "tags": "replace panel",
       "version": "0.6",
 
       "content": "0_6/transition-steps--post.js",
@@ -305,7 +305,7 @@
 
     {
       "name": "seqel-apply--effect",
-      "tags": "replace panelize",
+      "tags": "replace panel",
       "version": "0.6",
 
       "content": "0_6/seqel-apply--effect.js",
@@ -317,7 +317,7 @@
 
     {
       "name": "panel-art--panel-path",
-      "tags": "replace panelize",
+      "tags": "replace panel",
       "version": "0.6",
 
       "content": "0_6/panel-art--panel-path.js",
@@ -329,7 +329,7 @@
 
     {
       "name": "code-seqel",
-      "tags": "replace panelize",
+      "tags": "replace panel",
       "version": "0.6",
 
       "content": "0_6/code-seqel.js",
@@ -341,7 +341,7 @@
 
     {
       "name": "text-assets",
-      "tags": "replace panelize",
+      "tags": "replace panel",
       "version": "0.6",
 
       "content": "0_6/text-assets.js",
@@ -353,7 +353,7 @@
 
     {
       "name": "custom-asset-classnames",
-      "tags": "replace panelize",
+      "tags": "replace panel",
       "version": "0.6",
 
       "content": "0_6/custom-asset-classnames.js",

@@ -261,25 +261,22 @@ _.extend(Story.prototype, {
 		this.atCheckpoint = false;
 
 		// --- JINX PANEL PREPARATIONS ---
-		var jinxAutoReplace = window.jinx.getSetting('autoReplace');
-		var taggedReplace = Boolean(_.find(passage.tags, function(tag) { return tag === "replace" }));
-		var shouldReplace = jinxAutoReplace ? !taggedReplace : taggedReplace;
 
 		const shouldPanelize = (function(){
 			if (passage.panel) {
 				return false;
 			}
+
 			const autoPanelize = window.jinx.getSetting('autoPanelize');
 			if (autoPanelize) {
-				return !(_.find(passage.tags, function(tag) { return tag === "no-panelize" }));
+				return !passage.tags.includes('not-panel');
 			} else {
-				return !!(_.find(passage.tags, function(tag) { return tag === "panelize" }))
+				return passage.tags.includes('panel');
 			}
 		})();
 
 		if(shouldPanelize) {
 			passage.source = `<%$( function(){ window.passage.panelize(function initializer(p) { ${passage.source} }); }); %>`;
-			passage.tags = _(passage.tags).without("panelize"); // HACK: so we don't accidentally do this twice
 		}
 
 		const passageNameClass = passage.passageDomName();
@@ -305,15 +302,21 @@ ${e.stack}`)
 
 		 // -- PASSAGE RENDERING --
 
+ 		const jinxSetToAutoReplace = window.jinx.getSetting('autoReplace');
+ 		const passageTaggedReplace = passage.tags.includes("replace");
+		const passageTaggedKeep = passage.tags.includes("keep");
+		const shouldReplace = !!(jinxSetToAutoReplace && !passageTaggedKeep || !jinxSetToAutoReplace && passageTaggedReplace)
+
 		if (shouldReplace) {
 			$('#passages').empty();
 		}
 
-		// $('#passages').append('<div class="passage ' + passageNameClass + '" historyIndex="' + historyIndex + '">' + rendered + '</div>');
 		$('#passages').append(`<div class="passage ${passageNameClass}${passageCustomClasses}" historyIndex="${historyIndex}">${rendered}</div>`);
 
-		var newPassage = $('.'+passageNameClass+'[historyIndex='+historyIndex+']')
+		var newPassage = $(`.${passageNameClass}[historyIndex=${historyIndex}]`)
 		var activePassage = $('.active');
+
+		//this is wand stuff and shouldn't be here
 
 		if (activePassage) {
 			activePassage.removeClass("active");

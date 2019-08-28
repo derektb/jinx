@@ -21,21 +21,16 @@ var jQuery = require('jquery');
 **/
 
 function render(source) {
-	// See below for the definition of readyFunc.
 
 	var result = _.template(source)({ s: window.story.state, $: readyFunc });
-
-	// Remove /* comments */
 
 	result = result.replace(/\/\*.*\*\//g, '');
 
 	// Remove // comments
 	// to avoid clashes with URLs, lines must start with these
-
 	result = result.replace(/^\/\/.*(\r\n?|\n)/g, '');
 
 	// [\ndiv\n]{.withClass#andID}
-
 	var divRegexp = /\[([\r\n+])([^\]]*?)([\r\n+])\]\{(.*?)\}/g;
 	var divRenderer = function(wholeMatch, startBr, source, endBr, selector) {
 		return renderEl(
@@ -50,7 +45,6 @@ function render(source) {
 	}
 
 	// [span]{.withClass#andID}
-
 	var spanRegexp = /\[(.*?)\]\{(.*?)\}/g;
 	var spanRenderer = function(wholeMatch, source, selector) {
 		return renderEl('span', source, selector);
@@ -61,7 +55,6 @@ function render(source) {
 	}
 
 	// [[links]]
-
 	result = result.replace(/\[\[(.*?)\]\]/g, function(match, target) {
 		var display = target;
 
@@ -95,7 +88,6 @@ function render(source) {
 		}
 
 		// does this look like an external link?
-
 		if (/^\w+:\/\/\/?\w/i.test(target)) {
 			return '<a href="' + target + '">' + display + '</a>';
 		}
@@ -251,7 +243,7 @@ _.extend(Passage.prototype, {
 
 	render: function() {
 		return render(_.unescape(this.source));
-	}
+	},
 });
 
 module.exports = Passage;

@@ -89,6 +89,9 @@ Thumbs.db
 *.tar
 *.zip
 
+# ignore builds produced in /build
+/build/*
+
 # -------------------------
 # BEGIN Whitelisted Files
 # -------------------------

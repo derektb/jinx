@@ -1,6 +1,6 @@
 {
   "name": "jinx",
-  "version": "0.7.1",
+  "version": "0.7.2-2",
   "description": "A Twine story format for making interactive comics",
   "author": "Derek Timm-Brock <derektimmbrock@gmail.com>",
   "license": "MIT",
