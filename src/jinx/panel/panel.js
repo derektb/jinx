@@ -29,12 +29,12 @@ var Panel = function(name) {
     name: "",
     id: undefined
   }
-  this.__selectors = {
+  this.selectors = {
     passage: "",
     panel: ""
   }
   this.$ = function(){
-    return $(this.__selectors.panel);
+    return $(this.selectors.panel);
   }
 
   this.__isComplete = false;
@@ -44,6 +44,9 @@ var Panel = function(name) {
   this.art = new PanelArt(this.name);
   var art = this.art;
 
+
+  // TODO: Odd that this is in the panel and not in PanelArt, but ok
+  // maybe in the future, the api will be p.art.addAssets;
   this.addArtAssets = function __Panel__addArtAssets () {
     var assets;
 
@@ -70,12 +73,17 @@ var Panel = function(name) {
   // --- RENDERER ---
 
   this.renderer = new PanelRenderer();
+  this.renderer.panel = this;
   this.renderer.panelArt = this.art;
-  this.renderer._parentPanel = this;
+  this.renderer.selectors = this.selectors;
 
   // --- LAYERS ---
 
   this.layers = [];
+
+  // maybe this.layers = new PanelLayers
+  // this.layers.add(layer, layer, ...)
+  // note: var args = [...arguments];
 
   this.addLayer = function __Panel__addLayer (name) {
     var newLayerName;
@@ -104,115 +112,18 @@ var Panel = function(name) {
   // --- SEQUENCE ---
 
   this.seq = new Sequence();
-  // TODO: This sucks.  Possibly: this.step = StepCreator(this.seq);
+  // TODO: This below sucks.  Possibly: this.step = StepCreator(this.seq);
+  // or this.step = new StepCreator(); this.step.seq = this.seq;
   this.step = {};
   this.step.create = _.bind(this.seq.addStep, this.seq);
 
   // --- DESTINATIONS ---
 
+  // TODO: an actual Destination module!  with nonlinear destinations!  exciting!
   this.destination = {};
   this.destination.main = ""; // a Twine 2 syntax link
 
   //  -----  WORKHORSE METHODS  -----
-
-  // TODO: This should be a part of the Renderer, not a part of the Panel
-  this.setupStructure = function(passage) {
-    var panelDiv;
-
-    if (!passage) {
-      throw new Error(
-        "Panel.setupStructure(): No Parameter supplied.  Panel.setupStructure() must take the selector of the DOM element in which the panel elements will be created."
-      );
-    }
-
-    panelDiv = document.createElement('div');
-    panelDiv.className = "panel";
-
-    if ($(passage).length == 0) {
-      throw new Error( "Panel.setupStructure: No passage div can be found in the DOM that maches the passed selector: " + passage+ ".\n\n(Panels selector errors may be caused by Panelizing before the document is ready.  Try wrapping your Panelize in Snowman's $() helper )" );
-    } else {
-      $(passage).append(panelDiv);
-    }
-  };
-
-  // TODO: Renderer
-  this.layerize = function(specificLayer) {
-    var layers, $panel;
-    var createLayer;
-
-    $panel = this.__selectors.panel;
-    layers = this.layers;
-
-    if ($($panel).length == 0) {
-      throw new Error( "Panel.layerize(): No panel can be found that maches the passed selector: " + $panel + ".\n\n(Panels selector errors may be caused by Panelizing before the document is ready.  Try wrapping your Panelize in Snowman's $() helper )" );
-    }
-
-    createLayer = function __layerize__createLayer(name) {
-      var newLayer, layerExists;
-
-      newLayer = document.createElement("div");
-      newLayer.className = "layer " + name;
-
-      layerExists = $($panel + " .layer." + name).length;
-      if (!layerExists) {
-        $($panel).append(newLayer);
-      }
-    }
-
-    if(specificLayer) {
-      createLayer(specificLayer)
-    } else {
-      if(layers.length == 0) {
-        layers.push("default");
-      }
-
-      _.forEach(layers, _.bind(function(layerName) {
-          createLayer(layerName);
-        }, this)
-      );
-    }
-  };
-
-  // TODO: Having this in the panel is sort of bizarre; it should definitely be in the Wand.  It's not clear whether we even use wandize
-  this.wandize = function() {
-    var wand, wandExists, latestInstance;
-
-    latestInstance = window.story.history.length - 1; // the dumb version.
-    // it's also true, though.  That will probably always be correct?  But it smells funny to assume so.
-
-    // latestInstance = _.wiz_findInHistory() // exists but isn't a thing yet.
-
-    wand = $("#wand");
-    wandExists = wand.length; // semantics!
-
-    if(wandExists) {
-      wand.appendTo(".passage.active[historyIndex="+latestInstance+"] .panel");
-    } else {
-      wand = document.createElement("div")
-      wand.id = "wand"
-
-      var latestPanel = $(".passage.active[historyIndex="+latestInstance+"] .panel")
-      if (latestPanel.length) {
-        latestPanel.append(wand);
-      } else {
-        throw new Error("Wandize couldn't find an active passage of history index "+latestInstance+" bearing a panel.  Sorry!")
-      }
-    }
-
-    // this next bit is all highly suspect
-    if(this.__isComplete) {
-      if(!this.destination.main) {
-        throw new Error("No main destination set.")
-      }
-      // this part immediately transforms the wand into a link to the next passage by Passage.render()-ing the passage link string stored in the destination
-      $("#wand").html(Passage.render(this.destination.main)).removeClass("incomplete").addClass("complete");;
-      $("#wand a").unwrap(); // removes vestigial p tag that accompanies this
-    } else {
-      // this, I assure you, is the most suspect of all
-      $('#wand').html("<a href='javascript:void(0)' onClick='window.passage.panel.advance()'></a>").removeClass("complete").addClass("incomplete");
-      // the onclick is moderately naughty.
-    }
-  };
 
 
   this.advance = function() {
@@ -243,16 +154,13 @@ var Panel = function(name) {
 _.extend(Passage.prototype, {
   // TODO: Panelize should be broken apart to some degree
   panelize: function(initializeData){
-    var panel, passageSelector, panelSelector;
+    var panel = this.panel;
+    var passageSelector, panelSelector;
 
-    if(this.panel) {
-      // check to see if this passage already has a panel
-      panel = this.panel;
+    if(panel && !this.tags.includes("live-panel")) {
       panel.refresh();
     }
     else {
-      // begin panel creation:
-      // (if we don't have a panel, we make a new one)
       this.panel = new Panel(this.name);
       panel = this.panel;
 
@@ -265,27 +173,24 @@ _.extend(Passage.prototype, {
           initializeData(panel);
         }
       } else {
-        console.log( "Panel.panelize(): You Panelized the panel of Passage \"" + this.name + "\" without passing a function to set up its data.  This is allowed, but not recommended; a Panel's data should be set up in its entirety during Panelization.")
+        throw new Error(
+          'No initialization function given to Panel.panelize()'
+        )
       }
-
-      // create default info?  This really depends on how static panels are, and whether you're going to be configuring them some more later on
     }
 
     // Render Panel In Passage
 
-    // panel.__selectors.passage = passageSelector = ".passage.active." + this.passageDomName() + "[historyIndex=\'"+(window.story.history.length-1)+"\']";
-    // panel.__selectors.panel = panelSelector = passageSelector + " .panel";
-    panel.__selectors.passage = passageSelector = "."+this.passageDomName() + "[historyIndex=\'"+(window.story.history.length-1)+"\']";
-    panel.__selectors.panel = panelSelector = passageSelector + " .panel";
-    panel.renderer.selectors = panel.__selectors;
+    panel.selectors.passage = `.${this.passageDomName()}[historyIndex='${window.story.history.length-1}']`;
+    panel.selectors.panel = `${panel.selectors.passage} .panel`;
 
-    panel.setupStructure(passageSelector);
-    panel.layerize();
+    panel.renderer.setupStructure(panel.selectors.passage); // creates "panel" div within rendered passage div
+    panel.renderer.setupLayers();
     // stick the wand on the panel, or create one.
     panel.advance();
 
     $.event.trigger('panelized', panel);
-    $(document).on("click", panelSelector+".wand.active", function() {
+    $(document).on("click", panel.selectors.panel+".wand.active", function() {
       panel.$().trigger('panel-clicked', panel);
     })
     return panel;

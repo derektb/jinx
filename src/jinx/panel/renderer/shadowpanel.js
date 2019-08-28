@@ -3,7 +3,7 @@ const $ = require('jquery');
 const ShadowAsset = require('ShadowAsset');
 const ShadowLayer = require('ShadowLayer');
 
-var ShadowPanel = function() {
+var ShadowPanel = function(id) {
   /**
    @property _layers
 
@@ -15,7 +15,8 @@ var ShadowPanel = function() {
   /**
    @property _loadingAssets
 
-   A container for all the assets which have been instantiated but have not yet been loaded.
+   A container for all the assets which have been instantiated but have not
+   yet been loaded.
   **/
 
   this._loadingAssets = [];
@@ -23,10 +24,11 @@ var ShadowPanel = function() {
   /**
    @property rendererId
 
-   When a shadowPanel is created by the renderer, the renderer gives it its ID number, so that the ShadowPanel can send it smoke signals.
+   When a shadowPanel is created by the renderer, the renderer gives it its
+   ID number, so that the ShadowPanel can send it smoke signals.
   **/
 
-  this.rendererId = undefined;
+  this.rendererId = id;
 
   /**
    @method layer
@@ -46,7 +48,8 @@ var ShadowPanel = function() {
   /**
    @method asset
 
-   Finds the first instance of an asset matching the query param anywhere in the ShadowPanel.
+   Finds the first instance of an asset matching the query param anywhere
+   in the ShadowPanel.
   **/
 
   this.asset = function(assetNameOrId, includeLayer) {

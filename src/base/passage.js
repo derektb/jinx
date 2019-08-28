@@ -211,6 +211,19 @@ var Passage = function(id, name, tags, source) {
 	**/
 
 	this.tags = tags;
+  this.getTagClasses = function(){
+    const classTags = _(this.tags.filter(
+      (tag) => { return tag[0] === "." }
+    ));
+
+    if (classTags.length) {
+      const classNames = classTags.map(
+        (tag) => { return tag.slice(1) }
+      ); // strip period
+
+      return " "+classNames.join(" ");
+    } else return "";
+  }
 
 	/**
 	 The passage source code.
@@ -244,6 +257,18 @@ _.extend(Passage.prototype, {
 	render: function() {
 		return render(_.unescape(this.source));
 	},
+
+  renderPanel: function() {
+    return render(_.unescape(`
+<%
+  $( function(){
+    window.passage.panelize(function initializer(p) {
+      ${this.source}
+    });
+  });
+%>
+    `))
+  }
 });
 
 module.exports = Passage;

@@ -262,66 +262,46 @@ _.extend(Story.prototype, {
 
 		// --- JINX PANEL PREPARATIONS ---
 
-		const shouldPanelize = (function(){
-			if (passage.panel) {
-				return false;
-			}
-
-			const autoPanelize = window.jinx.getSetting('autoPanelize');
-			if (autoPanelize) {
-				return !passage.tags.includes('not-panel');
-			} else {
-				return passage.tags.includes('panel');
-			}
-		})();
-
-		if(shouldPanelize) {
-			passage.source = `<%$( function(){ window.passage.panelize(function initializer(p) { ${passage.source} }); }); %>`;
-		}
-
-		const passageNameClass = passage.passageDomName();
-		const passageCustomClasses = (function(){
-			const classTags = _(passage.tags).filter((tag)=>{ return tag[0] === "." });
-			if (classTags.length) {
-				const classNames = classTags.map((tag)=>{ return tag.slice(1) });
-				return " "+classNames.join(" ");
-			}
-			return "";
-		})()
-		const historyIndex = _.wiz_findInHistory(passage.id)
-
 		var rendered;
+
+		const jinxAutoPanelize = window.jinx.getSetting('autoPanelize')
+		const shouldPanelize = !!(
+			jinxAutoPanelize && !passage.tags.includes('not-panel')
+			|| !jinxAutoPanelize && passage.tags.includes('panel')
+		);
+
 		try {
-			rendered = passage.render()
+			if (shouldPanelize) {
+				rendered = passage.renderPanel()
+			} else {
+				rendered = passage.render()
+			}
 		} catch (e) {
-			throw new Error(
-`Some sort of rendering issue with passage "${passage.name}":
+			throw new Error(`Some sort of rendering issue with passage "${passage.name}":
 ---
 ${e.stack}`)
 		}
 
 		 // -- PASSAGE RENDERING --
 
- 		const jinxSetToAutoReplace = window.jinx.getSetting('autoReplace');
+		 // should replace?
+ 		const jinxAutoReplace = window.jinx.getSetting('autoReplace');
  		const passageTaggedReplace = passage.tags.includes("replace");
 		const passageTaggedKeep = passage.tags.includes("keep");
-		const shouldReplace = !!(jinxSetToAutoReplace && !passageTaggedKeep || !jinxSetToAutoReplace && passageTaggedReplace)
+		const shouldReplace = !!(
+			jinxAutoReplace && !passageTaggedKeep
+			|| !jinxAutoReplace && passageTaggedReplace
+		);
 
 		if (shouldReplace) {
 			$('#passages').empty();
 		}
 
+		const passageNameClass = passage.passageDomName();
+		const passageCustomClasses = passage.getTagClasses();
+		const historyIndex = _.wiz_findInHistory(passage.id)
+
 		$('#passages').append(`<div class="passage ${passageNameClass}${passageCustomClasses}" historyIndex="${historyIndex}">${rendered}</div>`);
-
-		var newPassage = $(`.${passageNameClass}[historyIndex=${historyIndex}]`)
-		var activePassage = $('.active');
-
-		//this is wand stuff and shouldn't be here
-
-		if (activePassage) {
-			activePassage.removeClass("active");
-		}
-		newPassage.addClass("active");
 
 		/**
 		 Triggered after a passage has been shown onscreen, and is now

@@ -361,6 +361,29 @@
       "testName": "ArtAssets With Custom Classes",
       "testDescription": "Art assets may now be created with user-defined classnames as an array of strings called classNames on the artasset.",
       "passing": true
+    },
+
+    {
+      "name": "live-panel",
+      "tags": "replace panel live-panel",
+      "version": "0.7",
+
+      "content": "0_7/live-panel.js",
+
+      "testName": "Live Panel",
+      "testDescription": "This is a live panel; it re-panelizes every time it is displayed.  In its panelization function it increases a variable on the state.  This number should increase every time you visit this panel.",
+      "passing": false
+    },
+    {
+      "name": "live-panel-control",
+      "tags": "replace panel",
+      "version": "0.7",
+
+      "content": "0_7/live-panel-control.js",
+
+      "testName": "Live Panel (Control Version)",
+      "testDescription": "This is the control version of the live panel; this panel is exactly the same as the other, except it isn't a 'live-panel'.  While its includes the increase code, it will only ever be 1, its initial state.",
+      "passing": false
     }
   ]
 }

@@ -13,41 +13,89 @@ var PanelRenderer = function() {
   var _renderer = this;
 
   this.id = _.thumbprint(10);
+  this.panel = undefined; // bequeathed by panel when renderer created
+  this.panelArt = undefined; // ditto, the panel's PanelArt object
+  this.selectors = undefined; // ditto
 
-  this.assetRecords = new ShadowPanel();
-    this.assetRecords.rendererId = this.id;
+  this.assetRecords = new ShadowPanel(this.id);
+  this.refresh = function() {
+    this.assetRecords = new ShadowPanel(this.id);
+  }
 
-  this.updateAssetRecords = function(panel) {
+  this.updateAssetRecords = function(shadowPanel) {
     if (panel instanceof ShadowPanel) {
-      this.assetRecords = panel;
+      this.assetRecords = shadowPanel;
     } else {
       throw new Error("updateAssetRecords must be passed a ShadowPanel")
     }
   }
 
-  this.refresh = function() {
-    this.assetRecords = new ShadowPanel();
-    this.assetRecords.rendererId = this.id;
-  }
+  /* SETUP */
+
+  // TODO: This should be a part of the Renderer, not a part of the Panel
+  this.setupStructure = function(passageSel) {
+    var panelDiv;
+
+    if (!passageSel) {
+      throw new Error(
+        "Panel.setupStructure(): No Parameter supplied.  Panel.setupStructure() must take the selector of the DOM element in which the panel elements will be created."
+      );
+    }
+
+    panelDiv = document.createElement('div');
+    panelDiv.className = "panel";
+
+    if ($(passageSel).length == 0) {
+      throw new Error( "Panel.setupStructure: No passage div can be found in the DOM that maches the passed selector: " + passage+ ".\n\n(Panels selector errors may be caused by Panelizing before the document is ready." );
+    } else {
+      $(passageSel).append(panelDiv);
+    }
+  };
+
+  // TODO: Renderer
+  this.setupLayers = function(specificLayer) {
+    var layers, panelSel;
+    var createLayer;
+
+    panelSel = this.selectors.panel;
+    layers = this.panel.layers;
+
+    if ($(panelSel).length == 0) {
+      throw new Error( "Panel.layerize(): No panel can be found that maches the passed selector: " + panelSel + ".\n\n(Panels selector errors may be caused by Panelizing before the document is ready.  Try wrapping your Panelize in Snowman's $() helper )" );
+    }
+
+    createLayer = function __layerize__createLayer(name) {
+      var newLayer, layerExists;
+
+      newLayer = document.createElement("div");
+      newLayer.className = "layer " + name;
+
+      layerExists = $(panelSel + " .layer." + name).length;
+      if (!layerExists) {
+        $(panelSel).append(newLayer);
+      }
+    }
+
+    if(specificLayer) {
+      createLayer(specificLayer)
+    } else {
+      if(layers.length == 0) {
+        layers.push("default");
+      }
+
+      _.forEach(layers, _.bind(function(layerName) {
+          createLayer(layerName);
+        }, this)
+      );
+    }
+  };
 
   /* DOM MANIPULATION */
 
-  this.panelArt = undefined;
-
   this.getArtAsset = function(ref) {
     var name = (ref instanceof ShadowAsset) ? ref.name : ref;
-    return this.panelArt.assets[name];
+    return this.panel.art.assets[name];
   }
-
-  /**
-    The panel's selectors, provided during Panelization.
-
-    @property selectors {object}
-  **/
-  this.selectors = {
-    passage: null,
-    panel: null
-  };
 
   this.getArtElement = function(ref){
     var rName, rLayer, rId, sEl, element;
@@ -63,7 +111,7 @@ var PanelRenderer = function() {
       rId = ref.id;
     }
 
-    sEl = this.selectors.panel + " .asset[assetId='"+rId+"']";
+    sEl = `${this.selectors.panel} .asset[assetId='${rId}']`;
     element = document.querySelector(sEl);
 
     if(!element && (rName && rLayer && rId)) {
