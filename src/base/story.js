@@ -7,131 +7,59 @@ var LZString = require('lz-string');
 /**
 An object representing the entire story. After the document has completed
 loading, an instance of this class will be available at `window.story`.
-
-@module Story
-@class Story
-@constructor
 **/
 var Story = function(el) {
-	// set up basic properties
-
+	// -- BASIC PROPERTIES --
 	this.el = el;
 
-	/**
-	 The name of the story.
-	 @property name
-	 @type String
-	 @readonly
-	**/
-	this.name = el.attr('name');
+	this.name = el.attr('name'); // The name of the story.
+	this.startPassage = parseInt(el.attr('startnode')); // The ID of the first passage to be displayed.
+	this.creator = el.attr('creator'); // The program that created this story.
+	this.creatorVersion = el.attr('creator-version'); // The version of the program used to create this story.
 
-	/**
-	 The ID of the first passage to be displayed.
-	 @property startPassage
-	 @type Number
-	 @readonly
-	**/
-	this.startPassage = parseInt(el.attr('startnode'));
-
-	/**
-	 The program that created this story.
-
-	 @property creator
-	 @type String
-	 @readonly
-	**/
-
-	this.creator = el.attr('creator');
-
-	/**
-	 The version of the program used to create this story.
-
-	 @property creatorVersion
-	 @type String
-	 @readOnly
-	**/
-
-	this.creatorVersion = el.attr('creator-version');
-
-	// initialize history and state
+	// -- INITIALIZE HISTORY AND STATE --
 
 	/**
 	 An array of passage IDs, one for each passage viewed during the current
-	 session.
-
-	 @property history
-	 @type Array
-	 @readOnly
-	**/
-
+	 session. **/
 	this.history = [];
 
 	/**
 	 An object that stores data that persists across a single user session.
-	 Any other variables will not survive the user pressing back or forward.
-
-	 @property state
-	 @type Object
-	**/
-
+	 Any other variables will not survive the user pressing back or forward. **/
 	this.state = {};
 
 	/**
 	 The name of the last checkpoint set. If none has been set, this is an
-	 empty string.
-
-	 @property checkpointName
-	 @type String
-	 @readonly
-	**/
-
+	 empty string. **/
 	this.checkpointName = '';
 
 	/**
 	 If set to true, then any JavaScript errors are ignored -- normally, play
-	 would end with a message shown to the user.
-
-	 @property ignoreErrors
-	 @type Boolean
-	**/
-
+	 would end with a message shown to the user. **/
 	this.ignoreErrors = false;
 
 	/**
 	 The message shown to users when there is an error and ignoreErrors is not
 	 true. Any %s in the message will be interpolated as the actual error
-	 messsage.
-
-	 @property errorMessage
-	 @type String
-	**/
-
+	 message. **/
 	this.errorMessage = '\u26a0 %s';
 
 	/**
 	 Mainly for internal use, this records whether the current passage contains
-	 a checkpoint.
-
-	 @property atCheckpoint
-	 @type Boolean
-	 @private
-	**/
-
+	 a checkpoint. **/
 	this.atCheckpoint = false;
 
-	// create passage objects
+	// -- CREATE PASSAGE OBJECTS --
 
 	/**
-	 An array of all passages, indexed by ID.
-
-	 @property passages
-	 @type Array
-	**/
-
+	 An array of all passages, indexed by ID. **/
 	this.passages = [];
 
 	var p = this.passages;
 
+	/**
+	 Read Twine passage data and create Passages from them **/
 	el.children('tw-passagedata').each(function(el) {
 		var $t = $(this);
 		var id = parseInt($t.attr('pid'));
@@ -147,9 +75,6 @@ var Story = function(el) {
 
 	/**
 	 An array of user-specific scripts to run when the story is begun.
-
-	 @property userScripts
-	 @type Array
 	**/
 
 	this.userScripts = _.map(
@@ -176,14 +101,9 @@ var Story = function(el) {
 
 _.extend(Story.prototype, {
 	/**
-	 Begins playing this story.
-
-	 @method start
-	**/
-
+	 Begins playing this story. **/
 	start: function() {
 		// set up history event handler
-
 		$(window).on('popstate', function(event) {
 			var state = event.originalEvent.state;
 
@@ -202,7 +122,6 @@ _.extend(Story.prototype, {
 		}.bind(this));
 
 		// set up passage link handler
-
 		$('body').on('click', 'a[data-passage]', function (e) {
 			this.show(_.unescape(
 				$(e.target).closest('[data-passage]').attr('data-passage')
@@ -210,13 +129,11 @@ _.extend(Story.prototype, {
 		}.bind(this));
 
 		// set up hash change handler for save/restore
-
 		$(window).on('hashchange', function() {
 			this.restore(window.location.hash.replace('#', ''));
 		}.bind(this));
 
 		// set up error handler
-
 		window.onerror = function(message, url, line) {
 			if (! this.errorMessage || typeof(this.errorMessage) != 'string') {
 				this.errorMessage = Story.prototype.errorMessage;
@@ -238,13 +155,11 @@ _.extend(Story.prototype, {
 		}.bind(this);
 
 		// activate user styles
-
 		_.each(this.userStyles, function(style) {
 			$('body').append('<style>' + style + '</style>');
 		});
 
 		// run user scripts
-
 		_.each(this.userScripts, function(script) {
 			eval(script);
 		});
@@ -252,14 +167,10 @@ _.extend(Story.prototype, {
 		/**
 		 Triggered when the story is finished loading, and right before
 		 the first passage is displayed. The story property of this event
-		 contains the story.
-
-		 @event startstory
-		**/
+		 contains the story.	**/
 		$.event.trigger('startstory', { story: this });
 
 		// try to restore based on the window hash if possible
-
 		if (window.location.hash === '' ||
 			!this.restore(window.location.hash.replace('#', ''))) {
 			// start the story; mark that we're at a checkpoint
@@ -270,13 +181,8 @@ _.extend(Story.prototype, {
 	},
 
 	/**
-	 Returns the Passage object corresponding to either an ID or name.
-	 If none exists, then it returns null.
-
-	 @method passage
-	 @param idOrName {String|Number} ID or name of the passage
-	 @return Passage object or null
-	**/
+	 Finds and returns the Passage object corresponding to either an ID or name.
+	 If none exists, then it returns null. **/
 	passage: function(idOrName) {
 		if (_.isNumber(idOrName)) {
 			return this.passages[idOrName];
@@ -288,17 +194,12 @@ _.extend(Story.prototype, {
 	},
 
 	/**
-	 Displays a passage on the page, replacing the current one. !! NOT ANy MORE !! If
-	 there is no passage by the name or ID passed, an exception is raised.
+	 Displays a passage on the page. If there is no passage by the
+	 name or ID passed, an exception is raised.
 
 	 Calling this immediately inside a passage (i.e. in its source code) will
 	 *not* display the other passage. Use Story.render() instead.
-
-	 @method show
-	 @param idOrName {String|Number} ID or name of the passage
-	 @param noHistory {Boolean} if true, then this will not be recorded in the story history
 	**/
-
 	show: function(idOrName, noHistory) {
 		var passage = this.passage(idOrName);
 
@@ -310,22 +211,17 @@ _.extend(Story.prototype, {
 
 		/**
 		 Triggered whenever a passage is about to be replaced onscreen with another.
-		 The passage being hidden is stored in the passage property of the event.
-
-		 @event hidepassage
-		**/
-
+		 The passage being hidden is stored in the passage property of the event. **/
 		$.event.trigger('hidepassage', { passage: window.passage });
 
 		/**
 		 Triggered whenever a passage is about to be shown onscreen.
-		 The passage being displayed is stored in the passage property of the event.
-
-		 @event showpassage
-		**/
-
+		 The passage being displayed is stored in the passage property of the event. **/
 		$.event.trigger('showpassage', { passage: passage });
 
+		/**
+		 If noHistory, this passage will not be added to the history.
+		 Otherwise: **/
 		if (!noHistory) {
 			this.history.push(passage.id);
 
@@ -354,14 +250,9 @@ _.extend(Story.prototype, {
 				}
 			}
 			catch (e) {
-				// this may fail due to security restrictions in the browser
-
 				/**
 				 Triggered whenever a checkpoint fails to be saved to browser history.
-
-				 @event checkpointfailed
-				**/
-
+				 (the above may fail due to security restrictions in the browser) **/
 				$.event.trigger('checkpointfailed', { error: e });
 			}
 		}
@@ -369,15 +260,10 @@ _.extend(Story.prototype, {
 		window.passage = passage;
 		this.atCheckpoint = false;
 
-		// --- derek / jinx --- weird passage code starts here.
-		// THIS IS WHERE PASSAGES GET ADDED TO THE THING
+		// --- JINX PANEL PREPARATIONS ---
 		var jinxAutoReplace = window.jinx.getSetting('autoReplace');
 		var taggedReplace = Boolean(_.find(passage.tags, function(tag) { return tag === "replace" }));
 		var shouldReplace = jinxAutoReplace ? !taggedReplace : taggedReplace;
-
-		if (shouldReplace) {
-			$('#passages').empty();
-		}
 
 		const shouldPanelize = (function(){
 			if (passage.panel) {
@@ -417,6 +303,12 @@ _.extend(Story.prototype, {
 ${e.stack}`)
 		}
 
+		 // -- PASSAGE RENDERING --
+
+		if (shouldReplace) {
+			$('#passages').empty();
+		}
+
 		// $('#passages').append('<div class="passage ' + passageNameClass + '" historyIndex="' + historyIndex + '">' + rendered + '</div>');
 		$('#passages').append(`<div class="passage ${passageNameClass}${passageCustomClasses}" historyIndex="${historyIndex}">${rendered}</div>`);
 
@@ -431,24 +323,14 @@ ${e.stack}`)
 		/**
 		 Triggered after a passage has been shown onscreen, and is now
 		 displayed in the div with id passage. The passage being displayed is
-		 stored in the passage property of the event.
-
-		 @event showpassage:after
-		**/
-
+		 stored in the passage property of the event.	**/
 		$.event.trigger('showpassage:after', { passage: passage });
 	},
 
 	/**
 	 Returns the HTML source for a passage. This is most often used when
 	 embedding one passage inside another. In this instance, make sure to
-	 use <%= %> instead of <%- %> to avoid incorrectly encoding HTML entities.
-
-	 @method render
-	 @param idOrName {String|Number} ID or name of the passage
-	 @return {String} HTML source code
-	**/
-
+	 use <%= %> instead of <%- %> to avoid incorrectly encoding HTML entities. **/
 	render: function(idOrName) {
 		var passage = this.passage(idOrName);
 
@@ -462,12 +344,15 @@ ${e.stack}`)
 	/**
 	 Tries to add an entry in the browser history for the current story state.
 	 Remember, only variables set on this story's state variable are stored in
-	 the browser history.
+	 the browser history.	**/
 
-	 @method checkpoint
-	 @param name {String} checkpoint name, appears in history, optional
+	/** TODO: JINX HISTORY MANAGEMENT
+		Jinx currently fights with Snowman's built-in history management, mainly
+		because Snowman expected to have only one passage displayed at a time,
+		and Jinx displays multiple "passages" (as panels) at a time.
+
+		This should be addressed in future page-based versions of jinx
 	**/
-
 	checkpoint: function(name) {
 		if (name !== undefined) {
 			document.title = this.name + ': ' + name;
