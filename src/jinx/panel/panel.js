@@ -186,13 +186,18 @@ _.extend(Passage.prototype, {
 
     panel.renderer.setupStructure(panel.selectors.passage); // creates "panel" div within rendered passage div
     panel.renderer.setupLayers();
-    // stick the wand on the panel, or create one.
-    panel.advance();
 
+    /**
+      listener for this panel click --- probably shouldn't be here, and instead
+      be set up by the wand in respone to "panelized" event **/
     $.event.trigger('panelized', panel);
     $(document).on("click", panel.selectors.panel+".wand.active", function() {
       panel.$().trigger('panel-clicked', panel);
     })
+
+    // initial advance -- possibly also refactor to give to the wand.
+    panel.advance();
+
     return panel;
   },
 

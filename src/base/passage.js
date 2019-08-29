@@ -212,9 +212,9 @@ var Passage = function(id, name, tags, source) {
 
 	this.tags = tags;
   this.getTagClasses = function(){
-    const classTags = _(this.tags.filter(
+    const classTags = this.tags.filter(
       (tag) => { return tag[0] === "." }
-    ));
+    );
 
     if (classTags.length) {
       const classNames = classTags.map(
