@@ -157,7 +157,10 @@ _.extend(Passage.prototype, {
     var panel = this.panel;
     var passageSelector, panelSelector;
 
-    if(panel && !this.tags.includes("live-panel")) {
+    const isLivePanel = this.tags.includes("live-panel");
+    const isPreloading = window.jinx._isPreloading;
+
+    if(panel && !isLivePanel) {
       panel.refresh();
     }
     else {
@@ -179,24 +182,26 @@ _.extend(Passage.prototype, {
       }
     }
 
-    // Render Panel In Passage
+    if (!isPreloading) {
+      // Render Panel In Passage
 
-    panel.selectors.passage = `.${this.passageDomName()}[historyIndex='${window.story.history.length-1}']`;
-    panel.selectors.panel = `${panel.selectors.passage} .panel`;
+      panel.selectors.passage = `.${this.passageDomName()}[historyIndex='${window.story.history.length-1}']`;
+      panel.selectors.panel = `${panel.selectors.passage} .panel`;
 
-    panel.renderer.setupStructure(panel.selectors.passage); // creates "panel" div within rendered passage div
-    panel.renderer.setupLayers();
+      panel.renderer.setupStructure(panel.selectors.passage); // creates "panel" div within rendered passage div
+      panel.renderer.setupLayers();
 
-    /**
-      listener for this panel click --- probably shouldn't be here, and instead
-      be set up by the wand in respone to "panelized" event **/
-    $.event.trigger('panelized', panel);
-    $(document).on("click", panel.selectors.panel+".wand.active", function() {
-      panel.$().trigger('panel-clicked', panel);
-    })
+      /**
+        listener for this panel click --- probably shouldn't be here, and instead
+        be set up by the wand in respone to "panelized" event **/
+      $.event.trigger('panelized', panel);
+      $(document).on("click", panel.selectors.panel+".wand.active", function() {
+        panel.$().trigger('panel-clicked', panel);
+      })
 
-    // initial advance -- possibly also refactor to give to the wand.
-    panel.advance();
+      // initial advance -- possibly also refactor to give to the wand.
+      panel.advance();
+    }
 
     return panel;
   },
