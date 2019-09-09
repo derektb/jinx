@@ -42,33 +42,6 @@ var Panel = function(name) {
   // --- ART ---
 
   this.art = new PanelArt(this.name);
-  var art = this.art;
-
-
-  // TODO: Odd that this is in the panel and not in PanelArt, but ok
-  // maybe in the future, the api will be p.art.addAssets;
-  this.addArtAssets = function __Panel__addArtAssets () {
-    var assets;
-
-    assets = Array.from(arguments);
-
-    _.each(assets, function(asset) {
-      if(_(asset).isArray()) {
-        var assetName, assetPath;
-        assetName = asset[0];
-        assetPath = asset[1];
-
-        art.createAsset({
-          name: assetName,
-          src: assetPath
-        });
-      } else {
-        if(_(asset).isObject()) {
-          art.createAsset(asset);
-        }
-      }
-    })
-  }
 
   // --- RENDERER ---
 
@@ -76,10 +49,6 @@ var Panel = function(name) {
   this.renderer.panel = this;
   this.renderer.panelArt = this.art;
   this.renderer.selectors = this.selectors;
-
-  // --- LAYERS ---
-
-  this.layers = [];
 
   // maybe this.layers = new PanelLayers
   // this.layers.add(layer, layer, ...)

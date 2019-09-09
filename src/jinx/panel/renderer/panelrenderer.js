@@ -54,17 +54,14 @@ var PanelRenderer = function() {
 
   // TODO: Renderer
   this.setupLayers = function(specificLayer) {
-    var layers, panelSel;
-    var createLayer;
-
-    panelSel = this.selectors.panel;
-    layers = this.panel.layers;
+    const panelSel = this.selectors.panel;
+    const layers = this.panel.art.layers();
 
     if ($(panelSel).length == 0) {
       throw new Error( "Panel.layerize(): No panel can be found that maches the passed selector: " + panelSel + ".\n\n(Panels selector errors may be caused by Panelizing before the document is ready.  Try wrapping your Panelize in Snowman's $() helper )" );
     }
 
-    createLayer = function __layerize__createLayer(name) {
+    function renderLayer(name) {
       var newLayer, layerExists;
 
       newLayer = document.createElement("div");
@@ -77,14 +74,14 @@ var PanelRenderer = function() {
     }
 
     if(specificLayer) {
-      createLayer(specificLayer)
+      renderLayer(specificLayer)
     } else {
       if(layers.length == 0) {
         layers.push("default");
       }
 
       _.forEach(layers, _.bind(function(layerName) {
-          createLayer(layerName);
+          renderLayer(layerName);
         }, this)
       );
     }
@@ -94,7 +91,7 @@ var PanelRenderer = function() {
 
   this.getArtAsset = function(ref) {
     var name = (ref instanceof ShadowAsset) ? ref.name : ref;
-    return this.panel.art.assets[name];
+    return this.panel.art.getAsset(name);
   }
 
   this.getArtElement = function(ref){

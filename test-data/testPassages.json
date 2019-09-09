@@ -372,7 +372,7 @@
 
       "testName": "Live Panel",
       "testDescription": "This is a live panel; it re-panelizes every time it is displayed.  In its panelization function it increases a variable on the state.  This number should increase every time you visit this panel.",
-      "passing": false
+      "passing": true
     },
     {
       "name": "live-panel-control",
@@ -383,6 +383,17 @@
 
       "testName": "Live Panel (Control Version)",
       "testDescription": "This is the control version of the live panel; this panel is exactly the same as the other, except it isn't a 'live-panel'.  While its includes the increase code, it will only ever be 1, its initial state.",
+      "passing": true
+    },
+    {
+      "name": "new-api",
+      "tags": "replace panel",
+      "version": "0.7",
+
+      "content": "0_7/new-api.js",
+
+      "testName": "New API for Jinx release",
+      "testDescription": "Tests a basic panel for the Jinx API update: assets created with `p.art.assets()`, layers created with `p.layers()`, linear destination created with `p.destination.to()`",
       "passing": false
     }
   ]
