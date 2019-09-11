@@ -24,5 +24,5 @@ module.exports = function(grunt) {
 	});
 
 	grunt.registerTask('package', ['build:release', 'package:icon', 'package:format']);
-	grunt.registerTask('package:debug', ['build', 'package:icon', 'package:format']);
+	grunt.registerTask('package:debug', ['build:prerelease', 'package:icon', 'package:format']);
 };

@@ -181,10 +181,11 @@ module.exports = function(grunt) {
 	grunt.registerTask('build', ['browserify:default', 'cssmin', 'html:test']);
 	grunt.registerTask('build:dev', ['browserify:default', 'cssmin', 'bump:prerelease', 'html:test']);
 	grunt.registerTask('build:tdd', ['browserify:default']);
-	grunt.registerTask('build:release', ['browserify:release', 'cssmin', 'bump', 'html:release']);
+	grunt.registerTask('build:prerelease', ['browserify:default', 'cssmin', 'html:release']);
+	grunt.registerTask('build:release', ['bump', 'browserify:release', 'cssmin', 'html:release']);
 	grunt.registerTask('default', ['build']);
-	grunt.registerTask('dev', ['build:dev', 'watch']);
-	grunt.registerTask('dev:tdd', ['build:tdd', 'watch:tdd']);
+	grunt.registerTask('dev', ['watch']);
+	grunt.registerTask('dev:tdd', ['watch:tdd']);
 };
 
 function timestamp(opts) {
