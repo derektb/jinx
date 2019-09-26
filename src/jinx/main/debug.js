@@ -1,5 +1,7 @@
 var $ = require('jquery');
 
+// This is junk-ass code but it gets the job done
+
 var Debug = function(){
   // create debug passage
   var debugPassage = new Passage(Number(_.thumbprint(5,10)), "debug", "", debugPassageSrc);

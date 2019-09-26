@@ -2,6 +2,7 @@
 var $ = require('jquery');
 var _ = require('underscore');
 var Seqel = require('Seqel');
+// var StepData = require('StepData');
 const AssetAnimation = require('AssetAnimation');
 
 /**

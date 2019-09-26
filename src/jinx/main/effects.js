@@ -2,8 +2,8 @@ const _ = require('underscore');
 
 var Effects = function(){
   this.get = function(name){
-    if (_(this.__library).has(name)) {
-      var hash = this.__library[name]
+    if (_(this.library).has(name)) {
+      var hash = this.library[name]
       return this.instantiate(hash);
     } else {
       console.log(`No such effect named "${name}"`);
@@ -12,12 +12,12 @@ var Effects = function(){
   }
 
   this.create = function(name, hash){
-    this.__library[name] = hash;
+    this.library[name] = hash;
     return this.instantiate(hash);
   }
 
   this.remove = function(name){
-    this.__library[name] = null;
+    this.library[name] = null;
   }
 
   this.extend = function(name) { // (name, hash) || (name, newName, hash)
@@ -46,7 +46,7 @@ var Effects = function(){
     return this.instantiate(newHash);
   }
 
-  this.__library = { };
+  this.library = { };
 
   this.instantiate = function(hash) {
     var newHash = _.deepClone(hash);
@@ -75,6 +75,14 @@ var Effects = function(){
     easing: function easeOutCubic(t) { return 1+(--t)*t*t }
   });
   this.create("none", {});
+  this.create("hidden", {
+    fromOpacity: 0,
+    opacity: 0
+  });
+  this.create("hiddenGif", {
+    fromOpacity: 0.001,
+    opacity: 0.001
+  });
 }
 
 module.exports = Effects;

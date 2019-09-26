@@ -2,11 +2,6 @@ var _ = require('underscore');
 
 var PanelDestination = function() {
 
-  this.evaluateDestination = function() {
-    // fallback; possibly: by default, this is the same as a destination.end()
-    return ""; // returns a name / passage link, replaced by config
-  }
-
   // configuration functions
 // the way I've written this is BAD, i just did it whil I was tired
   this.to = function setupLinearDestination(passageName) {
@@ -37,11 +32,17 @@ var PanelDestination = function() {
     this.evaluateDestination = callback;
   }
 
-  // actual destination determiner
+  this.end = function setupEndDestination() {
+    // this panel ends here
+  }
 
   this.get = function getDestination() {
     return this.evaluateDestination();
   }
+
+  // default: if none specified, then panel ends
+
+  this.end()
 }
 
 module.exports = PanelDestination;

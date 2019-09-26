@@ -103,7 +103,8 @@ var Panel = function(name) {
       step = stepData.step;
       newPosIndex = stepData.data.lastIndex + 1;
       isFinalStep = stepData.data.isFinalStep;
-    stepAnimation = this.renderer.createStepAnimation(step);
+    stepAnimation = this.renderer.createStepAnimation(step); // ?? this should just use the StepData.
+    // stepAnimation = this.renderer.createStepAnimation(stepData)
 
     this.renderer.animate(stepAnimation);
 

@@ -20,12 +20,21 @@ var Wand = function() {
     }
   });
 
+  $(document).on('hidepanel', function(){
+    wand.away(); // hack 19 SEP 9
+  })
+
   $(document).on('panelized', function(e,panel){
+    wand.away(); // hack 19 SEP 9
     wand.over(panel);
   })
 
+  this.away = function() {
+    const existingWand = $('.wand');
+    existingWand ? existingWand.removeClass('active').removeClass('wand') : false;
+  }
+
   this.over = function(panel) {
-    $('.wand').removeClass('active').removeClass('wand');
     wand._target = panel;
     panel.$().addClass('wand');
   }
