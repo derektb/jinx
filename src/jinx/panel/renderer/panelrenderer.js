@@ -220,6 +220,28 @@ var PanelRenderer = function() {
 
   /* ANIMATION PIPELINE FUNCTIONS */
 
+  this.createStepAnimation = function(step) {
+    var stepAnimation;
+    var panel = this.assetRecords;
+
+    stepAnimation = new StepAnimation(step, this.assetRecords);
+
+    return stepAnimation;
+  }
+
+  this.createSnabbtSequence = function(assetAnimation, element) {
+    var beats, sequence, i;
+
+    sequence = [];
+    beats = assetAnimation.beats;
+
+    for (i = 0; i < beats.length; i++) {
+      var beat = beats[i];
+      sequence.push([element, beat]);
+    }
+
+    return sequence;
+  }
 
   this.animate = function(stepAnimation) {
     var sequences = [];
@@ -264,30 +286,6 @@ var PanelRenderer = function() {
     }  else {
       playAnimation();
     }
-  }
-
-  this.createStepAnimation = function(step) {
-    var stepAnimation;
-    var panel = this.assetRecords;
-
-    stepAnimation = new StepAnimation(step, this.assetRecords);
-
-    return stepAnimation;
-  }
-
-  this.createSnabbtSequence = function(assetAnimation, element) {
-    var beats, sequence, i;
-
-    sequence = [];
-    beats = assetAnimation.beats;
-
-    for (i = 0; i < beats.length; i++) {
-      var beat = beats[i];
-      sequence.push([element, beat]);
-    }
-
-    return sequence;
-  }
 
   this.postAnimationCleanup = function(stepAnimation) {
     _(stepAnimation.assets).each(function(assetAnimation) {
