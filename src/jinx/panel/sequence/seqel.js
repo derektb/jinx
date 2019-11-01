@@ -1,14 +1,10 @@
 var $ = require('jquery');
 var _ = require('underscore');
 
-/**
-  An object which represents all the information for a given step of an
-  iterative panel's Sequence.  More documentation is on the Trello.
-
-  @module Seqel
-  @class Seqel
-  @constructor
-**/
+/* TODO: Renaming: this is a BEAT, not a SEQEL.
+    a SEQEL is NOTHING.  The Sequence is a Sequence
+    of Steps and each Step is a series of Beats.
+*/
 var Seqel = function(data, jinx){
   var art, layer, effect, apply, sync, delay, flow, type, duration, xy, code;
 
@@ -33,15 +29,15 @@ var Seqel = function(data, jinx){
     }
   } */
 
-  art = data.art || data.asset ||  data.a;
+  art = data.art           ||  data.asset ||  data.a;
   layer = data.layer       ||  data.l;
-  apply = data.apply       ||  data.p  ||  jinx.getDefault('apply');
-  sync = data.sync         ||  data.s  ||  jinx.getDefault('sync');
   delay = data.delay       ||  data.d;
   duration = data.duration ||  data.u;
-  flow = data.flow         ||  data.f  ||  jinx.getDefault('flow');
+  apply = data.apply       ||  data.p     ||  jinx.getDefault('apply');
+  sync = data.sync         ||  data.s     ||  jinx.getDefault('sync');
+  flow = data.flow         ||  data.f     ||  jinx.getDefault('flow');
+  effect = data.effect     ||  data.e; // ||  jinx.getDefault(`${apply}Effect`)
   xy = data.xy;
-  effect = data.effect     ||  data.e;
   code = data.code;
   if(code) {
     apply = 'code';

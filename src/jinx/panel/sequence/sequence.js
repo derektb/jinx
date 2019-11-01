@@ -233,12 +233,12 @@ var Sequence = function(){
   this.addStep = function(){
     var seqels, setupSeqel, steps;
 
-    seqels = Array.from(arguments);
-
+    seqels = [...arguments];
+    debugger
     setupSeqel = function(hash, index) {
       var newSeqel;
       // I'm just gonna get cowboy on this motherfucker, I dunno if we need to play it safe with these heifers or what.  The seqel now knows what it needs, so like, fuck it, right?
-      if (index+1 == seqels.length) {
+      if (index+1 == seqels.length && !hash.flow) {
         // Automatically sets the last seqel's flow property to "stop" if it wasn't defined.  I should just rely on falsiness, but I dunno what you kids will get up to in the future
         if((hash.flow !== 'stop') || (hash.flow !== "end")) {
           hash.flow = "stop";

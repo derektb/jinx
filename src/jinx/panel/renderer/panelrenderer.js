@@ -197,8 +197,8 @@ var PanelRenderer = function() {
   }
 
   this.imageLoadHandler = function(element, image, ref){
-    var loadHandler = function(e){
-      console.log("loaded:", ref)
+    function loadHandler(e){
+      // console.log("loaded:", ref)
       image.removeEventListener("load", loadHandler);
       image.removeEventListener("error", loadErrorHandler);
 
@@ -206,7 +206,7 @@ var PanelRenderer = function() {
       _renderer.assetRecords.assetLoaded(ref);
     }
 
-    var loadErrorHandler = function(e){
+    function loadErrorHandler(e){
       console.log("not loaded:", ref)
       image.removeEventListener("load", loadHandler);
       image.removeEventListener("error", loadErrorHandler);

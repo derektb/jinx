@@ -16,6 +16,8 @@ const moduleAliases = {
 
 	, "Sequence": './src/jinx/panel/sequence/sequence.js'
 	, "Seqel": './src/jinx/panel/sequence/seqel.js'
+	, "StepData": './src/jinx/panel/sequence/step-data.js'
+	, "StepCreator": './src/jinx/panel/sequence/step-creator.js'
 
 	, "PanelRenderer": './src/jinx/panel/renderer/panelrenderer.js'
 	, "ShadowPanel": './src/jinx/panel/renderer/shadowpanel.js'

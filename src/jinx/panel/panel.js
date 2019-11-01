@@ -16,6 +16,7 @@ const _ = require('underscore');
 const Passage = require('Passage');
 const Seqel = require('Seqel');
 const Sequence = require('Sequence');
+const StepCreator = require('StepCreator');
 const PanelRenderer = require('PanelRenderer');
 const PanelArt = require('PanelArt');
 const ArtAsset = require('ArtAsset');
@@ -83,8 +84,9 @@ var Panel = function(name) {
   this.seq = new Sequence();
   // TODO: This below sucks.  Possibly: this.step = StepCreator(this.seq);
   // or this.step = new StepCreator(); this.step.seq = this.seq;
-  this.step = {};
-  this.step.create = _.bind(this.seq.addStep, this.seq);
+  this.step = new StepCreator();
+  this.step.seq = this.seq;
+  // this.step.create = _.bind(this.seq.addStep, this.seq);
 
   // --- DESTINATIONS ---
 
