@@ -16,4 +16,4 @@ p.step.create(
   {p: 'remove',     a: '1',  l: 'L'},
   {p: 'remove',     a: '2',  l: 'L'});
 
-p.destination = { main: '[[->Start]]' };
+p.destination.main = '[[->Start]]';

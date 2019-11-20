@@ -31,8 +31,6 @@ var PanelRenderer = function() {
   }
 
   /* SETUP */
-
-  // TODO: This should be a part of the Renderer, not a part of the Panel
   this.setupStructure = function(passageSel) {
     var panelDiv;
 
@@ -52,7 +50,6 @@ var PanelRenderer = function() {
     }
   };
 
-  // TODO: Renderer
   this.setupLayers = function(specificLayer) {
     const panelSel = this.selectors.panel;
     const layers = this.panel.art.layers();
@@ -218,7 +215,7 @@ var PanelRenderer = function() {
     image.addEventListener("error", loadErrorHandler);
   }
 
-  /* ANIMATION PIPELINE FUNCTIONS */
+  // /* ANIMATION PIPELINE FUNCTIONS */
 
   this.createStepAnimation = function(step) {
     var stepAnimation;
@@ -243,9 +240,20 @@ var PanelRenderer = function() {
     return sequence;
   }
 
+  /*
+
+    Animation event sequence:
+    jinx.animation.started       => start of process; setup stuff
+    jinx.animation.playing.begun => setup complete; actual animation plays
+    jinx.animation.playing.ended => actual animation finished playing
+    jinx.animation.finished         => enof process; cleanup stuff
+
+  */
+
   this.animate = function(stepAnimation) {
     var sequences = [];
-    $(document).trigger("animation-begun", stepAnimation);
+    $(document).trigger("animation-begun", stepAnimation); // deprecated
+    $(document).trigger("jinx.animation.started", stepAnimation);
 
     // hydrate assetAnimation with real assets and add to sequences
     _(stepAnimation.assets).each(_(function(assetAnimation) {
@@ -260,16 +268,21 @@ var PanelRenderer = function() {
 
     // play all snabbt sequences
     function playAnimation() {
-      $(document).trigger("started-playing-animation");
+      $(document).trigger("started-playing-animation"); // deprecated
+      $(document).trigger("jinx.animation.playing.begun");
       // console.log("all assets have loaded", Date.now(), _renderer.assetRecords)
       // HACK: Refactor this to be an actual function
       _(sequences).each(function(sequence) {
         snabbt.sequence(sequence);
       })
-      setTimeout(function() { $(document).trigger("ended-playing-animation"); }, stepAnimation.timing.end) // HACK: don't like setTimeout for this
+      setTimeout(function() {
+        $(document).trigger("ended-playing-animation"); // deprecated
+        $(document).trigger("jinx.animation.playing.ended");
+      }, stepAnimation.timing.end) // HACK: don't like setTimeout for this
 
-      $(document).one("ended-playing-animation", function() {
+      $(document).one("jinx.animation.playing.ended", function() {
         _renderer.postAnimationCleanup(stepAnimation);
+        $(document).trigger("jinx.animation.finished");
       })
     }
 
@@ -286,6 +299,7 @@ var PanelRenderer = function() {
     }  else {
       playAnimation();
     }
+  }
 
   this.postAnimationCleanup = function(stepAnimation) {
     _(stepAnimation.assets).each(function(assetAnimation) {

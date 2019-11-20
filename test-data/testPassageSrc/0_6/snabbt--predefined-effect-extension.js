@@ -38,4 +38,4 @@ p.step.create(
   {p: 'remove',  a: '1',  l: 'L',  e: jinx.effects.extend('fadeOut', { fromScale: [1,1], scale: [.8,.8], duration: 1000 }), s: 'after' } // not including a name will just extend and return a hash
 );
 
-p.destination = { main: '[[->Start]]' };
+p.destination.main = '[[->Start]]';

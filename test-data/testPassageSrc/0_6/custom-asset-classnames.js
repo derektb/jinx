@@ -45,4 +45,4 @@ p.step.create(
   {p: 'add',     a: 'blue',  l: 'text', xy: [10,150]},
 );
 
-p.destination = { main: '[[->Start]]' };
+p.destination.main = '[[->Start]]';

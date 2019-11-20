@@ -20,4 +20,4 @@ p.step.create(
   {p: 'remove',  a: '3',  l: 'L', d: 2000, e: "fadeOut", s: "with"},
 );
 
-p.destination = { main: '[[->Start]]' };
+p.destination.main = '[[->Start]]';

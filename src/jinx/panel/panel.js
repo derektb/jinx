@@ -18,6 +18,7 @@ const Seqel = require('Seqel');
 const Sequence = require('Sequence');
 const StepCreator = require('StepCreator');
 const PanelRenderer = require('PanelRenderer');
+const PanelDestination = require('PanelDestination');
 const PanelArt = require('PanelArt');
 const ArtAsset = require('ArtAsset');
 const Story = require('Story');
@@ -44,59 +45,44 @@ var Panel = function(name) {
 
   this.art = new PanelArt(this.name);
 
+  this.addArtAssets = function(){
+    console.warn("p.addArtAssets has been deprecated.  Use p.art.assets()")
+    this.art.assets.apply(this.art, [...arguments]);
+  }
+  this.addLayers = function(){
+    console.warn("p.addLayers has been deprecated.  Use p.art.layers()")
+    this.art.layers.apply(this.art, [...arguments]);
+  }
+
   // --- RENDERER ---
 
   this.renderer = new PanelRenderer();
+  // parent data down
   this.renderer.panel = this;
   this.renderer.panelArt = this.art;
   this.renderer.selectors = this.selectors;
 
-  // maybe this.layers = new PanelLayers
-  // this.layers.add(layer, layer, ...)
-  // note: var args = [...arguments];
-
-  this.addLayer = function __Panel__addLayer (name) {
-    var newLayerName;
-
-    if ( (!name) || (typeof name !== "string") ) {
-      throw new Error("Panel.addLayer: Bad argument passed to addLayer. Please give addLayer a string. Value:" + name)
-    }
-
-    newLayerName = _.wiz_validCssName(name);
-
-    if( _.find(this.layers, function(existingLayer, proposedNewLayer) { return existingLayer == proposedNewLayer; }) ) {
-      throw new Error("Panel.addLayer: The layer you're trying to add either has literally the same name as another layer, or does so when it gets processed into a CSS-friendly name. Sorry!\n\nProblem Name: " + newLayerName)
-    } else {
-      this.layers.push(newLayerName);
-    }
-  }
-
-  this.addLayers = function __Panel__addMultipleLayers() {
-    const layers = Array.from(arguments);
-
-    _.each(layers, (layerName)=> {
-      this.addLayer(layerName);
-    })
-  }
-
   // --- SEQUENCE ---
 
   this.seq = new Sequence();
-  // TODO: This below sucks.  Possibly: this.step = StepCreator(this.seq);
-  // or this.step = new StepCreator(); this.step.seq = this.seq;
   this.step = new StepCreator();
+  // parent data down
   this.step.seq = this.seq;
-  // this.step.create = _.bind(this.seq.addStep, this.seq);
 
   // --- DESTINATIONS ---
 
   // TODO: an actual Destination module!  with nonlinear destinations!  exciting!
-  this.destination = {};
-  this.destination.main = ""; // a Twine 2 syntax link
+  this.destination = new PanelDestination();
 
   //  -----  WORKHORSE METHODS  -----
+  /**
+    Having this as a naked function on the panel is starting to smell fishy,
+    especially in light of how much the above has been tidied up and
+    modularized.  Not sure where Advance goes to live if it ain't here.
 
-
+    I mean, maybe it does live here, given how many of the panel's modules
+    it touches.  I don't know.  Something to think about, though.
+  **/
   this.advance = function() {
     var stepData, stepAnimation,
     step, newPosIndex, isFinalStep;
@@ -105,7 +91,8 @@ var Panel = function(name) {
       step = stepData.step;
       newPosIndex = stepData.data.lastIndex + 1;
       isFinalStep = stepData.data.isFinalStep;
-    stepAnimation = this.renderer.createStepAnimation(step); // ?? this should just use the StepData.
+    // The above is weird. Should be refactored to just use the StepData.
+    stepAnimation = this.renderer.createStepAnimation(step);
     // stepAnimation = this.renderer.createStepAnimation(stepData)
 
     this.renderer.animate(stepAnimation);
@@ -113,6 +100,14 @@ var Panel = function(name) {
     // this should be evented somehow.  it temporarily fixes final advancement, though.
     this.seq.pos.index = newPosIndex;
     this.__isComplete = isFinalStep;
+    // possibly we do something like this
+    if (isFinalStep) {
+      if (this.destination.get() === -1) { // final panel
+        $.event.trigger("jinx.panel.is-final-panel")
+      } else {
+        $.event.trigger("jinx.panel.will-transition")
+      }
+    }
   }
 
   this.refresh = function(){
@@ -164,15 +159,10 @@ _.extend(Passage.prototype, {
       panel.renderer.setupLayers();
 
       /**
-        listener for this panel click --- probably shouldn't be here, and instead
-        be set up by the wand in respone to "panelized" event **/
+        "panelized" event---the wand will observe this and give the panel
+        its initial advancement
+      **/
       $.event.trigger('panelized', panel);
-      $(document).on("click", panel.selectors.panel+".wand.active", function() {
-        panel.$().trigger('panel-clicked', panel);
-      })
-
-      // initial advance -- possibly also refactor to give to the wand.
-      panel.advance();
     }
 
     return panel;

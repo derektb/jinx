@@ -59,4 +59,4 @@ p.step.create(
   }
 );
 
-p.destination = { main: '[[->Start]]' };
+p.destination.main = '[[->Start]]';

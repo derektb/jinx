@@ -23,4 +23,4 @@ p.step.create(
   {p: 'replace', a: '3',  l: 'L',  d: 1000, u: 1000, sync: 'after'}
 );
 
-p.destination = { main: '[[->Start]]' };
+p.destination.main = '[[->Start]]';

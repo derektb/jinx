@@ -95,18 +95,50 @@ tw-storydata {
 	background-color: #06f;
 }*/
 
-.wand {
+.panel.wand {
 	transition: border-bottom .1s;
 	border-bottom: 4px solid #ddd;
 }
 
-.wand.active {
+.panel.wand.active {
 	border-bottom-color: #f08;
 	cursor: pointer;
 }
 
-.wand.active:hover, .wand.loading {
+.panel.wand.active.will-transition {
+  border-bottom-color: #f80;
+}
+
+.panel.wand.active:hover, .panel.wand.loading {
 	border-bottom-width: 8px;
+}
+
+button.wand {
+  position: fixed;
+  bottom: 3em;
+  right: 3em;
+  width: 9em;
+  height: 9em;
+  border: none;
+  border-radius: 1em;
+  opacity: 0;
+  transition: opacity 0.5s ease-out;
+}
+
+button.wand.active, button.wand.loading {
+  opacity: 1;
+}
+
+button.wand.active {
+  background-color: #f08;
+}
+
+button.wand.active.will-transition {
+  background-color: #f80
+}
+
+button.wand.loading {
+  background-color: #ddd;
 }
 
 .layer.css-border {

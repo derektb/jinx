@@ -10,4 +10,4 @@ p.step.create(
   {p: 'add',     a: '1',  l: 'L'},
 );
 
-p.destination = { main: '[[->Start]]' };
+p.destination.main = '[[->Start]]';

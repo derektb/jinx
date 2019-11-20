@@ -51,4 +51,4 @@ p.step.create(
   {p: 'remove',  a: '3',  l: 'L',  e: "wibbleWobble"},
 );
 
-p.destination = { main: '[[->Start]]' };
+p.destination.main = '[[->Start]]';

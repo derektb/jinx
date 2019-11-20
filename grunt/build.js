@@ -8,6 +8,7 @@ const moduleAliases = {
 	, "Effects": './src/jinx/main/effects.js'
 	, "Settings": './src/jinx/main/settings.js'
 	, "Debug": './src/jinx/main/debug.js'
+  , "Utils": './src/jinx/main/utils.js'
 
 	, "Panel": './src/jinx/panel/panel.js'
 
@@ -19,12 +20,14 @@ const moduleAliases = {
 	, "StepData": './src/jinx/panel/sequence/step-data.js'
 	, "StepCreator": './src/jinx/panel/sequence/step-creator.js'
 
-	, "PanelRenderer": './src/jinx/panel/renderer/panelrenderer.js'
+  , "PanelRenderer": './src/jinx/panel/renderer/panelrenderer.js'
 	, "ShadowPanel": './src/jinx/panel/renderer/shadowpanel.js'
 	, "ShadowLayer": './src/jinx/panel/renderer/shadowlayer.js'
 	, "ShadowAsset": './src/jinx/panel/renderer/shadowasset.js'
 	, "AssetAnimation": './src/jinx/panel/renderer/asset-animation.js'
 	, "StepAnimation": './src/jinx/panel/renderer/step-animation.js'
+
+  , "PanelDestination": './src/jinx/panel/destination/paneldestination.js'
 }
 
 module.exports = function(grunt) {
@@ -181,7 +184,7 @@ module.exports = function(grunt) {
 	})
 
 	grunt.registerTask('build', ['browserify:default', 'cssmin', 'html:test']);
-	grunt.registerTask('build:dev', ['browserify:default', 'cssmin', 'bump:prerelease', 'html:test']);
+	grunt.registerTask('build:dev', ['bump:prerelease', 'browserify:default', 'cssmin', 'html:test']);
 	grunt.registerTask('build:tdd', ['browserify:default']);
 	grunt.registerTask('build:prerelease', ['browserify:default', 'cssmin', 'html:release']);
 	grunt.registerTask('build:release', ['bump', 'browserify:release', 'cssmin', 'html:release']);

@@ -394,7 +394,18 @@
 
       "testName": "New API for Jinx release",
       "testDescription": "Tests a basic panel for the Jinx API update: assets created with `p.art.assets()`, layers created with `p.layers()`, linear destination created with `p.destination.to()`",
-      "passing": false
+      "passing": true
+    },
+    {
+      "name": "static-wand",
+      "tags": "replace panel",
+      "version": "0.7",
+
+      "content": "0_7/static-wand.js",
+
+      "testName": "Static (Button) Wand",
+      "testDescription": "Tests creation and functionality of the static wand, which appears as a stationary button on the page",
+      "passing": true
     }
   ]
 }

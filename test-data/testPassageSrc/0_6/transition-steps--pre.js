@@ -19,4 +19,4 @@ p.transition.pre(
   {p: 'remove',     a: '3',   l: 'L',   u: 200}
 );
 
-p.destination = { main: '[[->manager-dog-dummy]]' };
+p.destination.main = '[[->manager-dog-dummy]]';

@@ -19,5 +19,5 @@ p.step.create(
   }
 )
 
-// p.destination.to("[[next]]")
-p.destination = { main: '[[->Start]]' };
+// p.destination.main = "[[Start]]" // regression
+p.destination.to("[[Start]]")
