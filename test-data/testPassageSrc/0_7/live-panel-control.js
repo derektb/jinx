@@ -1,4 +1,4 @@
-p.art.path("../numbers300/")
+p.art.path("../numbers300/");
 
 if (s.livePanelTestControl) {
   s.livePanelTestControl++;

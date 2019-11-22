@@ -8,7 +8,11 @@ const Wand = function() {
   const wand = this;
   // _target might be tightly coupled with a panel-wand paradigm
   this._target = undefined;
+  // state props
   this.isActive = false;
+  wand.expectTransition = false;
+  wand.shouldAutoTransition = false;
+
   this.minimumTimeForDeactivation = 100;
   // HACK: wand mode.  should go through jinx?  should detect when mode changes?
   this.wandMode = `panel`; // panel | button
@@ -40,7 +44,15 @@ const Wand = function() {
 
   /* MAIN EVENTS */
 
-  $(document).on(`click`, `.wand.active`, function(e) {
+  $(document).on(`click`, `.wand.active`, function(){
+    /*
+      this is kind of a hack, but the wand should listen
+      for the jinx event and not the regular click event
+    */
+    $(this).trigger(`jinx.panel.advance`)
+  })
+
+  $(document).on(`jinx.panel.advance`, function(e) {
     const panel = window.passage.panel;
 
     if (!_.isEqual(wand._target,panel)) {
@@ -59,8 +71,8 @@ const Wand = function() {
     wand.away(); // hack 19 SEP 9
   })
 
-  $(document).on('panelized', function(e,panel){
-    wand.expectTransition = false; // no expectations
+  $(document).on('jinx.panel.panelized', function(e,panel){
+    wand.clearState();
     wand.away();
     wand.over(panel);
     panel.advance(); // initial panel advance
@@ -86,11 +98,21 @@ const Wand = function() {
   }
 
   this.deactivate = function() {
+    wand.clearStyling();
     wand.clearState();
+  }
+
+  this.clearState = function(){
     wand.isActive = false;
+    wand.expectTransition = false;
+    wand.shouldAutoTransition = false;
   }
 
   /* PANEL-WAND STATE COMMUNICATION */
+
+  $(document).on("jinx.panel.should-auto-transition", function(){
+    wand.shouldAutoTransition = true;
+  })
 
   $(document).on('jinx.animation.started', function(e, stepAnimation){
     console.log("wand saw animation start");
@@ -118,6 +140,7 @@ const Wand = function() {
     console.log("wand saw animation finish");
     const panel = window.passage.panel;
     let willTransition, isFinalPanel;
+    const shouldAutoTransition = wand.shouldAutoTransition
 
     if (panel.__isComplete) {
       const dest = panel.destination.get();
@@ -134,16 +157,20 @@ const Wand = function() {
     if (isFinalPanel) {
       wand.away();
     } else {
-      wand.activate();
-      if (willTransition) {
-        wand.willTransition();
+      if (shouldAutoTransition) { // hack zone
+        $(document).trigger("jinx.panel.advance")
+      } else {
+        wand.activate();
+        if (willTransition) {
+          wand.willTransition();
+        }
       }
     }
   });
 
   /* WAND STATE VISUALIZATION */
 
-  this.clearState = function() {
+  this.clearStyling = function() {
     $('.wand').
       removeClass('active').
       removeClass('loading').

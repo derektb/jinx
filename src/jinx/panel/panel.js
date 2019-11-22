@@ -84,15 +84,14 @@ var Panel = function(name) {
     it touches.  I don't know.  Something to think about, though.
   **/
   this.advance = function() {
-    var stepData, stepAnimation,
-    step, newPosIndex, isFinalStep;
+    const stepData = this.seq.getStepData();
 
-    stepData = this.seq.getStepData();
-      step = stepData.step;
-      newPosIndex = stepData.data.lastIndex + 1;
-      isFinalStep = stepData.data.isFinalStep;
+    const step = stepData.step;
+    const newPosIndex = stepData.data.lastIndex + 1;
+    const isFinalStep = stepData.data.isFinalStep;
+    const shouldAutoTransition = stepData.data.shouldAutoTransition;
     // The above is weird. Should be refactored to just use the StepData.
-    stepAnimation = this.renderer.createStepAnimation(step);
+    const stepAnimation = this.renderer.createStepAnimation(step);
     // stepAnimation = this.renderer.createStepAnimation(stepData)
 
     this.renderer.animate(stepAnimation);
@@ -107,6 +106,11 @@ var Panel = function(name) {
       } else {
         $.event.trigger("jinx.panel.will-transition")
       }
+    }
+    // hack for transition
+    if (shouldAutoTransition) {
+      // very much a hack
+      $.event.trigger("jinx.panel.should-auto-transition");
     }
   }
 
@@ -162,7 +166,8 @@ _.extend(Passage.prototype, {
         "panelized" event---the wand will observe this and give the panel
         its initial advancement
       **/
-      $.event.trigger('panelized', panel);
+      $.event.trigger('panelized', panel); // regression
+      $.event.trigger('jinx.panel.panelized', panel);
     }
 
     return panel;

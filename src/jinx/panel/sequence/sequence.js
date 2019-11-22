@@ -105,7 +105,7 @@ var Sequence = function(){
     while (reading && i < track.length) {
       var seqel = track[i]
       step.push(seqel);
-      if (seqel.flow === 'stop' || seqel.flow === 'end') {
+      if (["stop","end","end-transition"].includes(seqel.flow)) {
         reading = false;
       } else {
         i += 1;
@@ -114,7 +114,8 @@ var Sequence = function(){
 
     data = {
       lastIndex: i,
-      isFinalStep: (i+1 >= track.length)
+      isFinalStep: (i+1 >= track.length),
+      shouldAutoTransition: track[i].flow === "end-transition",
     }
 
     return {step: step, data: data};
@@ -198,6 +199,7 @@ var Sequence = function(){
   // This is extremely bad, and I want to refactor it, but I'm also worried about my own backwards compatibility.  So I'm just going to have Sequence.addStep know about the new way of making seqels and have done with it.
 
   this.addSeqel = function(){
+    console.warn("addSeqel is deprecated, do not use it")
     var art, layer, effect, apply, flow, ns;
 
     // varying numbers of arguments
@@ -231,24 +233,19 @@ var Sequence = function(){
   **/
 
   this.addStep = function(){
-    var seqels, setupSeqel, steps;
+    const seqels = [...arguments];
 
-    seqels = [...arguments];
-    debugger
-    setupSeqel = function(hash, index) {
-      var newSeqel;
-      // I'm just gonna get cowboy on this motherfucker, I dunno if we need to play it safe with these heifers or what.  The seqel now knows what it needs, so like, fuck it, right?
+    const setupSeqel = (hash, index)=>{
       if (index+1 == seqels.length && !hash.flow) {
-        // Automatically sets the last seqel's flow property to "stop" if it wasn't defined.  I should just rely on falsiness, but I dunno what you kids will get up to in the future
         if((hash.flow !== 'stop') || (hash.flow !== "end")) {
           hash.flow = "stop";
         }
       }
 
-      newSeqel = new Seqel(hash);
+      const newSeqel = new Seqel(hash);
       this.addSeqelToTrack(newSeqel);
     };
-    setupSeqel = _.bind(setupSeqel, this);
+    // setupSeqel = _.bind(setupSeqel, this);
 
     var results = _.each(seqels, setupSeqel);
   }

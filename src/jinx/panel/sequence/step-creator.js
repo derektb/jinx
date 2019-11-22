@@ -18,8 +18,12 @@ var StepCreator = function(panelSequence){
   }
 
   this.transition = function() {
-    // TODO // HACK
-    this.create.apply(this, [...arguments]);
+    // all this is hack
+    const steps = [...arguments];
+    const lastBeat = steps[steps.length-1];
+    lastBeat.flow = "end-transition";
+
+    this.create.apply(this, steps);
     /* later: will automate creating a step which
        automatically advances the panel when it
        is finished playing its animation.

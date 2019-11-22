@@ -1,6 +1,9 @@
 var _ = require('underscore');
 
 var PanelDestination = function() {
+  this.evaluateDestination = function() {
+    // this is overwritten by config functions
+  }
 
   // configuration functions
 // the way I've written this is BAD, i just did it while I was tired
@@ -44,7 +47,6 @@ var PanelDestination = function() {
 
   this.end = function setupEndDestination() {
     this.evaluateDestination = function(){
-      // $.event.trigger(`final-panel-ended`);
       return -1;
       /*
         in general, wand gets destination when a completed panel has been
