@@ -24,6 +24,8 @@ const Wand = function() {
       wand.away();
       this.createButtonWand();
     }
+
+    this.wandMode = which;
   }
 
   this.createButtonWand = function() {
