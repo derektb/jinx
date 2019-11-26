@@ -80,8 +80,9 @@ const Wand = function() {
 
   this.away = function() {
     const existingWand = $('.wand');
+    existingWand.removeClass("active");
     if (this.wandMode === "panel") {
-      existingWand ? existingWand.removeClass('active').removeClass('wand') : false;
+      existingWand.removeClass('wand');
     }
   }
 
