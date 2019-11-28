@@ -37,8 +37,8 @@ var PanelDestination = function() {
   }
 
   this.switch = function setupNonlinearDestination (opts, cases) {
-    const {check} = opts;
-    const {routes} = cases;
+    // const {check} = opts;
+    // const {routes} = cases;
   }
 
   this.freeform = function setupFunctionDestination(callback) {

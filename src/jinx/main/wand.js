@@ -17,14 +17,14 @@ const Wand = function() {
   // HACK: wand mode.  should go through jinx?  should detect when mode changes?
   this.wandMode = `panel`; // panel | button
   this.mode = function(which) {
-    if (![`panel`, `static`].includes(which)) {
+    if (![`panel`, `button`].includes(which)) {
       throw new Error(`Invailid wand mode specified: "${which}"`);
     }
 
     if (which === `panel`) {
       this.destroyButtonWand();
       wand.over(wand._target);
-    } else if (which === `static`) {
+    } else if (which === `button`) {
       wand.away();
       this.createButtonWand();
     }
@@ -117,7 +117,7 @@ const Wand = function() {
 
   $(document).on('jinx.animation.started', function(e, stepAnimation){
     const minimumTimeForDeactivation = wand.minimumTimeForDeactivation;
-    
+
     if(stepAnimation.timing.end > minimumTimeForDeactivation) {
       wand.deactivate();
     }
