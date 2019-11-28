@@ -4,7 +4,6 @@ var StepCreator = function(panelSequence){
   this.seq = panelSequence;
 
   this.create = function(){
-    debugger
     this.seq.addStep.apply(this.seq, [...arguments]);
     /* note:
         in 0.7, we're going to start to think of

@@ -116,10 +116,8 @@ const Wand = function() {
   })
 
   $(document).on('jinx.animation.started', function(e, stepAnimation){
-    console.log("wand saw animation start");
     const minimumTimeForDeactivation = wand.minimumTimeForDeactivation;
-
-    debugger
+    
     if(stepAnimation.timing.end > minimumTimeForDeactivation) {
       wand.deactivate();
     }
@@ -127,18 +125,15 @@ const Wand = function() {
   });
 
   $(document).on('jinx.animation.playing.begun', function(e){
-    console.log("wand saw animation begin playing");
     wand.loaded();
     wand.startedPlaying()
   });
 
   $(document).on('jinx.animation.playing.ended', function(e){
-    console.log("wand saw animation end playing");
     wand.endedPlaying()
   });
 
   $(document).on('jinx.animation.finished', function(e){
-    console.log("wand saw animation finish");
     const panel = window.passage.panel;
     let willTransition, isFinalPanel;
     const shouldAutoTransition = wand.shouldAutoTransition
