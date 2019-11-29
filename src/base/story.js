@@ -225,36 +225,40 @@ _.extend(Story.prototype, {
 		if (!noHistory) {
 			this.history.push(passage.id);
 
-			try {
-				if (this.atCheckpoint) {
-					window.history.pushState(
-						{
-							state: this.state,
-							history: this.history,
-							checkpointName: this.checkpointName
-						},
-						'',
-						''
-					);
-				}
-				else {
-					window.history.replaceState(
-						{
-							state: this.state,
-							history: this.history,
-							checkpointName: this.checkpointName
-						},
-						'',
-						''
-					);
-				}
-			}
-			catch (e) {
-				/**
-				 Triggered whenever a checkpoint fails to be saved to browser history.
-				 (the above may fail due to security restrictions in the browser) **/
-				$.event.trigger('checkpointfailed', { error: e });
-			}
+      /*
+        JINX 0.7.4 : Deactivating this history stuff, since it's never been
+        A Thing in Jinx.  Could be nice to have sometime, but not now.
+      */
+			// try {
+			// 	if (this.atCheckpoint) {
+			// 		window.history.pushState(
+			// 			{
+			// 				state: this.state,
+			// 				history: this.history,
+			// 				checkpointName: this.checkpointName
+			// 			},
+			// 			'',
+			// 			''
+			// 		);
+			// 	}
+			// 	else {
+			// 		window.history.replaceState(
+			// 			{
+			// 				state: this.state,
+			// 				history: this.history,
+			// 				checkpointName: this.checkpointName
+			// 			},
+			// 			'',
+			// 			''
+			// 		);
+			// 	}
+			// }
+			// catch (e) {
+			// 	/**
+			// 	 Triggered whenever a checkpoint fails to be saved to browser history.
+			// 	 (the above may fail due to security restrictions in the browser) **/
+			// 	$.event.trigger('checkpointfailed', { error: e });
+			// }
 		}
 
 		window.passage = passage;

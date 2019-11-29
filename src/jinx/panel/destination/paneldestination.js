@@ -1,12 +1,23 @@
 var _ = require('underscore');
 
+/*
+  Note:
+  Destinations are evaluated as late as possible.  This is to permit
+  interactivity functionality potentially changing the destination of a
+  panel mid-animation.  Expect it to be evaluated immediately before the
+  transition happens, when a completed panel is clicked.
+*/
+
 var PanelDestination = function() {
   this.evaluateDestination = function() {
-    // this is overwritten by config functions
+    /*
+      this is overwritten by config functions.
+      empty function here as placeholder and to
+      prevent anything from falling apart.
+    */
   }
 
   // configuration functions
-// the way I've written this is BAD, i just did it while I was tired
   this.to = function setupLinearDestination(passageName) {
     this.evaluateDestination = function(){
       return passageName;
@@ -36,10 +47,12 @@ var PanelDestination = function() {
     }
   }
 
+  /*
   this.switch = function setupNonlinearDestination (opts, cases) {
     // const {check} = opts;
     // const {routes} = cases;
   }
+  */
 
   this.freeform = function setupFunctionDestination(callback) {
     this.evaluateDestination = callback;

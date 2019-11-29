@@ -12,7 +12,7 @@ p.art.layers("art")
 p.step.create(
   {
     code: function(){
-      window.jinx.wand.mode("static");
+      window.jinx.wand.mode("button");
     }
   },
   {

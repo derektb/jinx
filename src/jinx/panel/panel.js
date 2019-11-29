@@ -8,7 +8,6 @@
  @constructor
 **/
 
-// Klembot included this stuff in the other files.
 'use strict';
 const $ = require('jquery');
 const _ = require('underscore');
@@ -27,7 +26,7 @@ var Panel = function(name) {
   // ----- Basic Properties -----
   this.name = name;
 
-  this.__parentPassage = {
+  this.parentPassage = {
     name: "",
     id: undefined
   }
@@ -39,7 +38,7 @@ var Panel = function(name) {
     return $(this.selectors.panel);
   }
 
-  this.__isComplete = false;
+  this.isComplete = false;
 
   // --- ART ---
 
@@ -71,7 +70,6 @@ var Panel = function(name) {
 
   // --- DESTINATIONS ---
 
-  // TODO: an actual Destination module!  with nonlinear destinations!  exciting!
   this.destination = new PanelDestination();
 
   //  -----  WORKHORSE METHODS  -----
@@ -98,7 +96,7 @@ var Panel = function(name) {
 
     // this should be evented somehow.  it temporarily fixes final advancement, though.
     this.seq.pos.index = newPosIndex;
-    this.__isComplete = isFinalStep;
+    this.isComplete = isFinalStep;
     // possibly we do something like this
     if (isFinalStep) {
       if (this.destination.get() === -1) { // final panel
@@ -162,10 +160,6 @@ _.extend(Passage.prototype, {
       panel.renderer.setupStructure(panel.selectors.passage); // creates "panel" div within rendered passage div
       panel.renderer.setupLayers();
 
-      /**
-        "panelized" event---the wand will observe this and give the panel
-        its initial advancement
-      **/
       $.event.trigger('panelized', panel); // regression
       $.event.trigger('jinx.panel.panelized', panel);
     }

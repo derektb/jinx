@@ -41,7 +41,7 @@
       "content": "0_2/panel.js",
 
       "testDescription": "This should be a multi-layer panel.  Three layers with three separate art 300px assets.  A Sequence exists which defines which art goes where.",
-      "passing": true
+      "passing": false
     },
 
     {
@@ -81,7 +81,7 @@
 
       "testName": "Test Panel.addArtAssets and Panel.addLayers",
       "testDescription": "Tests two new condensed methods for adding multiple art assets and layers at once",
-      "passing": true
+      "passing": false
     },
 
     {
@@ -108,7 +108,7 @@
 
       "testName": "Test 'Panelize' Tag and Auto Panelization",
       "testDescription": "Panels tagged with 'panelize' should automatically append the proper Underscore and Jinx markup for panelizing a passage.",
-      "passing": true
+      "passing": false
     },
 
     {
@@ -403,8 +403,8 @@
 
       "content": "0_7/static-wand.js",
 
-      "testName": "Static (Button) Wand",
-      "testDescription": "Tests creation and functionality of the static wand, which appears as a stationary button on the page",
+      "testName": "Button Wand",
+      "testDescription": "Tests creation and functionality of the button wand, which appears as a stationary button on the page.  Standard is 'panel' wand.",
       "passing": true
     },
     {
@@ -416,7 +416,7 @@
 
       "testName": "Step.Transition()",
       "testDescription": "Tests the use of step.transition, which should create a step that will automatically advance the panel when it's done playing without reactivating the wand",
-      "passing": false
+      "passing": true
     }
   ]
 }

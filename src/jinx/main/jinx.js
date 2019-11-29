@@ -25,7 +25,7 @@ var Jinx = function(){
   this.effects = new Effects();
   this.createEffect = _(this.effects.create).bind(this.effects); // alias
 
-  this.settings = new Settings();
+  this.settings = new Settings(); // Jinx 0.7.4 : This settings api is confusing, and one I barely use. consider refactoring
   this.getSetting = _(this.settings.get).bind(this.settings); // alias
   this.setSetting = function __jinx__setSetting(property, value) {
     if (_.has(this.settings, property)) {
@@ -61,12 +61,15 @@ var Jinx = function(){
   }
 
   this.debug = this.debugMode = function() {
-    // jinx.debug replaces itself with the debug object
+    // jinx.debug() [Method] replaces itself with jinx.debug [Object]
     this.debug = new Debug();
   }
 
   this.wand = new Wand();
 }
+
+// 0.7.4 : In the distant past, I used underscore mixins for special Jinx functionality.
+// Now that I have the Utils module, I might move some of this stuff?
 
 _.mixin({
   wiz_validCssName: function(name) {

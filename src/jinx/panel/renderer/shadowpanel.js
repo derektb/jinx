@@ -1,7 +1,19 @@
+'use strict'
 var _ = require('underscore');
 const $ = require('jquery');
 const ShadowAsset = require('ShadowAsset');
 const ShadowLayer = require('ShadowLayer');
+
+/**
+ An object representing the state of displayed assets in the displayed panel.
+ As assets are added and removed from the DOM Panel, assets are also added to
+ and removed from the Shadow Panel.
+
+ Relies on Shadow Layer and Shadow Asset modules.
+
+ @class ShadowPanel
+ @constructor
+**/
 
 var ShadowPanel = function(id) {
   /**

@@ -1,3 +1,4 @@
+'use strict'
 var $ = require('jquery');
 var _ = require('underscore');
 const ShadowPanel = require('ShadowPanel');
@@ -31,6 +32,7 @@ var PanelRenderer = function() {
   }
 
   /* SETUP */
+
   this.setupStructure = function(passageSel) {
     var panelDiv;
 
@@ -141,6 +143,7 @@ var PanelRenderer = function() {
     }
     // we could refactor ^^^ this to:
     // var [element, image] = this.createArtElementTags(artAsset); // where that obv returns an array
+    // Alternately: make an AssetRenderer module.  That could work.
 
     element.setAttribute('assettype', artAsset.type);
     element.setAttribute('assetid', ref.id);

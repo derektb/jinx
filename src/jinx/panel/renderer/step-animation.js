@@ -1,3 +1,4 @@
+'use strict'
 var $ = require('jquery');
 var _ = require('underscore');
 const AssetAnimation = require('AssetAnimation');
@@ -34,7 +35,7 @@ var StepAnimation = function(step, shadowPanel) {
     var ref, seqel, timing, assetAnimation;
 
     if (ref === "panel") { // special case
-      
+
       assetAnimation = _(assets).find(function(animationAssetRecord){
         return animationAssetRecord.asset === "panel";
       })
@@ -217,7 +218,7 @@ var StepAnimation = function(step, shadowPanel) {
     if(seqel.apply === "effect") {
       this.effectArtOnLayer(seqel);
     } else if(seqel.apply === "code") {
-      
+
       this.codeBeat(seqel);
     } else if(seqel.apply === "add") {
       this.addArtToLayer(seqel);

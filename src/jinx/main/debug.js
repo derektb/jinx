@@ -7,16 +7,17 @@ var Debug = function(){
   var debugPassage = new Passage(Number(_.thumbprint(5,10)), "debug", "", debugPassageSrc);
   window.story.passages.push(debugPassage);
 
-  // setup tilde event listener
+  // setup keypress
   $(document).keydown(function(e){
-  	if (e.keyCode === 192) {
-  		if($('#debug').length === 0){
+  	if (e.keyCode === 192) { // tilde
+      const debugEl = document.getElementById("debug");
+  		if(!debugEl){
   			var d = document.createElement('div');
   			d.id = "debug";
   			d.insertAdjacentHTML("afterbegin", window.story.render('debug'));
-  			$('body').append(d);
+  			document.querySelector("body").insertAdjacentElement("beforeend", d);
   		} else {
-  			$('#debug').remove()
+  			debugEl.remove()
   		}
   	}
   });

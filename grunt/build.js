@@ -3,31 +3,31 @@ const moduleAliases = {
 	  "Story": './src/base/story.js'
 	, "Passage": './src/base/passage.js'
 
-	, "Jinx": './src/jinx/main/jinx.js'
-	, "Wand": './src/jinx/main/wand.js'
-	, "Effects": './src/jinx/main/effects.js'
-	, "Settings": './src/jinx/main/settings.js'
-	, "Debug": './src/jinx/main/debug.js'
   , "Utils": './src/jinx/main/utils.js'
 
+	, "Jinx": './src/jinx/main/jinx.js'
+  	, "Wand": './src/jinx/main/wand.js'
+  	, "Effects": './src/jinx/main/effects.js'
+  	, "Settings": './src/jinx/main/settings.js'
+  	, "Debug": './src/jinx/main/debug.js'
+
 	, "Panel": './src/jinx/panel/panel.js'
+  	, "PanelArt": './src/jinx/panel/art/panelart.js'
+  	, "ArtAsset": './src/jinx/panel/art/artasset.js'
 
-	, "PanelArt": './src/jinx/panel/art/panelart.js'
-	, "ArtAsset": './src/jinx/panel/art/artasset.js'
+  	, "Sequence": './src/jinx/panel/sequence/sequence.js'
+  	, "Seqel": './src/jinx/panel/sequence/seqel.js'
+  	, "StepData": './src/jinx/panel/sequence/step-data.js'
+  	, "StepCreator": './src/jinx/panel/sequence/step-creator.js'
 
-	, "Sequence": './src/jinx/panel/sequence/sequence.js'
-	, "Seqel": './src/jinx/panel/sequence/seqel.js'
-	, "StepData": './src/jinx/panel/sequence/step-data.js'
-	, "StepCreator": './src/jinx/panel/sequence/step-creator.js'
+    , "PanelRenderer": './src/jinx/panel/renderer/panelrenderer.js'
+      , "ShadowPanel": './src/jinx/panel/renderer/shadowpanel.js'
+      	, "ShadowLayer": './src/jinx/panel/renderer/shadowpanel/shadowlayer.js'
+      	, "ShadowAsset": './src/jinx/panel/renderer/shadowpanel/shadowasset.js'
+    	, "StepAnimation": './src/jinx/panel/renderer/step-animation.js'
+        , "AssetAnimation": './src/jinx/panel/renderer/step-animation/asset-animation.js'
 
-  , "PanelRenderer": './src/jinx/panel/renderer/panelrenderer.js'
-	, "ShadowPanel": './src/jinx/panel/renderer/shadowpanel.js'
-	, "ShadowLayer": './src/jinx/panel/renderer/shadowlayer.js'
-	, "ShadowAsset": './src/jinx/panel/renderer/shadowasset.js'
-	, "AssetAnimation": './src/jinx/panel/renderer/asset-animation.js'
-	, "StepAnimation": './src/jinx/panel/renderer/step-animation.js'
-
-  , "PanelDestination": './src/jinx/panel/destination/paneldestination.js'
+    , "PanelDestination": './src/jinx/panel/destination/paneldestination.js'
 }
 
 module.exports = function(grunt) {

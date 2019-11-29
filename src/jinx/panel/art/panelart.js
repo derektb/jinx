@@ -19,7 +19,6 @@ var PanelArt = function(panelName){
     }
   }
 
-  // this.assets = {};
   this.assetStore = {};
   this._preloadingImages = []; // somewhere to persist the images that get preloaded
 

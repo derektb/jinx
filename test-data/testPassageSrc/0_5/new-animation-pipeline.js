@@ -1,10 +1,12 @@
+p.art.path("..")
+
 p.art.assets(
-  ['bg', '../test-bg.png'],
-  ['1',  '../numbers300/1.png'],
-  ['2',  '../numbers300/2.png'],
-  ['3',  '../numbers300/3.png'],
-  ['4',  '../numbers300/4.png'],
-  ['5',  '../numbers300/5.png']
+  ['bg', '/test-bg.png'],
+  ['1',  '/numbers300/1.png'],
+  ['2',  '/numbers300/2.png'],
+  ['3',  '/numbers300/3.png'],
+  ['4',  '/numbers300/4.png'],
+  ['5',  '/numbers300/5.png']
 );
 p.art.layers('bg', 'L', 'css-border');
 

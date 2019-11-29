@@ -14,7 +14,6 @@ const Wand = function() {
   wand.shouldAutoTransition = false;
 
   this.minimumTimeForDeactivation = 100;
-  // HACK: wand mode.  should go through jinx?  should detect when mode changes?
   this.wandMode = `panel`; // panel | button
   this.mode = function(which) {
     if (![`panel`, `button`].includes(which)) {
@@ -45,7 +44,7 @@ const Wand = function() {
   /* MAIN EVENTS */
 
   $(document).on(`click`, `.wand.active`, function(){
-    /*
+    /* 0.7.4
       this is kind of a hack, but the wand should listen
       for the jinx event and not the regular click event
     */
@@ -59,7 +58,7 @@ const Wand = function() {
       throw new Error("Wand's target does not match")
     }
 
-    if (panel.__isComplete) {
+    if (panel.isComplete) {
       const passageName = Utils.unwrapLink(panel.destination.get())
       window.story.show(passageName);
     } else {
@@ -75,7 +74,7 @@ const Wand = function() {
     wand.clearState();
     wand.away();
     wand.over(panel);
-    panel.advance(); // initial panel advance
+    panel.advance();
   })
 
   this.away = function() {
@@ -138,7 +137,7 @@ const Wand = function() {
     let willTransition, isFinalPanel;
     const shouldAutoTransition = wand.shouldAutoTransition
 
-    if (panel.__isComplete) {
+    if (panel.isComplete) {
       const dest = panel.destination.get();
       if (dest === -1) {
         isFinalPanel = true;
