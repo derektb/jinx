@@ -6,7 +6,7 @@
   "license": "MIT",
   "repository": "https://bitbucket.org/derektb/twize",
   "dependencies": {
-    "jquery": "^2.2.0",
+    "jquery": "^3.4.0",
     "lz-string": "^1.4.4",
     "marked": "^0.3.5",
     "underscore": "^1.8.3"
