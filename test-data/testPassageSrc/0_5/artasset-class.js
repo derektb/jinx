@@ -1,6 +1,6 @@
 p.art.path("../test-data/test-art")
 
-p.addArtAssets(
+p.art.assets(
   {name: 'bg', type: 'asset', useRoot: false, src: '/test-bg.png'},
   {name: '1', type: 'asset', useRoot: false, src: '/numbers300/1.png'},
   {name: '2', type: 'asset', useRoot: false, src: '/numbers300/2.png'},
@@ -8,7 +8,7 @@ p.addArtAssets(
   {name: '4', type: 'asset', useRoot: false, src: '/numbers300/4.png'},
   {name: '5', type: 'asset', useRoot: false, src: '/numbers300/5.png'}
 );
-p.addLayers('bg', 'L', 'css-border');
+p.art.layers('bg', 'L', 'css-border');
 
 p.step.create(
   {p: 'add',     a: 'bg', l: 'bg', u: 200},
