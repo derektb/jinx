@@ -187,7 +187,7 @@ module.exports = function(grunt) {
 	grunt.registerTask('build:dev', ['bump:prerelease', 'browserify:default', 'cssmin', 'html:test']);
 	grunt.registerTask('build:tdd', ['browserify:default']);
 	grunt.registerTask('build:prerelease', ['browserify:default', 'cssmin', 'html:release']);
-	grunt.registerTask('build:release', ['bump', 'browserify:release', 'cssmin', 'html:release']);
+	grunt.registerTask('build:release', ['browserify:release', 'cssmin', 'html:release']);
 	grunt.registerTask('default', ['build']);
 	grunt.registerTask('dev', ['watch']);
 	grunt.registerTask('dev:tdd', ['watch:tdd']);
