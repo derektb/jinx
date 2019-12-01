@@ -10,6 +10,8 @@ It is originally based off the Snowman story format created by Chris Klimas, and
 
 Build from source and look at the `build/format-test.html` to see a variety of test passages, whose source you can view in `test-data/testPassageSrc`.  Panels from version 0.5 onward are considered relatively modern.
 
+If you don't mind incomplete documentation, [here is some incomplete documentation](http://derektb.withdraft.com/pages/1404299).
+
 ## Building From Source
 
 Run `npm install` to install dependencies. `grunt` or `grunt build` will create a testing version of the format at `format-test.html`, and `grunt package` will build a release version ready to be used in Twine under `dist/`.
