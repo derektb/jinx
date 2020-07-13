@@ -1,0 +1,21 @@
+p.addArtAssets(
+  {
+    name: "bg",
+    src: "fizzbizz.png",
+    type: "asset",
+    position: "full" // positions at top left and asset gets 100% size all over
+  },
+  {
+    name: "speech",
+    src: "foobar.png",
+    type: "asset",
+    position: "CSS", // positions based on positionCSS property styling
+    positionCSS: "position: absolute; top: 20vh; left: 20vw"
+  },
+  {
+    name: "char",
+    src: "foobar.png",
+    type: "asset",
+    position: "dynamic" // will get positioning data from the seqel.
+  },
+);

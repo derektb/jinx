@@ -1,0 +1,92 @@
+MAYBE: Panelize isn't fed the panel, but a special configuration object bound to the panel which knows how to set up the panel's data?
+
+p.addArt( "key of art asset", (rootArtPath || "root/art/path"), "specific/art path" )
+
+condensing:
+p.assets( {option: "configuration"},
+          {"art key": "art path"},
+          {"art key":"art path"}
+        );
+p.assets(options, *assets);
+
+******************************************
+| What if all panel setup was just JSON? |
+******************************************
+
+p.assets({useroot: true}, )
+
+if (opts.useroot) {
+  // twize.rootArtPath gets set for all
+}
+
+Twize {
+  issue: {
+    // issue is where 'story settings' go
+    name: "Interactive Comic",
+    author: "Etienne Shrdlu",
+    *
+    authors: ["Etienne Shrdlu", "Edelweiss Glamstride"],
+    writer : "" / writers: [],
+    illustrator: "" / illustrators: [],
+    *
+    date: "",
+    language: "en",
+
+    warnings: {
+      content: {
+        standard: ["nudity", "violence", "language"] // flags, not the full list
+      },
+      context: {
+        standard: ["author-white", "author-man-cis", "author-queer", "author-wealthy"] // ditto
+      }
+    },
+  }
+
+  // twize singleton
+  pages: []
+  panels: []
+}
+
+--------------
+
+sketch of new panelize:
+
+p.addAssets(
+  {useRoot: true}, // options hash
+//                    ( useRoot: use a root art path defined within the Twize 'service' )
+  [ // array of asset hashes
+    {
+      n: "bga" || name: "bga" || key: "bga"
+      p: "background/background.png" || path: || src: || s:
+    },
+    { n: "1-char", s: "1/character.png" },
+    { n: "1-sp", s: "1/speech.png"}
+
+    // etcetera with the 2
+  ],
+)
+
+p.addLayers("bg", "char", "speech", "css-border") // possibly just addLayer("") -> addLayers("only one argument")
+
+p.seq.addSetup(
+  {"bga":"bg"},
+  {"1-char", "char"},
+  {"1-sp", "speech"}
+) // stop automatically added
+
+p.seq.addStep(
+  {
+    art: "2-effect",
+    layer: "speech",
+    apply: "replace",
+
+    sync: "with", // sync? time? display?
+    //       || "after" (after all prior animations are done)
+    // maybe:
+    //       || "just after" (after the previous seqel's animation has finished)
+    delay: 200, // show after a delay of this many milliseconds
+    transition: 200 // this is the duration of the fade-in.  this probably gets a default value.
+    effect: "fade in" // "fade-in" ; this is also the default
+  }
+  // When displaying a step, advance() will run through all seqels in a step, make note of all the assets being manipulated, and build a snabbt animation sequence for each individual asset, keeping track of relative timing for everybody
+)
