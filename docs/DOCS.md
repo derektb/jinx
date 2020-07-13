@@ -3,8 +3,12 @@
 Contents:
 
 * [Packages Included](#packages-included)
-* [The Jinx Panel Passage](#the-jinx-panel-passage)
-  * [Jinx Panel Rendering](#jinx-panel-rendering)
+* [Jinx](#jinx)
+  * [Setup](#jinx-setup)
+    * [Debug Mode](#debug-mode)
+  * [The Wand](#the-wand)
+  * [The Jinx Panel Passage](#the-jinx-panel-passage)
+    * [Jinx Panel Rendering](#jinx-panel-rendering)
 * [Panel Definition](#panel-definition)
   * [Art Assets](#art-assets)
     * [Art Asset Pathing](#art-asset-pathing)
@@ -23,6 +27,35 @@ Contents:
 - Jinx uses [Underscore](https://underscorejs.org/) for templating and utility methods.
 - Jinx uses [Snabbt](https://daniel-lundin.github.io/snabbt.js/) for JavaScript animations.
 
+# Jinx
+
+Jinx is a singleton object that handles all the stuff relevant to Jinx.
+
+## Jinx Setup
+
+
+
+```
+jinx.setup({
+  rootArtPath: "./art/",
+  defaults: {
+    duration: 250
+  }
+})
+```
+
+### Debug Mode
+
+By calling `jinx.debug()` you will permanently enter debug mode in the comic.  This will allow you to access the debug panel, which may be toggled open and closed via the tilde/backtick key.
+
+The debug panel allows you to display any passage in the story at will.  It also lets you output that passage's src to the console.
+
+## The Wand
+
+The Wand represents the user's linear interaction with a Jinx comic.
+
+Typically, The Wand sits on the active panel.  When a user clicks on the panel, it will **advance** the panel to its next [step](#step-definition).  If there isn't one, it will **transition** to that panel's [destination](#destination-definition).
+
 ## The Jinx Panel Passage
 
 A Jinx Panel is just a Twine Passage that has been given panel-rendering superpowers.
@@ -39,7 +72,7 @@ This is a Jinx panel definition, and how that Jinx panel's Twine passage will re
 
 ```
 
-:: Name [panel AXp1]
+:: Name Of Passage [panel AXp1]
   p.art.assets(
     ["hello", "hello.png"]
   )
@@ -53,8 +86,10 @@ This is a Jinx panel definition, and how that Jinx panel's Twine passage will re
     }
   )
 
+  p.destination.to()
+
 <div id="passages" class="page">
-  <div class="passage passage--Name AX p1" historyindex="1">
+  <div class="passage passage--Name-Of-Passage AX p1" historyindex="1">
     <div class="panel wand active will-transition">
       <div class="layer world">
         <img
@@ -85,14 +120,14 @@ p.art.assets(
 // basic
   ["foo", "foo.png"],
 
-// object literal version, identical to previous asset
+// object version, identical to previous asset
   {
     name: "foo-2",
     src: "foo.png"
   },
 
 // useRoot: false will escape usual pathing, and use
-// the src as its full path
+//   the src as its full path
   {
     name: "baz",
     src: "http://baz.biz/images/baz.png",
@@ -107,7 +142,7 @@ p.art.assets(
   }
 
 // assets with classNames will have class names appended
-// to top-level element, either the <img> or the <div>
+//   to top-level element, either the <img> or the <div>
   {
     name: "fizz",
     src: "fizz.png",
@@ -115,38 +150,34 @@ p.art.assets(
   },
 
 // Assets with a "size" property will have their size
-// explicitly defined.  0 for a dimension will be `auto`.
-// Useful for text assets!
+//   explicitly defined.  0 for a dimension will be `auto`.
+//   Useful for text assets!
   {
     name: "buzz",
     src: "buzz.png"
-    size: [200,0]   // in pix
+    size: [200,0]   // in px
   },
 
 // text type asset will render as an asset <div> with the
-// contents of the "text" property rendered as HTML.
-// ArtAsset with text is auto-detected as `type: "text"`
+//   contents of the "text" property rendered as HTML.
+//   ArtAsset with text is auto-detected as `type: "text"`
   {
     name: "lipsum",
     type: "text", // not strictly necessary
     text: "Lorem ipsum dolor sit <em>amet</em>."
   },
 
-// Animated Sprite assets will be covered in their
-// own section further down.
+// Animated Sprite assets covered in their
+//   own section further down.
   {
     name: "sprite",
     type: "sprite", // not strictly necessary
     sprite: { /* see below */ }
   }
 );
-
-p.art.path("panel-folder/")
-// ^ panel-specific sub-path for these art assets, added
-//   after jinx's rootArtPath and before asset's `src`
 ```
 
-Art asset names may not contain # characters, since they are reserved for instance control.  Trying to define an art asset with # will throw an error.
+Art asset names may not contain # characters, since they are reserved for instance control.  Trying to define an art asset with # in the name will throw an error.
 
 ### Art Asset Pathing
 
