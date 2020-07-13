@@ -144,33 +144,6 @@ p.art.assets(
 p.art.path("panel-folder/")
 // ^ panel-specific sub-path for these art assets, added
 //   after jinx's rootArtPath and before asset's `src`
-
-// "!!SPECULATIVE" Art Asset Instance Control
-
-p.step.create(
-// adds an instance of the "foo" asset
-   to layer "default"
-  {
-    art: "foo", l: "default"
-  },
-// adds instances of the "foo" asset named
-// "foo#1" and "foo#2" to that layer
-  {
-    art: "foo#1", l: "default"
-  },
-  {
-    art: "foo#2", l: "default"
-  },
-// removes the asset "foo#1" from the layer
-  {
-    art: "foo#2", l: "default", p: "remove"
-  },
-// removes all instances of "foo" asset from
-// that layer
-  {
-    art: "foo", l: "default", p: "remove"
-  },
-)
 ```
 
 Art asset names may not contain # characters, since they are reserved for instance control.  Trying to define an art asset with # will throw an error.
