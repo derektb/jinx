@@ -198,6 +198,8 @@ A Jinx **Step** defines what happens when a player advances the panel.  It is th
 
 A step is composed of individual **Beats**.  In general, a Beat defines one thing happening to one art asset on one layer.  In our hypothetical normal panel, the one Step will add one art asset to one layer.  That's the bare minimum you need to define for a panel to render.
 
+For Steps with multiple Beats, remember that animations are defined sequentially, in a naturalistic way.  When writing an animation, think "this happens, then this happens after that, then this happens at the same time as that..."
+
 Here are the props used in Beat definitions:
 
 ```
@@ -205,11 +207,11 @@ Here are the props used in Beat definitions:
 {
   art: "art",
   layer: "layer",
-  effect: "fadeIn",
   apply: "add",
-  sync: "with",
   delay: 100,
   duration: 400,
+  sync: "with",
+  effect: "fadeIn",
   xy: [100,100]
 }
 
@@ -218,9 +220,9 @@ Here are the props used in Beat definitions:
   a: "art",
   l: "layer",
   p: "add",
-  s: "with",
   d: 100,
   u: 400,
+  s: "with",
   e: "fadeIn",
   xy: [100,100]
 }
@@ -238,6 +240,92 @@ Except for [special circumstances](#code), `art` and `layer` are required.
 Jinx will supply default values for `apply`, `sync`, `duration`, and `delay`.  It will also apply a different `effect` per the beat's `apply` type _(an `addEffect` or a `removeEffect`)_.  These defaults can all be configured in `jinx.setDefaults({ apply: "add", sync: "with", ...})`.
 
 By default, all art assets are positioned at `xy: [0,0]`, which is to say, the top left corner of the layer.
+
+#### Art Asset Instancing
+
+**_!!SPECULATIVE!! This functionality has not been implemented_**
+
+Multiple instances of an art asset can be added to a single layer.  By default, however, you won't be able to work intelligently with them, such as removing or applying effects to them individually, by name.
+
+When you want to do this, you can explicitly name instances of these art assets to be able to reference them later on:
+
+```
+p.step.create(
+  {
+    a: "asset#foo",     // add an instance of "asset" named "foo"
+    l: "art"            // to layer "art"
+  },
+  {
+    a: "asset#bar",     // add another instance of "asset", this one
+    l: "art"            // named bar, to layer "art"
+  }
+);
+
+p.step.create(
+  {
+    p: "effect",
+    e: "bounceVert",    // apply the effect bounceVert to "foo"
+    a: "asset#foo",
+    l: "art"
+  },
+  {
+    p: "effect",
+    e: "bounceHoriz",   // apply a different effect bounceHoriz to "bar"
+    a: "asset#foo",
+    l: "art"
+  }
+);
+```
+
+### Apply
+
+Apply defines what Jinx should do with the art asset in question:
+
+* `apply: "add"` — adds an instance of the asset to the layer
+* `apply: "remove"` - removes an instance of that art asset from the layer
+* `apply: "replace"` - removes everything from the layer, then adds an instance of that art asset to the layer.
+
+### Timing and Sync
+
+`duration` is how long the animation defined by this Beat's [effect](#effects) will last.  `delay` is the amount of time to wait before starting that animation.
+
+`sync` defines the timing relationship this Beat has to the one immediately before it.
+
+* `sync: "after"` — this beat's timing starts from when the previous beat has finished playing: i.e. after its **duration** is over.
+* `sync: "with"` - this beat's timing starts from when the previous beat has started playing: i.e. after its **delay** is over.
+* `sync: "async"` - this beat's timing starts from the beginning of the panel, and beats after it will not sync to it.
+
+```
+adding three assets to the panel:
+synced "with":
+1: [   delay   |---duration---]
+2:             [---duration---]
+3:             [   delay   |---duration---]
+
+synced "after":
+1: [   delay   |---duration---]
+2:                            [---duration---]
+3:                                           [   delay   |---duration---]
+
+synced "async":
+1: [   delay   |---duration---]
+2: [---duration---]
+3: [   delay   |---duration---]
+```
+
+Take care with your timing and sync definitions.  Beats on different assets may, of course, overlap, but multiple Beats on the same asset must be sequential:
+
+```
+adding and removing an asset:
+OK:
+  add: [   delay   |---duration---]
+  rem:                             [---duration---]
+
+
+ERROR:
+  add: [   delay   |---duration---]
+  rem:                     [---duration---]
+```
 
 ### Effects
 
