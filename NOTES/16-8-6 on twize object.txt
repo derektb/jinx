@@ -1,5 +1,0 @@
-# Twize Object
-
-- Knows what Effects are and can apply them
-
-- Knows how to use the wand
