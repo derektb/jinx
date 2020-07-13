@@ -218,6 +218,8 @@ When the asset "hello" is rendered as an `img` tag, its src will be: `http://foo
 
 ### Sprite ArtAssets
 
+**_!!SPECULATIVE!! This functionality has not been implemented_**
+
 If you want to have a short frame-by-frame animation in your comic, creating a sprite is a more controlled, performant, and data-efficient route than using an animated GIF.
 
 Jinx, in its current form, expects its spritesheets to be a grid of same-size frames which are read sequentially right-to-left and top-to-bottom.  I personally have used the [ImageMagick](http://www.imagemagick.org/) CLI image editing tool in its [Montage Concatenate Mode](http://www.imagemagick.org/Usage/montage/#concatenate).
@@ -278,44 +280,90 @@ _A word of caution: keep the size of your full spritesheet in mind when implemen
 
 _It is therefore recommended that you maintain an inverse proportion between the size of sprite and number of frames.  Viz: **if you want a big sprite, use few frames.  If you want a lot of frames, use a small sprite.**  Keep in mind a spritesheet is effectively being rendered full-size on the page, so you can ask yourself whether your size of image would cause problems as-is._
 
+## Step Definition
 
+A Jinx **Step** defines what happens when a player advances the panel.  It is the place where animations are written.  A Panel that behaves like a normal comic panel, with no interactivity or fancy animations, is a Jinx panel with a single Step defined.
+
+A step is composed of individual **Beats**.  In general, a Beat defines one thing happening to one art asset on one layer.  In our hypothetical normal panel, the one Step will add one art asset to one layer.  That's the bare minimum you need to define for a panel to render.
+
+Here are nearly all
+
+```
+// verbose props
+{
+  art: "art",
+  layer: "layer",
+  effect: "fadeIn",
+  apply: "add",
+  sync: "with",
+  delay: 100,
+  duration: 400,
+  xy: [100,100]
+}
+
+// concise props; identical to previous, just shorter
+{
+  a: "art",
+  l: "layer",
+  e: "fadeIn",
+  p: "add",
+  s: "with",
+  d: 100,
+  u: 400,
+  xy: [100,100]
+}
+
+// special beat to execute code during step animation
+{
+  code: function() { console.log("Hello, world!") }
+}
+```
+
+### Code
+
+Code Beats are special beats to execute code during animation.  Beats that run code are stand-alone and not tied to art assets or layers.  If you _really_ want to run a function in the same beat where you're working with an art asset, include it in the effect via one of Snabbt's animation hooks.
+
+### Effects
+
+All Jinx animation effects are Snabbt animations.  Refer to documentation about Snabbt for information in how to write them.
+
+#### Easing Functions
+Jinx includes [a library for JavaScript easing functions](https://github.com/AndrewRayCode/easing-utils) which may be employed in writing effects.  These are accessible from `jinx.effects.easing.`
 
 ## Destinations
 
 ```
 // TO: linear destination
-//   no logic
-p.destination.to("[[next-passage]]");
-
-// GET: variable destination
-//   will get string from story.state and
-//   use it as name of destination passage.
-p.destination.var("passageNameOnState");
+p.destination.to("[[next-passage]]");       // no logic. goes directly
+                                            // to named passage.
+// VAR: variable destination
+p.destination.var("passageNameOnState");    // gets name of passage from
+                                            // state[theArgument]
 
 // IF: binary destination
-//   will get first arg string as property on story.state
-p.destination.if(
-  "propOnState",
+p.destination.if(                           // gets boolean value from named
+  "propOnState",                            // property on state.
   "[[true-passage]]", "[[false-passage]]");
 
-//   will evaluate first arg function as a predicate
-p.destination.if(
-  function() { return story.state.propOnState },
+p.destination.if(                           // can also be given a function
+  function() {                              // to evaluate.
+    return story.state.propOnState
+  },
   "[[true-passage]]", "[[false-passage]]");
 
 // SWITCH: nonlinear destination
-//   value of property from state mapped to keys
 p.destination.switch({
-  check: "propOnState",
-  foo: "[[foo-passage]]",
+  check: "propOnState",                     // value of property from state
+  foo: "[[foo-passage]]",                   // mapped to keys
   bar: "[[bar-passage]]",
   baz: "[[baz-passage]]",
   default: "[[next-passage]]"
 });
 
-//   like IF, can also use a callback.
 p.destination.switch({
-  check: function() { return _(["foo","bar","baz"]).sample() },
+  check: function() {                       // like destination.if, can also
+    return _(["foo","bar","baz"]).sample()  // use a callback rtrtn a
+  },                                        // state property
   foo: "[[foo-passage]]",
   bar: "[[bar-passage]]",
   baz: "[[baz-passage]]",
@@ -325,7 +373,7 @@ p.destination.switch({
 
 ## Interactivity
 
-_!!SPECULATIVE!! This functionality has not been implemented_
+**_!!SPECULATIVE!! This functionality has not been implemented_**
 
 Interactions are defined on art assets via the "interaction" or "i" property on a given beat.  It can be defined on an existing art asset, or it can create an interactive asset.  Personally, I recommend placing interaction assets in their own dedicated layer at the top of the rest of your layers.
 
