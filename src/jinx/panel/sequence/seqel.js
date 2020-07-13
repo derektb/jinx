@@ -66,12 +66,15 @@ var Seqel = function(data, jinx){
   }
 
   // handling defaults for duration and delay;
+  if (!duration) {
+    if (effect.duration) {duration = effect.duration}
+    else duration = jinx.getDefault("duration")
+  }
 
-  if (!duration && effect.duration) duration = effect.duration
-  else duration = jinx.getDefault("duration")
-
-  if (!delay && effect.delay) delay = effect.delay
-  else delay = jinx.getDefault("delay")
+  if (!delay) {
+    if (effect.delay) delay = effect.delay
+    else delay = jinx.getDefault("delay")
+  }
 
   // ensuring xy format
 
