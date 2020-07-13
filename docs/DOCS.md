@@ -246,6 +246,32 @@ All Jinx animation effects are Snabbt animations.  Refer to documentation about 
 #### Easing Functions
 Jinx includes [a library for JavaScript easing functions](https://github.com/AndrewRayCode/easing-utils) which may be employed in writing effects.  These are accessible from `jinx.effects.easing.`
 
+### XY
+
+The XY property defines where the art asset will be placed within its layer.  By default, this is at `xy: [0,0]`, the top left corner.  `xy` definition is in pixels.
+
+Helpfully, [effects](#effects) defined with `positionFrom` and `position` will use those coordinates as **local with respect to their `xy` position**.  This means you can have an effect defined for an asset to fade in and slide down, and Jinx will animate that the way you'd expect:
+
+```
+{
+  a: "hello", l: "world",
+  e: {
+    opacityFrom: 0,
+    opacity: 1,
+    positionFrom: [0, -50, 0],  // -50 from its final y value.
+    positionTo: [0,0,0]         // at its final xy position
+  }
+  xy: [150, 150]                // its final xy position
+}
+
+// as you might expect, this asset will slide down
+// from [150, 100] to [150, 150]
+```
+
+### Code
+
+Code Beats are special beats to execute code during animation.  Beats that run code are stand-alone and not tied to art assets or layers.  If you _really_ want to run a function in the same beat where you're working with an art asset, include it in the effect via one of Snabbt's animation hooks.
+
 ## Destinations
 
 ```
@@ -286,32 +312,6 @@ p.destination.switch({
   default: "[[next-passage]]"
 });
 ```
-
-### XY
-
-The XY property defines where the art asset will be placed within its layer.  By default, this is at `xy: [0,0]`, the top left corner.  `xy` definition is in pixels.
-
-Helpfully, [effects](#effects) defined with `positionFrom` and `position` will use those coordinates as **local with respect to their `xy` position**.  This means you can have an effect defined for an asset to fade in and slide down, and Jinx will animate that the way you'd expect:
-
-```
-{
-  a: "hello", l: "world",
-  e: {
-    opacityFrom: 0,
-    opacity: 1,
-    positionFrom: [0, -50, 0],  // -50 from its final y value.
-    positionTo: [0,0,0]         // at its final xy position
-  }
-  xy: [150, 150]                // its final xy position
-}
-
-// as you might expect, this asset will slide down
-// from [150, 100] to [150, 150]
-```
-
-### Code
-
-Code Beats are special beats to execute code during animation.  Beats that run code are stand-alone and not tied to art assets or layers.  If you _really_ want to run a function in the same beat where you're working with an art asset, include it in the effect via one of Snabbt's animation hooks.
 
 ## Interactivity
 
