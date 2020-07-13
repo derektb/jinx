@@ -1,11 +1,80 @@
 # Jinx 0.7 Documentation
 
+Contents:
+
+* [Packages Included](#packages-included)
+* [The Jinx Panel Passage](#the-jinx-panel-passage)
+  * [Jinx Panel Rendering](#jinx-panel-rendering)
+* [Panel Definition](#panel-definition)
+  * [Art Assets](#art-assets)
+    * [Art Asset Pathing](#art-asset-pathing)
+    * [Sprite Assets](#sprite-assets)
+  * [Steps](#step-definition)
+    * [Required and Default Props](#required-and-default-props)
+      * [Art Asset Instancing](#art-asset-instancing)
+    * [Apply](#apply)
+    * [Timing and Sync](#timing-and-sync)
+    * [Effects](#effects)
+    * [Code](#code)
+  [Destinations](#destination-definition)
+
 ## Packages Included
 
 - Jinx uses [Underscore](https://underscorejs.org/) for templating and utility methods.
 - Jinx uses [Snabbt](https://daniel-lundin.github.io/snabbt.js/) for JavaScript animations.
 
-## Art Asset Definitions
+## The Jinx Panel Passage
+
+A Jinx Panel is just a Twine Passage that has been given panel-rendering superpowers.
+
+Passages serving as Jinx Panels are tagged with `panel`.
+
+Passages tagged with `replace` will clear all rendered passages before rendering.
+
+Passages named with a Jinx panel definition are rendered with proper dimensions and page positioning.  If you don't want to name your passage a panel definition, you can include the panel definition in a tag.
+
+## Jinx Panel Rendering
+
+This is a Jinx panel definition, and how that Jinx panel's Twine passage will render to the page:
+
+```
+
+:: Name [panel AXp1]
+  p.art.assets(
+    ["hello", "hello.png"]
+  )
+
+  p.layers("world")
+
+  p.step.create(
+    {
+      art: "hello",
+      layer: "world"
+    }
+  )
+
+<div id="passages" class="page">
+  <div class="passage passage--Name AX p1" historyindex="1">
+    <div class="panel wand active will-transition">
+      <div class="layer world">
+        <img
+          assettype="image"
+          assetid="hello__rc5qccl"
+          assetname="hello"
+          src="hello.png"
+          class="asset"
+          loaded="loaded"
+          style="transform: matrix3d(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1); opacity: 1;"
+        />
+      </div>
+    </div>
+  </div>
+</div>
+```
+
+# Panel Definition
+
+## Art Assets
 
 Art Assets are defined within the panelization definition (conventionally, at the start) and displayed as instances of the definition via Steps.
 
@@ -128,7 +197,7 @@ p.art.assets({
 
 When the asset "hello" is rendered as an `img` tag, its src will be: `http://foo.bar/comic/images/panel-hello-world/hello-world.png`
 
-### Sprite ArtAssets
+### Sprite Assets
 
 **_!!SPECULATIVE!! This functionality has not been implemented_**
 
@@ -191,6 +260,10 @@ p.art.assets(
 _A word of caution: keep the size of your full spritesheet in mind when implementing sprites.  Aside from loading and data use practicalities, a particularly large spritesheet will visibly take time for the browser to render, even if you're only displaying the one frame.  This will cause lag as the spritesheet loads in, and may introduce unsightly hiccups in your final panel animation._
 
 _It is therefore recommended that you maintain an inverse proportion between the size of sprite and number of frames.  Viz: **if you want a big sprite, use few frames.  If you want a lot of frames, use a small sprite.**  Keep in mind a spritesheet is effectively being rendered full-size on the page, so you can ask yourself whether your size of image would cause problems as-is._
+
+## Layer Definition
+
+Jinx layers are
 
 ## Step Definition
 
@@ -329,7 +402,7 @@ ERROR:
 
 ### Effects
 
-All Jinx animation effects are Snabbt animations.  Refer to documentation about Snabbt for information in how to write them.
+All Jinx animation effects are [Snabbt](https://daniel-lundin.github.io/snabbt.js/) animations.  Refer to Snabbt's documentation for information on how to write them.
 
 #### Easing Functions
 Jinx includes [a library for JavaScript easing functions](https://github.com/AndrewRayCode/easing-utils) which may be employed in writing effects.  These are accessible from `jinx.effects.easing.`
@@ -360,7 +433,7 @@ Helpfully, [effects](#effects) defined with `positionFrom` and `position` will u
 
 Code Beats are special beats to execute code during animation.  Beats that run code are stand-alone and not tied to art assets or layers.  If you _really_ want to run a function in the same beat where you're working with an art asset, include it in the effect via one of Snabbt's animation hooks.
 
-## Destinations
+## Destination Definition
 
 ```
 // TO: linear destination
