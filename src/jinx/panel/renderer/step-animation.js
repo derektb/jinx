@@ -110,19 +110,10 @@ var StepAnimation = function(step, shadowPanel) {
   /** BEAT MANAGEMENT **/
 
   var addBeatTo = this.addBeatTo = function(assetAnimation, seqel, action) {
-    var delay, duration;
-    // okay, *I* like this solution?
-    // But I KNOW it's bad and not where this should happen.
-    if ( !(delay = seqel.delay ? seqel.delay : undefined) ) {
-      delay = seqel.effect.delay ? seqel.effect.delay : jinx.getDefault('delay');
-    }
-    if ( !(duration = seqel.duration ? seqel.duration : undefined) ) {
-      duration = seqel.effect.duration ? seqel.effect.duration : jinx.getDefault('duration');
-    }
-    // I'm just doing my best here.
+    let {delay, duration, sync} = seqel;
 
-    var startAnimating = getBeatSync(seqel.sync) + delay;
-    var endAnimating = startAnimating + duration;
+    let startAnimating = getBeatSync(sync) + delay;
+    let endAnimating = startAnimating + duration;
 
     var hash = {
       action: action,
@@ -131,7 +122,7 @@ var StepAnimation = function(step, shadowPanel) {
       duration: duration
     }
     assetAnimation.addBeat(hash, seqel);
-    if (seqel.sync != 'async'){
+    if (sync != 'async'){
       updateTiming(startAnimating,endAnimating);
     }
   }

@@ -36,7 +36,7 @@ var Seqel = function(data, jinx){
   apply = data.apply       ||  data.p     ||  jinx.getDefault('apply');
   sync = data.sync         ||  data.s     ||  jinx.getDefault('sync');
   flow = data.flow         ||  data.f     ||  jinx.getDefault('flow');
-  effect = data.effect     ||  data.e; // ||  jinx.getDefault(`${apply}Effect`)
+  effect = data.effect     ||  data.e;
   xy = data.xy;
   code = data.code;
   if(code) {
@@ -47,7 +47,11 @@ var Seqel = function(data, jinx){
     type = code ? 'code' : 'art';
   }
 
-  // autofilling empty effects
+  // handling effects
+
+  if (typeof effect === 'string') {
+    effect = jinx.effects.get(effect);
+  }
 
   if(!effect) {
     if (apply === 'code') {
@@ -57,13 +61,17 @@ var Seqel = function(data, jinx){
     }
   }
 
-  if (typeof effect === 'string') {
-    effect = jinx.effects.get(effect);
-  }
-
   if ( (apply === 'replace') && !(_.isArray(effect)) ) {
     throw new Error ("Replace seqels must define effects as a two-item array [removeEffect, addEffect]");
   }
+
+  // handling defaults for duration and delay;
+
+  if (!duration && effect.duration) duration = effect.duration
+  else duration = jinx.getDefault("duration")
+
+  if (!delay && effect.delay) delay = effect.delay
+  else delay = jinx.getDefault("delay")
 
   // ensuring xy format
 
