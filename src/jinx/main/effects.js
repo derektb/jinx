@@ -1,4 +1,5 @@
 const _ = require('underscore');
+const easing = require('easing-utils');
 
 var Effects = function(){
   this.get = function(name){
@@ -46,6 +47,8 @@ var Effects = function(){
     return this.instantiate(newHash);
   }
 
+  this.easing = easing;
+
   this.library = { };
 
   this.instantiate = function(hash) {
@@ -67,12 +70,12 @@ var Effects = function(){
   this.create("fadeIn", {
     fromOpacity: 0,
     opacity: 1,
-    easing: function easeOutCubic(t) { return 1+(--t)*t*t }
+    easing: easing.easeOutCubic
   });
   this.create("fadeOut", {
     fromOpacity: 1,
     opacity: 0,
-    easing: function easeOutCubic(t) { return 1+(--t)*t*t }
+    easing: easing.easeOutCubic
   });
   this.create("none", {});
   this.create("hidden", {
