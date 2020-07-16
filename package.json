@@ -1,6 +1,6 @@
 {
   "name": "jinx",
-  "version": "0.7.5-5",
+  "version": "0.7.5-6",
   "description": "A Twine story format for making interactive comics",
   "author": "Derek Timm-Brock <derektimmbrock@gmail.com>",
   "license": "MIT",
@@ -29,7 +29,7 @@
     "qunitjs": "^2.0.1",
     "seedrandom": "^2.4.2",
     "snabbt.js": "^0.6.4",
-    "uglifyify": "^3.0.1"
+    "uglifyify": "^5.0.2"
   },
   "eslintConfig": {
     "parserOptions": {
