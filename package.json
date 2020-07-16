@@ -1,13 +1,13 @@
 {
   "name": "jinx",
-  "version": "0.7.5-2",
+  "version": "0.7.5-3",
   "description": "A Twine story format for making interactive comics",
   "author": "Derek Timm-Brock <derektimmbrock@gmail.com>",
   "license": "MIT",
   "repository": "https://bitbucket.org/derektb/twize",
   "dependencies": {
     "easing-utils": "0.0.7",
-    "jquery": "^2.2.0",
+    "jquery": "^3.5.0",
     "lz-string": "^1.4.4",
     "marked": "^0.3.18",
     "underscore": "^1.8.3"
