@@ -1,6 +1,6 @@
 {
   "name": "jinx",
-  "version": "0.7.5-3",
+  "version": "0.7.5-4",
   "description": "A Twine story format for making interactive comics",
   "author": "Derek Timm-Brock <derektimmbrock@gmail.com>",
   "license": "MIT",
@@ -13,16 +13,16 @@
     "underscore": "^1.8.3"
   },
   "devDependencies": {
-    "babel-core": "^6.26.0",
+    "babel-core": "^6.26.3",
     "babel-loader": "^7.1.2",
-    "babel-preset-env": "^1.1.4",
+    "babel-preset-env": "^1.7.0",
     "babelify": "^8.0.0",
     "grunt": "^1.0.4",
     "grunt-browserify": "^5.2.0",
     "grunt-bump": "^0.8.0",
     "grunt-contrib-clean": "^0.7.0",
     "grunt-contrib-cssmin": "^2.2.1",
-    "grunt-contrib-watch": "^1.0.0",
+    "grunt-contrib-watch": "^1.1.0",
     "grunt-eslint": "^18.0.0",
     "grunt-newer": "^1.2.0",
     "jit-grunt": "^0.9.1",
