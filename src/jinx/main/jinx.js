@@ -83,9 +83,9 @@ _.mixin({
   },
 
   wiz_findInHistory: function(passageId, how) {
-    let historySet, found;
+    let found;
     const method = how || "last"; // || "first"
-    historySet = window.story.history;
+    const historySet = window.story.history;
 
     if (method == "last") {
       found = _.lastIndexOf(historySet, passageId);
@@ -142,7 +142,7 @@ _.mixin({
 
   thumbprint: function(x, b) {
     const tp = [];
-    const b = b+""
+    b = b+""
     const characters = base[b] || base["32"]
 
     for(let i = 0; i < x; i++) {

@@ -107,7 +107,7 @@ module.exports = function(grunt) {
 
 	grunt.registerTask('html:test', function() {
 		const template = _.template(grunt.file.read('src/base/index.html'));
-		const testPassages = _.template(grunt.file.read('test-data/passages.html'))
+		let testPassages = _.template(grunt.file.read('test-data/passages.html'))
 		const name = grunt.file.read('test-data/name.txt');
 		const buildVersion = grunt.file.readJSON('package.json').version;
 
@@ -194,21 +194,21 @@ module.exports = function(grunt) {
 };
 
 function timestamp(opts) {
-	const date, year, month, dayNum, dayName, hours, meridian, minutes, seconds, stamp;
+  // baby's ancient "I'm not going to use moment.js cos I don't know about it" code
 	const months = ['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC']
 	const days = ['SUN','MON','TUE','WED','THU','FRI','SAT']
 
-	date = new Date()
-	year = date.getFullYear()
-	month = months[date.getMonth()];
-	dayNum = date.getDate();
-	dayName = days[date.getDay()]
-	meridian = (Math.floor(date.getHours()/2)) ? "PM" : "AM";
-	hours = date.getHours() % 12;
+	const date = new Date()
+	const year = date.getFullYear()
+	const month = months[date.getMonth()];
+	const dayNum = date.getDate();
+	const dayName = days[date.getDay()]
+	const meridian = (Math.floor(date.getHours()/2)) ? "PM" : "AM";
+	let hours = date.getHours() % 12;
 		hours = (hours == 0) ? 12 : hours;
-	minutes = date.getMinutes().toString();
+	let minutes = date.getMinutes().toString();
 		minutes = minutes.toString().length == 1 ? "0" + minutes : minutes;
-	seconds = date.getSeconds().toString();
+	let seconds = date.getSeconds().toString();
 		seconds = seconds.toString().length == 1 ? "0" + seconds : seconds;
 
 	function theTime() {

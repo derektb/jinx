@@ -125,7 +125,7 @@ function renderEl(nodeName, source, selector) {
 		let classes = [];
 		let id = null;
 		const classOrId = /([#\.])([^#\.]+)/g;
-		const matches = classOrId.exec(selector);
+		let matches = classOrId.exec(selector);
 
 		while (matches !== null) {
 			switch (matches[1]) {
