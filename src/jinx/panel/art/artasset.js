@@ -2,10 +2,17 @@ const $ = require('jquery');
 const _ = require('underscore');
 
 var ArtAsset = function(data){
-  var jinx = window.jinx;
+  const jinx = window.jinx;
 
   this.name = data.name;
-  this.type = data.type || "image";
+  this.type = data.type;
+  if (!this.type) {
+    if (data.text) this.type = "text";
+    else {
+      this.type = "image"
+    }
+  }
+
   // image assets:
   if (_.or(this.type, "image", "asset")) {
     this.src = data.src;

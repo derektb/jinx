@@ -1,8 +1,13 @@
+p.grid = "#BYp1"; // hack
+
 p.art.path("../")
 
 p.art.assets(
   ["bg", "test-bg.png"],
-  ["5", "numbers300/5.png"]
+  {
+    name: "text",
+    text: "Positions the panel at BY"
+  }
 )
 
 p.art.layers("art")
@@ -13,10 +18,10 @@ p.step.create(
     layer: "art"
   },
   {
-    art: "5",
+    art: "text",
     layer: "art",
     s: "after",
   }
 )
 
-p.destination.to("[[Start]]")
+p.destination.to("jinx-standard-grid-3")

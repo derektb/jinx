@@ -94,26 +94,32 @@ function writeGridCss(hash = {}){
   let gridStyles = document.getElementById("jinx-grid-classes");
   if (!gridStyles) {
     gridStyles = document.createElement('style');
-    style.id = "jinx-grid-classes"
-    document.querySelector('body').append(style);
+    gridStyles.id = "jinx-grid-classes"
+    document.querySelector('body').append(gridStyles);
     document.querySelector('#passages').className += "page";
   }
 
-  style.innerHTML = css;
+  gridStyles.innerHTML = css;
 }
 
 /* PUBLIC EXPORT */
 
 // gridhack application listener
 $(document).on('jinx.panel.panelized', function(e, data){
+  const panelDefFinder = /(\d)?#([A-M]h?[N-Z]h?)(p\d+v?)/
   // find panel definition from passage name
-	let panelDef = passage.name.match(/(\d)?#([A-M]h?[N-Z]h?)(p\d+v?)/);
+	let panelDef = passage.name.match(panelDefFinder);
 
 	if (!panelDef) {
     // if not found, find it in the passage's tags
 		const tagDef = _(passage.tags).find((tag)=>{ return tag[0] === "#" })
-		panelDef = tagDef ? tagDef.match(/(\d)?#([A-M]h?[N-Z]h?)(p\d+v?)/) : null;
+		panelDef = tagDef ? tagDef.match(panelDefFinder) : null;
 	}
+  if (!panelDef && passage.panel.grid) {
+    // more of a hack for testing, but possibly also a good way of doing it
+    panelDef = passage.panel.grid.match(panelDefFinder);
+  }
+  //
 	if (panelDef) {
 		const [str, page, position, size] = panelDef;
 		const $p = $(passage.panel.selectors.passage);
@@ -126,6 +132,12 @@ $(document).on('jinx.panel.panelized', function(e, data){
 
 const Grid = function() {
   this.write = writeGridCss;
+  this.erase = function(){
+    let gridStyles = document.getElementById("jinx-grid-classes");
+    if (gridStyles) {
+      gridStyles.innerHTML = "";
+    }
+  }
 }
 
 module.exports = Grid

@@ -71,21 +71,22 @@ _(packageVersions).each(function(pV, i){
   <h3><%= versions[i] ? "Jinx "+versions[i] : "Unversioned" %></h3>
 <%
   _(pV).each(function(p){
-    var passing, status;
-    var passageName, linkName, description;
+    if (!p.hidden) {
+      var passing, status;
+      var passageName, linkName, description;
 
-    passing = p.passing
-    if (passing != undefined) {
-      status = passing ? "passing" : "failing";
-    } else { status = "unknown"; }
+      passing = p.passing
+      if (passing != undefined) {
+        status = passing ? "passing" : "failing";
+      } else { status = "unknown"; }
 
-    passageName = p.name;
-    linkName = (p.testName) ? p.testName : p.name;
-    description = p.testDescription || "Ambiguously tests the passage " + p.passageName;
+      passageName = p.name;
+      linkName = (p.testName) ? p.testName : p.name;
+      description = p.testDescription || "Ambiguously tests the passage " + p.passageName;
 %>
 <li class="test-<%=status%>">[[<%= linkName %>-><%= passageName  %>]] — <%= description %></li>
 <%
-  })
+  }})
 %>
 </ul>
 <%

@@ -417,6 +417,64 @@
       "testName": "Step.Transition()",
       "testDescription": "Tests the use of step.transition, which should create a step that will automatically advance the panel when it's done playing without reactivating the wand",
       "passing": true
+    },
+
+
+    {
+      "name": "jinx-standard-grid-1",
+      "tags": "replace panel",
+      "version": "0.7",
+
+      "content": "0_7/jinx-standard-grid-1.js",
+
+      "testName": "Default Jinx Grid",
+      "testDescription": "Writes the default Jinx grid, and begins a process of displaying three panels, AZ - BY - CX",
+      "passing": true
+    },
+    {
+      "name": "jinx-standard-grid-2",
+      "tags": "panel",
+      "version": "0.7",
+
+      "content": "0_7/jinx-standard-grid-2.js",
+      "hidden": true
+    },
+    {
+      "name": "jinx-standard-grid-3",
+      "tags": "panel",
+      "version": "0.7",
+
+      "content": "0_7/jinx-standard-grid-3.js",
+      "hidden": true
+    },
+
+
+    {
+      "name": "jinx-nonstandard-grid-1",
+      "tags": "replace panel",
+      "version": "0.7",
+
+      "content": "0_7/jinx-nonstandard-grid-1.js",
+
+      "testName": "Configured Jinx Grid",
+      "testDescription": "Writes a custom (3x3, 300x400 px) Jinx grid, and begins a process of displaying three panels, AZ - BY - CX",
+      "passing": false
+    },
+    {
+      "name": "jinx-nonstandard-grid-2",
+      "tags": "panel",
+      "version": "0.7",
+
+      "content": "0_7/jinx-nonstandard-grid-2.js",
+      "hidden": true
+    },
+    {
+      "name": "jinx-nonstandard-grid-3",
+      "tags": "panel",
+      "version": "0.7",
+
+      "content": "0_7/jinx-nonstandard-grid-3.js",
+      "hidden": true
     }
   ]
 }

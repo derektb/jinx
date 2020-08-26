@@ -1,14 +1,14 @@
-var $ = require('jquery');
-var _ = require('underscore');
+const $ = require('jquery');
+const _ = require('underscore');
 
 /* TODO: Renaming: this is a BEAT, not a SEQEL.
     a SEQEL is NOTHING.  The Sequence is a Sequence
     of Steps and each Step is a series of Beats.
 */
-var Seqel = function(data, jinx){
-  var art, layer, effect, apply, sync, delay, flow, type, duration, xy, code;
+const Seqel = function(data, j){
+  let art, layer, effect, apply, sync, delay, flow, type, duration, xy, code;
 
-  var jinx = jinx || window.jinx;
+  const jinx = j || window.jinx;
 
   // setup property values with defaults
   /* if (data.type) {

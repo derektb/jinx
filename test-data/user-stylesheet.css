@@ -52,3 +52,16 @@ div#passages {
 .passage.big-panel .panel .asset {
 	width: 100%;
 }
+
+.passage .layer.color-field {
+  background-color: gray;
+}
+.passage.AZ .layer.color-field {
+  background-color: red;
+}
+.passage.BY .layer.color-field {
+  background-color: green;
+}
+.passage.CX .layer.color-field {
+  background-color: blue;
+}
