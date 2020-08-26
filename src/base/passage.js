@@ -7,9 +7,9 @@
 **/
 
 'use strict';
-var _ = require('underscore');
-var marked = require('marked');
-var jQuery = require('jquery');
+const _ = require('underscore');
+const marked = require('marked');
+const jQuery = require('jquery');
 
 /**
  Our rendering engine. This is available externally as Passage.render(),
@@ -22,7 +22,7 @@ var jQuery = require('jquery');
 
 function render(source) {
 
-	var result = _.template(source)({ s: window.story.state, $: readyFunc });
+	let result = _.template(source)({ s: window.story.state, $: readyFunc });
 
 	result = result.replace(/\/\*.*\*\//g, '');
 
@@ -31,8 +31,8 @@ function render(source) {
 	result = result.replace(/^\/\/.*(\r\n?|\n)/g, '');
 
 	// [\ndiv\n]{.withClass#andID}
-	var divRegexp = /\[([\r\n+])([^\]]*?)([\r\n+])\]\{(.*?)\}/g;
-	var divRenderer = function(wholeMatch, startBr, source, endBr, selector) {
+	const divRegexp = /\[([\r\n+])([^\]]*?)([\r\n+])\]\{(.*?)\}/g;
+	const divRenderer = function(wholeMatch, startBr, source, endBr, selector) {
 		return renderEl(
 			'div',
 			startBr + source + endBr,
@@ -45,8 +45,8 @@ function render(source) {
 	}
 
 	// [span]{.withClass#andID}
-	var spanRegexp = /\[(.*?)\]\{(.*?)\}/g;
-	var spanRenderer = function(wholeMatch, source, selector) {
+	const spanRegexp = /\[(.*?)\]\{(.*?)\}/g;
+	const spanRenderer = function(wholeMatch, source, selector) {
 		return renderEl('span', source, selector);
 	};
 
@@ -56,11 +56,11 @@ function render(source) {
 
 	// [[links]]
 	result = result.replace(/\[\[(.*?)\]\]/g, function(match, target) {
-		var display = target;
+		let display = target;
 
 		// display|target format
 
-		var barIndex = target.indexOf('|');
+		const barIndex = target.indexOf('|');
 
 		if (barIndex != -1) {
 			display = target.substr(0, barIndex);
@@ -69,7 +69,7 @@ function render(source) {
 		else {
 			// display->target format
 
-			var rightArrIndex = target.indexOf('->');
+			const rightArrIndex = target.indexOf('->');
 
 			if (rightArrIndex != -1) {
 				display = target.substr(0, rightArrIndex);
@@ -78,7 +78,7 @@ function render(source) {
 			else {
 				// target<-display format
 
-				var leftArrIndex = target.indexOf('<-');
+				const leftArrIndex = target.indexOf('<-');
 
 				if (leftArrIndex != -1) {
 					display = target.substr(leftArrIndex + 2);
@@ -115,17 +115,17 @@ function render(source) {
 **/
 
 function renderEl(nodeName, source, selector) {
-	var result = '<' + nodeName;
+	let result = '<' + nodeName;
 
 	if (selector) {
 		if (selector[0] == '-') {
 			result += ' style="display:none"';
 		}
 
-		var classes = [];
-		var id = null;
-		var classOrId = /([#\.])([^#\.]+)/g;
-		var matches = classOrId.exec(selector);
+		let classes = [];
+		let id = null;
+		const classOrId = /([#\.])([^#\.]+)/g;
+		const matches = classOrId.exec(selector);
 
 		while (matches !== null) {
 			switch (matches[1]) {
@@ -186,7 +186,7 @@ function readyFunc() {
 	}
 }
 
-var Passage = function(id, name, tags, source) {
+const Passage = function(id, name, tags, source) {
 	/**
 	 The numeric ID of the passage.
 	 @property name

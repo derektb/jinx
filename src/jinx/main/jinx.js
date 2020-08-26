@@ -73,11 +73,9 @@ var Jinx = function(){
 
 _.mixin({
   wiz_validCssName: function(name) {
-    var nonValidCharacters, validatedName;
-
     if (name && typeof name === "string") {
-      nonValidCharacters = /([^a-zA-Z-_0-9])/g;
-      validatedName = name.replace(nonValidCharacters, "-");
+      const nonValidCharacters = /([^a-zA-Z-_0-9])/g;
+      const validatedName = name.replace(nonValidCharacters, "-");
       return validatedName;
     } else {
       new Error( "_.wiz_validCssName requires that you pass a string to it, dummy!  Duh!" )
@@ -85,8 +83,8 @@ _.mixin({
   },
 
   wiz_findInHistory: function(passageId, how) {
-    var method, historySet, found;
-    method = how || "last"; // || "first"
+    let historySet, found;
+    const method = how || "last"; // || "first"
     historySet = window.story.history;
 
     if (method == "last") {
@@ -99,8 +97,8 @@ _.mixin({
   },
 
   or: function(premise) {
-    var result = false;
-    for (var i = 1; i < arguments.length; i++) {
+    let result = false;
+    for (let i = 1; i < arguments.length; i++) {
       result = (premise === arguments[i]) ? true : result;
     }
     return result;
@@ -121,7 +119,7 @@ _.mixin({
   },
 
   hasOnly: function(object, array) {
-    var objectKeys = _(object).keys().sort();
+    const objectKeys = _(object).keys().sort();
     return _(objectKeys).isEqual(array.sort());
   },
 
@@ -143,11 +141,11 @@ _.mixin({
   },
 
   thumbprint: function(x, b) {
-    var tp = [];
-    var b = b+""
-    var characters = base[b] || base["32"]
+    const tp = [];
+    const b = b+""
+    const characters = base[b] || base["32"]
 
-    for(var i = 0; i < x; i++) {
+    for(let i = 0; i < x; i++) {
       tp.push(_.sample(characters));
     }
 
@@ -155,7 +153,7 @@ _.mixin({
   }
 });
 
-var base = {
+const base = {
   "10": _("0123456789").toArray(),
   "16": _("0123456789ABCDEF").toArray(),
   "32": _("abcdefghijklmnopqrstuvwxyz234567").toArray(),
