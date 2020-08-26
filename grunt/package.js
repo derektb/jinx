@@ -1,12 +1,12 @@
 module.exports = function(grunt) {
-	var pkg = require('../package.json');
+	const pkg = require('../package.json');
 
 	grunt.registerTask('package:icon', function() {
 		grunt.file.copy('src/base/icon.svg', 'dist/' + pkg.name + '/icon.svg');
 	});
 
 	grunt.registerTask('package:format', function() {
-		var formatData = {
+		const formatData = {
 			description: pkg.description,
 			author: pkg.author.replace(/ <.*>/, ''),
 			image: 'icon.svg',

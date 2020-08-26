@@ -1,4 +1,4 @@
-var _ = require('underscore');
+const _ = require('underscore');
 const moduleAliases = {
 	  "Story": './src/base/story.js'
 	, "Passage": './src/base/passage.js'
@@ -106,12 +106,12 @@ module.exports = function(grunt) {
 	});
 
 	grunt.registerTask('html:test', function() {
-		var template = _.template(grunt.file.read('src/base/index.html'));
-		var testPassages = _.template(grunt.file.read('test-data/passages.html'))
-		var name = grunt.file.read('test-data/name.txt');
-		var buildVersion = grunt.file.readJSON('package.json').version;
+		const template = _.template(grunt.file.read('src/base/index.html'));
+		const testPassages = _.template(grunt.file.read('test-data/passages.html'))
+		const name = grunt.file.read('test-data/name.txt');
+		const buildVersion = grunt.file.readJSON('package.json').version;
 
-		var testData = {
+		const testData = {
 			name: name,
 			userStylesheet: grunt.file.read('test-data/user-stylesheet.css'),
 			userScript: grunt.file.read('test-data/user-script.js'),
@@ -122,15 +122,15 @@ module.exports = function(grunt) {
 
 		// process test passages to create body content
 		_(testData.passageData.passages).each(function(p) {
-			var bodyContent;
+			let bodyContent;
 			if (_(p.content).isArray()) {
 				bodyContent = _.map(p.content, function(line) {
 			    // escape < and >
 			    return line.replace("<","&lt;").replace(">","&gt;");
 			  }).join("\n");
 			} else if (_(p.content).isString()) {
-				var loadedBodyPath = 'test-data/testPassageSrc/'+p.content;
-				var loadedBody = _.escape(grunt.file.read(loadedBodyPath));
+				const loadedBodyPath = 'test-data/testPassageSrc/'+p.content;
+				const loadedBody = _.escape(grunt.file.read(loadedBodyPath));
 				if (!loadedBody) grunt.log.write("Warning: Could not load '"+loadedBodyPath+"' from passage '"+p.name+"'");
 				bodyContent = loadedBody;
 			} else {
@@ -142,7 +142,7 @@ module.exports = function(grunt) {
 
 		testPassages = testPassages(testData);
 
-		var mainData = {
+		const mainData = {
 			name: name,
 			storyFormatScript: '<script src="jinx.js"></script>',
 			storyFormatStylesheet: '<link rel="stylesheet" href="jinx.css">',
@@ -154,9 +154,9 @@ module.exports = function(grunt) {
 
 
 	grunt.registerTask('html:release', function() {
-		var template = _.template(grunt.file.read('src/base/index.html'));
+		const template = _.template(grunt.file.read('src/base/index.html'));
 
-		var data = {
+		const data = {
 			name: '{{STORY_NAME}}',
 			passages: '{{STORY_DATA}}',
 			storyFormatScript: '<script>' + grunt.file.read('build/jinx.js') + '</script>',
@@ -167,7 +167,7 @@ module.exports = function(grunt) {
 	});
 
 	grunt.registerTask('timestamp', function() {
-		var date, hours, meridian, minutes, seconds, stamp;
+		let date, hours, meridian, minutes, seconds, stamp;
 
 		date = new Date()
 		hours = date.getHours() % 12;
@@ -194,9 +194,9 @@ module.exports = function(grunt) {
 };
 
 function timestamp(opts) {
-	var date, year, month, dayNum, dayName, hours, meridian, minutes, seconds, stamp;
-	var months = ['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC']
-	var days = ['SUN','MON','TUE','WED','THU','FRI','SAT']
+	const date, year, month, dayNum, dayName, hours, meridian, minutes, seconds, stamp;
+	const months = ['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC']
+	const days = ['SUN','MON','TUE','WED','THU','FRI','SAT']
 
 	date = new Date()
 	year = date.getFullYear()
