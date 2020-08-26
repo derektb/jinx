@@ -68,6 +68,8 @@ const Jinx = function(){
   }
 
   this.wand = new Wand();
+
+  this.grid = new Grid();
 }
 
 // 0.7.4 : In the distant past, I used underscore mixins for special Jinx functionality.
