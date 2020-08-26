@@ -1,17 +1,19 @@
-var _ = require('underscore');
-const Wand = require('Wand');
+const _ = require('underscore');
 const Passage = require('Passage');
-const Effects = require('Effects');
-const Debug = require('Debug');
-const Settings = require('Settings');
 
-var Jinx = function(){
+const Wand = require('./wand.js');
+const Effects = require('./effects.js');
+const Debug = require('./debug.js');
+const Settings = require('./settings.js');
+const Grid = require('./grid.js');
+
+const Jinx = function(){
   this.setup = function(hash) {
     if(this.getSetting("isSetUp") && !hash.override) {
       throw new Error("You have already set up this Jinx. If you want to run setup again—well, I don't know why you would, but if you really do, please include 'override: true' in your setup parameters.")
     }
 
-    for (var prop in hash) {
+    for (let prop in hash) {
       if (prop === "defaults") {
         this.setDefaults(hash.defaults);
       } else {

@@ -1,4 +1,4 @@
-var Settings = function(){
+const Settings = function(){
   this.get = function(prop) {
     if (_(this).has(prop)) {
       return this[prop];
