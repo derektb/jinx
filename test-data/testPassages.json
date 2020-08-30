@@ -428,7 +428,7 @@
       "content": "0_7/jinx-standard-grid-1.js",
 
       "testName": "Default Jinx Grid",
-      "testDescription": "Writes the default Jinx grid, and begins a process of displaying three panels, AZp1 - BYp1 - CXp6",
+      "testDescription": "Writes the default Jinx grid, then displays sequence of three panels, AZp1 - BYp1 - CXp6",
       "passing": true
     },
     {
@@ -457,7 +457,7 @@
       "content": "0_7/jinx-nonstandard-grid-1.js",
 
       "testName": "Configured Jinx Grid",
-      "testDescription": "Writes a custom (3x3, 300x400 px) Jinx grid, and begins a process of displaying three panels, AZ - BY - CX",
+      "testDescription": "Writes a custom (3x3, 300x400 px) Jinx grid, including using Jinx.Grid to compute a set of panel sizes from the grid size. Then sequence of three panels, AZp1 - BYp1 - CXp1",
       "passing": true
     },
     {

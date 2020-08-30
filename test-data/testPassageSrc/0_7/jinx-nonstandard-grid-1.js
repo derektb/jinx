@@ -17,7 +17,8 @@ p.step.create(
     code: function(){
       jinx.grid.write({
         square: [300,400],
-        grid: [3,3]
+        grid: [3,3],
+        panels: jinx.grid.computePanels(3,3)
       })
     }
   },
