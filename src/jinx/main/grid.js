@@ -1,29 +1,14 @@
 // imported directly from the gridhack I've been using for the past few comics.
 // pretty old code and not reconsidered in a while.  adding it for refactoring.
 
-function sizeCss(square, unit) {
+const ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+
+function panelDefCss(square, unit, panelDefs) {
   let css = '';
-  const sizes = {
-    p1:  [1, 1],
-    p15: [1.5, 1],
-    p5:  [1, 0.5],
-    p5v: [0.5, 1],
-    p2:  [2, 1],
-    p2v: [1, 2],
-    p3:  [3, 1],
-    p3v: [1, 3],
-    p4:  [2, 2],
-    p6:  [3, 2],
-    p6v: [2, 3],
-    p9:  [3, 3],
-    p12: [3, 4]
-  };
 
-  const labels = Object.keys(sizes);
-
-  labels.forEach(function(p){
-    const width = square[0]*sizes[p][0]
-    const height = square[1]*sizes[p][1]
+  for (let p in panelDefs) {
+    const width = square[0] * panelDefs[p][0];
+    const height = square[1] * panelDefs[p][1];
     let rule = (
     `.passage.${p} .panel {
       width: ${width}${unit};
@@ -31,7 +16,7 @@ function sizeCss(square, unit) {
     }`)
 
     css += rule;
-  })
+  }
 
   return css;
 }
@@ -48,11 +33,10 @@ function gridSizeCss(square, unit, grid) {
   return css;
 }
 
-function positionCss(square, unit, grid) {
+function panelPositionCss(square, unit, grid) {
   let css = '';
-  const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-  const rows = alphabet.slice(0, grid[1]).split(/\s*/);
-  const columns = alphabet.slice(-1*grid[0]).split(/\s*/);
+  const rows = ALPHABET.slice(0, grid[1]).split(/\s*/);
+  const columns = ALPHABET.slice(-1*grid[0]).split(/\s*/);
 
   function halver(n){ return [n, n+"h"] }
   function reducer(r,e){
@@ -81,16 +65,17 @@ function positionCss(square, unit, grid) {
   return css;
 }
 
-function writeGridCss(hash = {}){
-  const square = hash.square || [300,300];
-  const unit = hash.unit || "px"
-  const grid = hash.grid || [3,4];
+function compileGridCss(hash) {
+  const {square, unit, grid, panels} = hash;
 
-	const sizeClasses = sizeCss(square,unit);
-  const posiClasses = positionCss(square,unit,grid);
-  const gridClass = gridSizeCss(square,unit,grid);
-  const css = (sizeClasses + posiClasses + gridClass);
+	const sizeStyles = panelDefCss(square, unit, panels) || "";
+  const posiStyles = panelPositionCss(square, unit, grid) || "";
+  const gridStyles = gridSizeCss(square, unit, grid) || "";
 
+  return sizeStyles + posiStyles + gridStyles;
+}
+
+function writeGridCss(css) {
   let gridStyles = document.getElementById("jinx-grid-classes");
   if (!gridStyles) {
     gridStyles = document.createElement('style');
@@ -102,42 +87,135 @@ function writeGridCss(hash = {}){
   gridStyles.innerHTML = css;
 }
 
-/* PUBLIC EXPORT */
+function computePanelsFromGrid(width=3, height=4) {
+	let panels = {};
+  let conflicts = {};
 
-// gridhack application listener
-$(document).on('jinx.panel.panelized', function(e, data){
-  const panelDefFinder = /(\d)?#([A-M]h?[N-Z]h?)(p\d+v?)/
-  // find panel definition from passage name
-	let panelDef = passage.name.match(panelDefFinder);
-
-	if (!panelDef) {
-    // if not found, find it in the passage's tags
-		const tagDef = _(passage.tags).find((tag)=>{ return tag[0] === "#" })
-		panelDef = tagDef ? tagDef.match(panelDefFinder) : null;
-	}
-  if (!panelDef && passage.panel.grid) {
-    // more of a hack for testing, but possibly also a good way of doing it
-    panelDef = passage.panel.grid.match(panelDefFinder);
+  function addPanel(pId,dim) {
+  	if (!panels[pId]) {
+      	panels[pId] = dim
+      } else {
+      	if (panels[pId] === dim) return;
+      	if (!conflicts[pId]) conflicts[pId] = [dim]
+        else conflicts[pId].push(dim);
+      }
   }
-  //
-	if (panelDef) {
-		const [str, page, position, size] = panelDef;
-		const $p = $(passage.panel.selectors.passage);
-		if (position && size) {
-      // jinx grid computes classes for position and size
-			$p.addClass(position).addClass(size);
-		}
-	}
-})
+
+  // compute pure horizontals
+  for (let w = 1; w <= width; w++) {
+  	for (let h = 1; h <= w; h++) {
+      addPanel(`p${w*h}`,[w,h]);
+    }
+  }
+
+  // compute pure verticals
+  if (height > width) {
+  	for (let h = width + 1; h <= height; h++) {
+    	for (let w = 1; w <= width; w++) {
+	      addPanel(`p${w*h}`,[w,h]);
+      }
+    }
+  }
+
+  // resolve conflicts
+  for (let p in conflicts) {
+    for (let i = 0; i < conflicts[p].length; i++) {
+      // any letter except v for exception naming
+      panels[`${p}${"abcdefghijklmnopqrstuwxyz"[i]}`] = conflicts[p][i];
+    }
+  }
+
+  // compute verticalized horizontals
+  for (let p in panels) {
+    const dim = panels[p];
+    if (dim[0] !== dim[1] && dim[1] < width) {
+      addPanel(`${p}v`, [dim[1],dim[0]]);
+    }
+  }
+
+	return panels;
+}
+
+/* *** PUBLIC EXPORT **** */
+
+function noGridDataFound() {
+  console.log("No grid data found");
+  return {};
+}
 
 const Grid = function() {
-  this.write = writeGridCss;
+  this.data = noGridDataFound;
+
+  this.write = function(data = {}) {
+    const gridData = {
+      square: data.square || [300,300],
+      unit: data.unit || "px",
+      grid: data.grid || [3,4],
+      panels: data.panels || {
+        p1:  [1, 1],
+        p15: [1.5, 1],
+        p5:  [1, 0.5],
+        p5v: [0.5, 1],
+        p2:  [2, 1],
+        p2v: [1, 2],
+        p3:  [3, 1],
+        p3v: [1, 3],
+        p4:  [2, 2],
+        p6:  [3, 2],
+        p6v: [2, 3],
+        p9:  [3, 3],
+        p12: [3, 4]
+      }
+    }
+
+    const css = compileGridCss(gridData)
+    this.data = ()=> gridData;
+
+    writeGridCss(css);
+  };
+
   this.erase = function(){
     let gridStyles = document.getElementById("jinx-grid-classes");
     if (gridStyles) {
       gridStyles.innerHTML = "";
     }
+    this.data = noGridDataFound
   }
+
+  this.computePanels = function(width, height) {
+    const panels = computePanelsFromGrid(width, height);
+    return panels;
+  }
+
+  // gridhack application listener
+  /*
+     applies grid definitions upon panel rendering.  this should probably be
+     moved to panel rendering or passage creation or something.
+  */
+  $(document).on('jinx.panel.panelized', function(e, data){
+    const panelDefFinder = /(\d)?#([A-M]h?[N-Z]h?)(p\d+v?)/
+    // find panel definition from passage name
+  	let panelDef = passage.name.match(panelDefFinder);
+
+  	if (!panelDef) {
+      // if not found, find it in the passage's tags
+  		const tagDef = _(passage.tags).find((tag)=>{ return tag[0] === "#" })
+  		panelDef = tagDef ? tagDef.match(panelDefFinder) : null;
+  	}
+    if (!panelDef && passage.panel.grid) {
+      // more of a hack for testing, but possibly also a good way of doing it
+      panelDef = passage.panel.grid.match(panelDefFinder);
+    }
+    //
+  	if (panelDef) {
+  		const [str, page, position, size] = panelDef;
+  		const $p = $(passage.panel.selectors.passage);
+  		if (position && size) {
+        // jinx grid computes classes for position and size
+  			$p.addClass(position).addClass(size);
+  		}
+  	}
+  })
 }
 
 module.exports = Grid

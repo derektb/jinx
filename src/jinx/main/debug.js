@@ -1,11 +1,27 @@
-var $ = require('jquery');
+const $ = require('jquery');
+const gridHelper = require('./debug/gridHelper.js');
 
 // This is junk-ass code but it gets the job done
 
-var Debug = function(){
+const Debug = function(){
   // create debug passage
-  var debugPassage = new Passage(Number(_.thumbprint(5,10)), "debug", "", debugPassageSrc);
+  const debugPassage = new Passage(Number(_.thumbprint(5,10)), "debug", "", debugPassageSrc);
   window.story.passages.push(debugPassage);
+
+  this.renderGridHelper = function() {
+    const jinx = window.jinx;
+    const panelDefs = jinx.grid.data().panels
+    if (panelDefs) {
+      const gh = gridHelper(panelDefs);
+
+      // because of how debug renders stuff, sorry, junk-ass hack, lol
+      const d = document.createElement('div');
+      d.append(gh);
+      return d.innerHTML; // lol
+    } else {
+      return `<p>No grid defined for this comic</p>`
+    }
+  }
 
   // setup keypress
   $(document).keydown(function(e){
@@ -33,7 +49,7 @@ var Debug = function(){
   });
 }
 
-var debugPassageSrc = `All Passages:
+const debugPassageSrc = `All Passages:
 <%
 _(window.story.passages).each(function(passage) {
  if(passage) {
@@ -46,6 +62,8 @@ _(window.story.passages).each(function(passage) {
 }
 });
 %>
+<hr>
+<%= jinx.debug.renderGridHelper() %>
 <hr>
 <a>close</a>`;
 
