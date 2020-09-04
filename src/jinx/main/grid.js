@@ -103,6 +103,7 @@ function computePanelsFromGrid(width=3, height=4) {
 
   // compute pure horizontals
   for (let w = 1; w <= width; w++) {
+    addPanel(`p${w*w}`,[w,w])
   	for (let h = 1; h <= w; h++) {
       addPanel(`p${w*h}`,[w,h]);
     }

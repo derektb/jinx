@@ -9,6 +9,8 @@ Contents:
   * [The Wand](#the-wand)
   * [The Jinx Panel Passage](#the-jinx-panel-passage)
     * [Jinx Panel Rendering](#jinx-panel-rendering)
+  * [Jinx Events](#jinx-events)
+  * [Jinx Grid](#jinx-grid)
 * [Panel Definition](#panel-definition)
   * [Art Assets](#art-assets)
     * [Art Asset Pathing](#art-asset-pathing)
@@ -106,6 +108,86 @@ This is a Jinx panel definition, and how that Jinx panel's Twine passage will re
   </div>
 </div>
 ```
+
+## Jinx Events
+
+
+
+## Jinx Grid
+
+Though it is not strictly required, Jinx assumes you will want to make comics on a strict grid system with standardized panel sizes.  This grid is built by means of `jinx.grid`:
+
+```
+// set up your grid as part of initial jinx setup:
+
+jinx.grid.write({
+  square: [300,300],    // the dimensions for the grid's 1x1 unit "square"
+  unit: "px",           // the css units with which to define the square
+  grid: [3,4]           // dimensions (width x height in squares) of the grid
+  panels: {
+    p1: [1,1],          // panel labels and dimensions (in grid squares)
+    p15: [1.5, 1],
+    p5:  [1, 0.5],
+    p5v: [0.5, 1],
+    p2:  [2, 1],
+    p2v: [1, 2],
+    p3:  [3, 1],
+    p3v: [1, 3],
+    p4:  [2, 2],
+    p6:  [3, 2],
+    p6v: [2, 3],
+    p9:  [3, 3],
+    p12: [3, 4]
+  }
+})
+
+// if you don't want to write your own panel definition hash, you can generate
+//   one via jinx.grid.computePanels(gridWidth, gridHeight)
+
+// remove the grid definition you set up
+jinx.grid.erase()
+
+```
+
+The above properties are alse the default values for `jinx.grid.write()`; any values not specified will be filled in with them.
+
+Grid properties can be assigned to panels in one of three ways: as the name of the passage, as a tag on the passage, or as a `p.grid` property defined in the panel definition.
+
+### Conventions
+
+Panel identities (grid position + panel size) are defined by a a string of pattern `#[grid position][panel size]`.  With default values, a 1x1 panel in the top left corner of the grid is defined as `#AXp1`.
+
+_tl;dr: the Jinx debug menu will show you all panel sizes and [not yet implemented] all possible positions in your grid._
+
+#### Label Names
+
+Panel labels are `[p][numbers][a-z]`.  Panel labels are numbered by the product of their dimensions: thus, a 2x1 panel is a `p2`; a 2x2 panel is a `p4`; a 3x2 panel is a `p6`.  When auto-generating panels, panel labels are generated via the following rules:
+
+* Generate numbered square panels
+* Generate numbered horizontal panels
+* Generate vertical versions of horizontal panels; these have the same name as their horizontal versions postfixed with `v`
+* Generate numbered vertical panels that are horizontally impossible
+
+Any same-product naming conflicts are postfixed with a letter (e.g., "p4", 2x2, "p4a" 4x1).
+
+#### Grid Positions
+
+Grid positions are defined as `[Uppercase Row Letter][Uppercase Column Letter]`.
+
+Row letters are assigned sequentially top to bottom from the start of the alphabet.  For the standard 3x4 grid, these are `A B C D`.
+
+Column letters are assigned sequentially right to left from the end of the alphabet.  For the standard 3x4 grid, these are `X Y Z`.
+
+Thus, the full standard 3x4 grid is:
+
+```
+[AX][AY][AZ]
+[BX][BY][BZ]
+[CX][CY][CZ]
+[DX][DY][DZ]
+```
+
+Jinx also defines half-positions after each letter.  These are assigned with a lowercase `h`.  So a position halfway between row `A` and `B` is `Ah`; a position halfway between column `X` and `Y` is `Xh`.  These are assigned the same way as you would assign a single-letter position, so `AhX`, `AXh`, and `AhXh` are all valid.
 
 # Panel Definition
 
