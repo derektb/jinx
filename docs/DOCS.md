@@ -9,7 +9,6 @@ Contents:
   * [The Wand](#the-wand)
   * [The Jinx Panel Passage](#the-jinx-panel-passage)
     * [Jinx Panel Rendering](#jinx-panel-rendering)
-  * [Jinx Events](#jinx-events)
   * [Jinx Grid](#jinx-grid)
 * [Panel Definition](#panel-definition)
   * [Art Assets](#art-assets)
