@@ -1,5 +1,5 @@
 const $ = require('jquery');
-const gridHelper = require('./debug/gridHelper.js');
+const gridHelpers = require('./debug/gridHelper.js');
 
 // This is junk-ass code but it gets the job done
 
@@ -8,15 +8,20 @@ const Debug = function(){
   const debugPassage = new Passage(Number(_.thumbprint(5,10)), "debug", "", debugPassageSrc);
   window.story.passages.push(debugPassage);
 
-  this.renderGridHelper = function() {
+  this.renderGridHelpers = function() {
     const jinx = window.jinx;
     const panelDefs = jinx.grid.data().panels
+    const gridSize = jinx.grid.data().grid;
     if (panelDefs) {
-      const gh = gridHelper(panelDefs);
+      const panelSizes = gridHelpers.renderAllPanels(panelDefs);
+      const gridPositions = gridHelpers.renderAllPositions(gridSize[0], gridSize[1])
 
       // because of how debug renders stuff, sorry, junk-ass hack, lol
       const d = document.createElement('div');
-      d.append(gh);
+      d.innerHTML += `<p class="grid-helper-header">all grid positions</p>`
+      d.append(gridPositions);
+      d.innerHTML += `<p class="grid-helper-header">all panel sizes</p>`
+      d.append(panelSizes);
       return d.innerHTML; // lol
     } else {
       return `<p>No grid defined for this comic</p>`
@@ -63,7 +68,7 @@ _(window.story.passages).each(function(passage) {
 });
 %>
 <hr>
-<%= jinx.debug.renderGridHelper() %>
+<%= jinx.debug.renderGridHelpers() %>
 <hr>
 <a>close</a>`;
 

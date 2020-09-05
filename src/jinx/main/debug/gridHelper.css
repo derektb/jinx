@@ -1,0 +1,93 @@
+.grid-helper-header {
+  font-family: "Roboto Mono", monospace;
+  text-decoration: underline;
+  font-weight: 600;
+}
+
+#all-panels-display {
+  display: flex;
+  flex-flow: row wrap;
+}
+
+#all-panels-display .panel-display-wrapper {
+  font-family: "Roboto Mono", monospace;
+  margin: 0.5em;
+}
+
+#all-panels-display .panel-display-wrapper .panel-name {
+  margin-top: 0;
+  font-size: 0.8em;
+  font-weight: 600;
+}
+
+#all-panels-display .panel-display-wrapper .panel-dims {
+  font-size: 0.6em;
+  border-top: 1px solid;
+  padding-top: 0.2em;
+}
+
+#all-panels-display .panel-display-wrapper .panel-display {
+  border: 2px solid;
+  border-collapse: collapse;
+}
+
+#all-panels-display .panel-display-wrapper .panel-display tr td {
+  border: 1px solid;
+  width: 1em;
+  height: 1em;
+}
+
+#all-panels-display .panel-display-wrapper .panel-display.half-right {
+  border-right: none;
+}
+
+#all-panels-display .panel-display-wrapper .panel-display.half-right tr td:last-of-type {
+  width: 0.5em;
+  border-right: 1px dashed;
+}
+
+#all-panels-display .panel-display-wrapper .panel-display.half-bottom {
+   border-bottom: none;
+}
+
+#all-panels-display .panel-display-wrapper .panel-display.half-bottom tr:last-of-type td {
+  height: 0.5em;
+  border-bottom: 1px dashed;
+}
+
+
+#all-grid-positions .grid-display {
+  color: #234;
+  border: 2px solid;
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+#all-grid-positions .grid-display td {
+  padding: 0;
+}
+
+#all-grid-positions .grid-display-cell-positions {
+  border-collapse: collapse;
+  border-spacing: 0;
+  border: 1px solid;
+}
+
+#all-grid-positions .grid-display-cell-positions tr td {
+  color: #8ac;
+  border: 1px dashed;
+  width: 2.25em;
+  height: 2.25em;
+  vertical-align: top;
+}
+
+#all-grid-positions .grid-display-cell-positions tr td span {
+  font-size: 0.8em;
+  font-style: italic;
+}
+
+#all-grid-positions .grid-display-cell-positions tr:first-child td:first-child span {
+  color: #234;
+  font-weight: 600;
+  font-size: 1.25em;
+  font-style: normal;
+}

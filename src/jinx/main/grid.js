@@ -87,33 +87,52 @@ function writeGridCss(css) {
   gridStyles.innerHTML = css;
 }
 
-function computePanelsFromGrid(width=3, height=4) {
+function makePanelLabel(number) {
+  if (!number) return "p0";
+
+  let numberString = ""+number;
+  if (numberString.indexOf(".") !== -1) {
+    numberString = numberString.split("").filter(c=>c!==".").join("")
+  }
+
+  return `p${numberString}`
+}
+
+function computePanelsFromGrid(width=3, height=4, shouldHalve) {
 	let panels = {};
   let conflicts = {};
+
+  const pL = makePanelLabel;
 
   function addPanel(pId,dim) {
   	if (!panels[pId]) {
       	panels[pId] = dim
       } else {
-      	if (panels[pId] === dim) return;
+      	if (panels[pId][0] === dim[0] && panels[pId][1] === dim[1]) return;
       	if (!conflicts[pId]) conflicts[pId] = [dim]
         else conflicts[pId].push(dim);
       }
   }
 
-  // compute pure horizontals
+  // compute squares
   for (let w = 1; w <= width; w++) {
-    addPanel(`p${w*w}`,[w,w])
-  	for (let h = 1; h <= w; h++) {
-      addPanel(`p${w*h}`,[w,h]);
+    addPanel(pL(w*w),[w,w]);
+  }
+
+  const inc = shouldHalve ? 0.5 : 1
+
+  // compute pure horizontals
+  for (let w = inc; w <= width; w += inc) {
+  	for (let h = inc; h <= w; h += inc) {
+      addPanel(pL(w*h),[w,h]);
     }
   }
 
   // compute pure verticals
   if (height > width) {
-  	for (let h = width + 1; h <= height; h++) {
-    	for (let w = 1; w <= width; w++) {
-	      addPanel(`p${w*h}`,[w,h]);
+  	for (let h = width + inc; h <= height; h += inc) {
+    	for (let w = inc; w <= width; w += inc) {
+	      addPanel(pL(w*h),[w,h]);
       }
     }
   }
@@ -183,8 +202,8 @@ const Grid = function() {
     this.data = noGridDataFound
   }
 
-  this.computePanels = function(width, height) {
-    const panels = computePanelsFromGrid(width, height);
+  this.computePanels = function(width, height, shouldHalve) {
+    const panels = computePanelsFromGrid(width, height, shouldHalve);
     return panels;
   }
 

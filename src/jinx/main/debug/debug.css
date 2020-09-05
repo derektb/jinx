@@ -1,0 +1,16 @@
+#debug {
+	background-color: #fff;
+	padding: 1em;
+	box-shadow: 0 0 10px black;
+
+	position: fixed;
+	left: 1em;
+	top: 1em;
+	bottom: 1em;
+
+	overflow-y: auto;
+  overflow-x: hidden;
+	max-width: 90vw;
+
+	z-index: 10000;
+}
