@@ -217,7 +217,7 @@ const Grid = function() {
      moved to panel rendering or passage creation or something.
   */
   $(document).on('jinx.panel.panelized', function(e, data){
-    const panelDefFinder = /(\d)?#([A-M]h?[N-Z]h?)(p\d+v?)/
+    const panelDefFinder = /(\d)?#([A-M]h?[N-Z]h?)(p[0-9]+[a-z]*)/
     // find panel definition from passage name
   	let panelDef = passage.name.match(panelDefFinder);
 
