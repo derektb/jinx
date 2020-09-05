@@ -50,7 +50,10 @@ jinx.setup({
 
 By calling `jinx.debug()` you will permanently enter debug mode in the comic.  This will allow you to access the debug panel, which may be toggled open and closed via the tilde/backtick key.
 
-The debug panel allows you to display any passage in the story at will.  It also lets you output that passage's src to the console.
+The debug panel:
+* Allows you to display any passage in the story at will.
+* Allows you to output any passage's src to the console.
+* If you have a grid defined, will display helpers to visualize options for that grid.
 
 ## The Wand
 
@@ -141,9 +144,6 @@ jinx.grid.write({
   }
 })
 
-// if you don't want to write your own panel definition hash, you can generate
-//   one via jinx.grid.computePanels(gridWidth, gridHeight)
-
 // remove the grid definition you set up
 jinx.grid.erase()
 
@@ -153,22 +153,30 @@ The above properties are alse the default values for `jinx.grid.write()`; any va
 
 Grid properties can be assigned to panels in one of three ways: as the name of the passage, as a tag on the passage, or as a `p.grid` property defined in the panel definition.
 
+#### Auto-Generation
+
+If you don't want to write your own set of panel sizes, you can generate one from grid size with `jinx.grid.computePanels()`, which takes the arguments `gridWidth` and `gridHeight` (the grid's dimensions in squares), as well as the optional property `shouldHalve`.
+
+If `shouldHalve === true`, panels of half-dimension size will be generated
+
 ### Conventions
 
 Panel identities (grid position + panel size) are defined by a a string of pattern `#[grid position][panel size]`.  With default values, a 1x1 panel in the top left corner of the grid is defined as `#AXp1`.
 
-_tl;dr: the Jinx debug menu will show you all panel sizes and [not yet implemented] all possible positions in your grid._
+If you're not interested how grid position and panel size labels are generated, just check the debug menu and it'll show you all the options.  Plug those into the `#` + `position` + `size` pattern and you're good to go.
 
 #### Label Names
 
-Panel labels are `[p][numbers][a-z]`.  Panel labels are numbered by the product of their dimensions: thus, a 2x1 panel is a `p2`; a 2x2 panel is a `p4`; a 3x2 panel is a `p6`.  When auto-generating panels, panel labels are generated via the following rules:
+Panel labels are of format `/p[0-9]+[a-z]*`.  In lay-terms, they are the letter p followed by at least one number and any amount of lowercase letters.
+
+By default (i.e. when auto-generating panel sizes) panel labels are numbered by the product of their dimensions: thus, a [2, 1] panel is a `p2`; a [2, 2] panel is a `p4`; a [3, 2] panel is a `p6`.  Any same-product naming conflicts are postfixed with a letter (e.g., [2, 2] === "p4"; [4, 1] === "p4a").  Panel labels are generated in the following order:
 
 * Generate numbered square panels
 * Generate numbered horizontal panels
 * Generate vertical versions of horizontal panels; these have the same name as their horizontal versions postfixed with `v`
 * Generate numbered vertical panels that are horizontally impossible
 
-Any same-product naming conflicts are postfixed with a letter (e.g., "p4", 2x2, "p4a" 4x1).
+If generating half-dimension panels, panel numbering will be the integer product with the decimal place removed (e.g., [1, 0.5] === p05, [0.5, 0.5] === p025, [2.5, 3.5] === p875).
 
 #### Grid Positions
 
@@ -187,7 +195,7 @@ Thus, the full standard 3x4 grid is:
 [DX][DY][DZ]
 ```
 
-Jinx also defines half-positions after each letter.  These are assigned with a lowercase `h`.  So a position halfway between row `A` and `B` is `Ah`; a position halfway between column `X` and `Y` is `Xh`.  These are assigned the same way as you would assign a single-letter position, so `AhX`, `AXh`, and `AhXh` are all valid.
+Jinx also defines half-positions after each letter.  These are assigned with a lowercase `h`.  So a position halfway down from `A` is `Ah`; a position halfway right of `X` is `Xh`.  These are assigned the same way as you would assign a single-letter position, so `AhX`, `AXh`, and `AhXh` are all valid.
 
 # Panel Definition
 
