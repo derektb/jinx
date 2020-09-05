@@ -112,10 +112,6 @@ This is a Jinx panel definition, and how that Jinx panel's Twine passage will re
 </div>
 ```
 
-## Jinx Events
-
-
-
 ## Jinx Grid
 
 Though it is not strictly required, Jinx assumes you will want to make comics on a strict grid system with standardized panel sizes.  This grid is built by means of `jinx.grid`:
