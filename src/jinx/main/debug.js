@@ -1,5 +1,5 @@
 const $ = require('jquery');
-const gridHelpers = require('./debug/gridHelper.js');
+const gridHelpers = require('./grid/gridHelpers.js');
 
 // This is junk-ass code but it gets the job done
 

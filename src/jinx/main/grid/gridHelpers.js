@@ -77,6 +77,7 @@ function renderAllPositions(width, height) {
   const table = document.createElement("table")
   table.classList.add("grid-display")
 
+  // here's an ugly way of doing this
   for (let r = 0; r < height; r++) {
     const row = document.createElement("tr");
     for (let c = 0; c < width; c++) {
@@ -110,4 +111,30 @@ function renderAllPositions(width, height) {
   return mainDiv;
 }
 
-module.exports = {renderAllPanels, renderAllPositions};
+function parsePanelId(passage) {
+  const panelIdFinder = /(\d)?#([A-M]h?[N-Z]h?)(p[0-9]+[a-z]*)/
+  // find panel identity from panel.grid
+  let panelDef = passage.panel.grid.match(panelIdFinder);
+
+  if (!panelDef) {
+    // if not found, find it in the passage's tags
+    const tagDef = _(passage.tags).find((tag)=>{ return tag[0] === "#" })
+    panelDef = tagDef ? tagDef.match(panelIdFinder) : null;
+  }
+  if (!panelDef) {
+    // if not found there either, look at the passage name
+    panelDef = passage.name.match(panelIdFinder);
+  }
+
+  if (panelDef) {
+    const [str, page, position, size] = panelDef;
+    const $p = $(passage.panel.selectors.passage);
+    if (position && size) {
+      return {position, size}
+    }
+  }
+  
+  return {}
+}
+
+module.exports = {renderAllPanels, renderAllPositions, parsePanelId};

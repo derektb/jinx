@@ -1,6 +1,8 @@
 // imported directly from the gridhack I've been using for the past few comics.
 // pretty old code and not reconsidered in a while.  adding it for refactoring.
 
+const {parsePanelId} = require("./grid/gridHelpers.js");
+
 const ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
 function panelDefCss(square, unit, panelDefs) {
@@ -159,7 +161,6 @@ function computePanelsFromGrid(width=3, height=4, shouldHalve) {
 /* *** PUBLIC EXPORT **** */
 
 function noGridDataFound() {
-  console.log("No grid data found");
   return {};
 }
 
@@ -203,43 +204,18 @@ const Grid = function() {
     if (gridStyles) {
       gridStyles.innerHTML = "";
     }
-    this.data = noGridDataFound
+    this.data = noGridDataFound;
+  }
+
+  this.exists = function() {
+    const {square, unit, grid, panels} = this.data();
+    return square && unit && grid && panels;
   }
 
   this.computePanels = function(width, height, shouldHalve) {
     const panels = computePanelsFromGrid(width, height, shouldHalve);
     return panels;
   }
-
-  // gridhack application listener
-  /*
-     applies grid definitions upon panel rendering.  this should probably be
-     moved to panel rendering or passage creation or something.
-  */
-  $(document).on('jinx.panel.panelized', function(e, data){
-    const panelDefFinder = /(\d)?#([A-M]h?[N-Z]h?)(p[0-9]+[a-z]*)/
-    // find panel definition from passage name
-  	let panelDef = passage.name.match(panelDefFinder);
-
-  	if (!panelDef) {
-      // if not found, find it in the passage's tags
-  		const tagDef = _(passage.tags).find((tag)=>{ return tag[0] === "#" })
-  		panelDef = tagDef ? tagDef.match(panelDefFinder) : null;
-  	}
-    if (!panelDef && passage.panel.grid) {
-      // more of a hack for testing, but possibly also a good way of doing it
-      panelDef = passage.panel.grid.match(panelDefFinder);
-    }
-    //
-  	if (panelDef) {
-  		const [str, page, position, size] = panelDef;
-  		const $p = $(passage.panel.selectors.passage);
-  		if (position && size) {
-        // jinx grid computes classes for position and size
-  			$p.addClass(position).addClass(size);
-  		}
-  	}
-  })
 }
 
 module.exports = Grid

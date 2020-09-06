@@ -21,6 +21,7 @@ const PanelDestination = require('PanelDestination');
 const PanelArt = require('PanelArt');
 const ArtAsset = require('ArtAsset');
 const Story = require('Story');
+const {parsePanelId} = require("../main/grid/gridHelpers.js");
 
 var Panel = function(name) {
   // ----- Basic Properties -----
@@ -39,6 +40,12 @@ var Panel = function(name) {
   }
 
   this.isComplete = false;
+
+  this.grid = ""; // temp alternative to setting grid properties
+                  // in passage tags.  being able to set grid props in
+                  // panel def is a good idea, but literally setting a
+                  // string in the panel doesn't feel like the right
+                  // way of going about it.
 
   // --- ART ---
 
@@ -135,6 +142,7 @@ _.extend(Passage.prototype, {
     else {
       this.panel = new Panel(this.name);
       panel = this.panel;
+      panel.parentPassage = this;
 
       if (initializeData) {
         if (typeof initializeData !== "function") {
@@ -159,6 +167,11 @@ _.extend(Passage.prototype, {
 
       panel.renderer.setupStructure(panel.selectors.passage); // creates "panel" div within rendered passage div
       panel.renderer.setupLayers();
+      // assigns panel identity in grid if it's been supplied
+      const {position: gridPos, size: panelSize} = parsePanelId(this);
+      if (gridPos && panelSize) {
+        $(`.${this.passageDomName()}`).addClass([gridPos, panelSize])
+      }
 
       $.event.trigger('panelized', panel); // regression
       $.event.trigger('jinx.panel.panelized', panel);
