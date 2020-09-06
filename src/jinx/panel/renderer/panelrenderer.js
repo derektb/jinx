@@ -255,8 +255,8 @@ var PanelRenderer = function() {
 
   this.animate = function(stepAnimation) {
     var sequences = [];
-    $(document).trigger("animation-begun", stepAnimation); // deprecated
-    $(document).trigger("jinx.animation.started", stepAnimation);
+    $.event.trigger("animation-begun", stepAnimation); // deprecated
+    $.event.trigger("jinx.animation.started", stepAnimation);
 
     // hydrate assetAnimation with real assets and add to sequences
     _(stepAnimation.assets).each(_(function(assetAnimation) {
@@ -271,21 +271,21 @@ var PanelRenderer = function() {
 
     // play all snabbt sequences
     function playAnimation() {
-      $(document).trigger("started-playing-animation"); // deprecated
-      $(document).trigger("jinx.animation.playing.begun");
+      $.event.trigger("started-playing-animation"); // deprecated
+      $.event.trigger("jinx.animation.playing.begun");
       // console.log("all assets have loaded", Date.now(), _renderer.assetRecords)
       // HACK: Refactor this to be an actual function
       _(sequences).each(function(sequence) {
         snabbt.sequence(sequence);
       })
       setTimeout(function() {
-        $(document).trigger("ended-playing-animation"); // deprecated
-        $(document).trigger("jinx.animation.playing.ended");
+        $.event.trigger("ended-playing-animation"); // deprecated
+        $.event.trigger("jinx.animation.playing.ended");
       }, stepAnimation.timing.end) // HACK: don't like setTimeout for this
 
       $(document).one("jinx.animation.playing.ended", function() {
         _renderer.postAnimationCleanup(stepAnimation);
-        $(document).trigger("jinx.animation.finished");
+        $.event.trigger("jinx.animation.finished");
       })
     }
 
