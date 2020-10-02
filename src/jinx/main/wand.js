@@ -153,7 +153,7 @@ const Wand = function() {
       wand.away();
     } else {
       if (shouldAutoTransition) { // hack zone
-        $(document).trigger("jinx.panel.advance")
+        $.event.trigger("jinx.panel.advance")
       } else {
         wand.activate();
         if (willTransition) {

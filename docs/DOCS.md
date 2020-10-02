@@ -9,6 +9,7 @@ Contents:
   * [The Wand](#the-wand)
   * [The Jinx Panel Passage](#the-jinx-panel-passage)
     * [Jinx Panel Rendering](#jinx-panel-rendering)
+  * [Jinx Events](#jinx-events)
   * [Jinx Grid](#jinx-grid)
 * [Panel Definition](#panel-definition)
   * [Art Assets](#art-assets)
@@ -110,6 +111,47 @@ This is a Jinx panel definition, and how that Jinx panel's Twine passage will re
   </div>
 </div>
 ```
+## Jinx Events
+
+Documentation of jinx event system
+
+### Snowman Events
+
+Jinx is built off of Snowman, and retains the set of snowman events related to passage rendering and state:
+
+* `startstory`
+* `hidepassage` - triggered when a passage is about to be hidden.  includes passage to be hidden as data
+* `showpassage` - triggered immediately before rendering a passage.  includes passage to be shown as data.
+* `showpassage:after` - triggered immediately after a new passage is rendered.  includes that passage as data.
+* `checkpoint`
+* `save`
+* `restore`
+* `restore:after`
+
+### Jinx Events
+
+Jinx events have to do with panel activity, animation, and interaction.
+
+#### Panel Lifecycle
+
+* `jinx.panel.panelized` - called after passage has completed panelization: panel has been defined by user-supplied function, and panel structure itself has been rendered to dom.  includes panel as data.
+* `jinx.panel.advance` - called by Wand to instruct the active panel to advance; typically a response to user interaction.
+
+#### Panel Animations
+
+* `jinx.animation.started` - fires when animation setup begins. typically, the panel will be non-interactive after this point.
+* `jinx.animation.playing.begun` - fires when all setup is complete and the animation begins actually playing.
+* `jinx.animation.playing.ended` - fires when the animation ends playing. Technically, this fires when the expected synchronized time for the animation has elapsed. If any assets are `sync: "async"`, it will by design fire before they are finished animating.
+* `jinx.animation.finished` - fires when the teardown is complete after the end of the animation itself.  Typically, the panel remains non-interactive until this event fires.
+
+#### Internal Events
+
+Should these be in the public docs?  Probably not!  But they are useful to me for now, and good to include for that reason alone.
+
+* `jinx.panel.should-auto-transition`
+* `jinx.panel.will-transition`
+* `jinx.panel.is-final-panel`
+* `all-assets-loaded` - called by shadowpanel when all assets have successfully loaded on the panel; indicates the panel animation is ready to begin
 
 ## Jinx Grid
 

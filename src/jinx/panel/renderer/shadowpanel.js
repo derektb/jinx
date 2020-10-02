@@ -134,7 +134,7 @@ var ShadowPanel = function(id) {
 
   this._completeLoading = function() {
     if(!this._loadingAssets.length) {
-      return $(document).trigger('all-assets-loaded', {rendererId: this.rendererId});
+      return $.event.trigger('all-assets-loaded', {rendererId: this.rendererId});
     }
   }
 }
