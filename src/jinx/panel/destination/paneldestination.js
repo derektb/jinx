@@ -75,8 +75,9 @@ var PanelDestination = function() {
     }
   }
 
-  this.get = function getDestination() {
+  this.get = function getDestination(debug) {
     if (this.main) return this.main // regression
+    if (debug) return this.evaluateDestination;
     return this.evaluateDestination();
   }
 
